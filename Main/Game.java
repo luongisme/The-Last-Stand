@@ -16,7 +16,18 @@ public class Game extends JFrame implements Runnable {
     private final int FPS=120;
     private final int UPS=60;
 
+    public Game(){
+        
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(true);
+        initClasses();
+        add(gameScreen);
+        pack();
+        setLocationRelativeTo(null); // Center the window on the screen
+        setVisible(true);
+        
 
+    }
 
     public static void main(String[] args) {
         Game game=new Game();
@@ -33,16 +44,16 @@ public class Game extends JFrame implements Runnable {
         
     }
 
-    /*
+    
     private void initClasses() {
-        render = new Render(this);
+        //render = new Render(this);
         gameScreen = new GameScreen(this);
-        menu = new Menu(this);
-        playing = new Playing(this);
-        settings = new Settings(this);
-        gameOver = new GameOver(this);
+        //menu = new Menu(this);
+        //playing = new Playing(this);
+        //settings = new Settings(this);
+        //gameOver = new GameOver(this);
     }
-     */
+     
 
     /*
     private void updateGame() {
@@ -87,14 +98,7 @@ public class Game extends JFrame implements Runnable {
         }
     }
 
-    public Game(){
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
-        pack();
-        setLocationRelativeTo(null);
-        setResizable(false);
-
-    }
+    
 
     /*
     public Render getRender(){
