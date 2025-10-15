@@ -1,5 +1,6 @@
 package Interfaces;
 
-public class Render {
+public interface Render {
+
     
 }
