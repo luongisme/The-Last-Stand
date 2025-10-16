@@ -3,19 +3,34 @@ package Scene;
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
+import Main.GameState;
+import UI.Button.MenuButton;
 
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
 public class Menu extends GameScene implements Render, SceneMethod {
 	private Image menuImage;
+	private List<MenuButton> buttons = new ArrayList<>();
+	private MenuButton playButton;
 
 	public Menu(Game game) {
 		super(game);
 		loadMenuImage();
+		initButtons();
+	}
+
+	private void initButtons() {
+		
+		playButton = new MenuButton(602, 350, 300, 60, "PLAY");
+		buttons.add(playButton);
+		
+		
 	}
 
 
@@ -44,6 +59,11 @@ public class Menu extends GameScene implements Render, SceneMethod {
         } else {
             System.err.println("Menu image is null, cannot render");
         }
+
+        // Render all buttons
+        for (MenuButton button : buttons) {
+            button.render(g);
+        }
 	}
 
 	private void loadMenuImage() {
@@ -65,22 +85,37 @@ public class Menu extends GameScene implements Render, SceneMethod {
 
 	@Override
 	public void mouseClicked(int x, int y) {
-		// Implement mouseClicked method
+		// Check if play button was clicked
+		if (playButton.isMouseOver(x, y)) {
+			System.out.println("Play button clicked!");
+			GameState.SetGameState(GameState.PLAYING);
+		}
 	}
 
 	@Override
 	public void mouseMoved(int x, int y) {
-		// Implement mouseMoved method
+		// Update button hover states
+		for (MenuButton button : buttons) {
+			button.update(x, y);
+		}
 	}
 
 	@Override
 	public void mousePressed(int x, int y) {
-		// Implement mousePressed method
+		// Set button pressed state
+		for (MenuButton button : buttons) {
+			if (button.isMouseOver(x, y)) {
+				button.setMousePressed(true);
+			}
+		}
 	}
 
 	@Override
 	public void mouseReleased(int x, int y) {
-		// Implement mouseReleased method
+		// Reset button pressed state
+		for (MenuButton button : buttons) {
+			button.setMousePressed(false);
+		}
 	}
 
 	@Override
