@@ -31,9 +31,37 @@ public class GameScreen extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
+        // Render based on GameState
+        switch (GameState.gameState) {
+            case MENU:
+                if (game.getMenu() != null) {
+                    game.getMenu().render(g);
+                } else {
+                    renderBlack(g);
+                }
+                break;
+            case PLAYING:
+                // Render playing scene
+                renderBlack(g);
+                break;
+            case SETTINGS:
+                // Render settings scene
+                renderBlack(g);
+                break;
+            case GAME_OVER:
+                // Render game over scene
+                renderBlack(g);
+                break;
+            default:
+                renderBlack(g);
+                break;
+        }
+    }
+    
+    private void renderBlack(Graphics g) {
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0,sizeWidth,sizeHeight);
-        // g.getRender()
+        g.fillRect(0, 0, sizeWidth, sizeHeight);
     }
 
 }

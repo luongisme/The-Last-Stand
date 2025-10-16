@@ -49,9 +49,8 @@ public class Game extends JFrame implements Runnable {
 
     
     private void initClasses() {
-        //render = new Render(this);
         gameScreen = new GameScreen(this);
-        //menu = new Menu(this);
+        menu = new Menu(this);
         //playing = new Playing(this);
         //settings = new Settings(this);
         //gameOver = new GameOver(this);
@@ -103,21 +102,19 @@ public class Game extends JFrame implements Runnable {
 
     
 
-    /*
-    public Render getRender(){
-        return render;
-    }
     public Menu getMenu(){
         return menu;
     }
+    
     public Playing getPlaying(){
         return playing;
     }
+    
     public Settings getSettings(){
         return settings;
     }
+    
     public GameOver getGameOver() {
         return gameOver;
-    }    
-     */
+    }
 }
