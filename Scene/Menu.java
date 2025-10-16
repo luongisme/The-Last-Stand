@@ -1,5 +1,7 @@
 package Scene;
 
-public class Menu {
+import Interfaces.Render;
+
+public class Menu extends GameScene implements Render, implements SceneMethod {
     
 }

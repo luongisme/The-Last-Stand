@@ -13,7 +13,7 @@ public class GameScreen extends JPanel {
     private int sizeWidth = 1504;
     private int sizeHeight = 736;
 
-    // ===== Constructor =====
+
     public GameScreen(Game game) {
         this.game = game;
         setPanelSize();

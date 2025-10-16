@@ -2,22 +2,27 @@ package Main;
 
 import javax.swing.JFrame;
 
+import Interfaces.Render;
+import Scene.GameOver;
+import Scene.Menu;
+import Scene.Playing;
+import Scene.Settings;
+
 public class Game extends JFrame implements Runnable {
     private GameScreen gameScreen;
     private Thread gameThread;
-    /*
+    
     private Render render;
     private Menu menu;
     private Playing playing;
     private Settings settings;
     private GameOver gameOver;
-     */
+     
     
     private final int FPS=120;
     private final int UPS=60;
 
     public Game(){
-        
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(true);
         initClasses();
@@ -25,8 +30,6 @@ public class Game extends JFrame implements Runnable {
         pack();
         setLocationRelativeTo(null); // Center the window on the screen
         setVisible(true);
-        
-
     }
 
     public static void main(String[] args) {
