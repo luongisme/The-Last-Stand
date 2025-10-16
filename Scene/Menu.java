@@ -5,16 +5,13 @@ import Main.Game;
 import Main.GameScene;
 
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.awt.Image;
+import java.io.File;
 
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class Menu extends GameScene implements Render, SceneMethod {
-	private BufferedImage menuImage;
-
-
-
+	private Image menuImage;
 
 	public Menu(Game game) {
 		super(game);
@@ -27,17 +24,23 @@ public class Menu extends GameScene implements Render, SceneMethod {
 		if (menuImage == null) {
             loadMenuImage();
         }
+		
         if (menuImage != null) {
             // Scale the menu image to fit the panel size
             int width, height;
+
 			if (g.getClipBounds() != null) {
 				width = g.getClipBounds().width;
 				height = g.getClipBounds().height;
+
 			} else {
 				width = 1504;
 				height = 736;
 			}
-            g.drawImage(menuImage, 0, 0, width, height, null);
+
+            // Draw the animated GIF (ImageIcon handles the animation automatically)
+            g.drawImage(menuImage, 0, 0, width, height, game.getContentPane());
+
         } else {
             System.err.println("Menu image is null, cannot render");
         }
@@ -45,10 +48,17 @@ public class Menu extends GameScene implements Render, SceneMethod {
 
 	private void loadMenuImage() {
 		try {
-			menuImage = ImageIO.read(new java.io.File("resource/assets/assets/Menu_bg.gif"));
-			System.out.println("Successfully loaded menu background from file path");
-		} catch (IOException ex) {
-			System.err.println("Failed to load menu image from file: " + ex.getMessage());
+			File imageFile = new File("resource/assets/assets/Menu_bg.gif");
+			if (imageFile.exists()) {
+				// Use ImageIcon to preserve GIF animation
+				ImageIcon menuImageIcon = new ImageIcon(imageFile.getAbsolutePath());
+				menuImage = menuImageIcon.getImage();
+				System.out.println("Successfully loaded animated menu background from file path");
+			} else {
+				System.err.println("Menu background file not found: " + imageFile.getAbsolutePath());
+			}
+		} catch (Exception ex) {
+			System.err.println("Failed to load menu image: " + ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
@@ -77,4 +87,5 @@ public class Menu extends GameScene implements Render, SceneMethod {
 	public void mouseDragged(int x, int y) {
 		// Implement mouseDragged method
 	}
+
 }

@@ -51,9 +51,9 @@ public class Game extends JFrame implements Runnable {
     private void initClasses() {
         gameScreen = new GameScreen(this);
         menu = new Menu(this);
-        //playing = new Playing(this);
-        //settings = new Settings(this);
-        //gameOver = new GameOver(this);
+        playing = new Playing(this);
+        settings = new Settings(this);
+        gameOver = new GameOver(this);
     }
      
 
