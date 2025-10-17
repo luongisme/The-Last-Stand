@@ -1,5 +1,7 @@
 package Interfaces;
 
-public class Render {
-    
+import java.awt.Graphics;
+
+public interface Render {
+    public void render(Graphics g);
 }
