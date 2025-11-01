@@ -25,9 +25,7 @@ public class Player {
     public void addMoney(int amount){
         money += amount;
     }
-    public void addBounus(int bonus){
-        money += bonus;
-    }
+
     public void spendMoney(int amount){
         if (money >= amount){
             money -= amount; 
