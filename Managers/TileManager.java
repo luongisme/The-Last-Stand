@@ -1,6 +1,8 @@
-package Map;
+package Managers;
 
 import Constant.TileConstant;
+import Map.Tile;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -37,7 +39,7 @@ public class TileManager {
     private BufferedImage loadImage(String fileName) {
         BufferedImage img = null;
         // path to the folder containing the tile image
-        InputStream is = TileManager.class.getResourceAsStream("/tileset/" + fileName);
+    InputStream is = TileManager.class.getResourceAsStream("/assets/assets/tileset/" + fileName);
         if (is == null) {
             System.err.println("Image file could not be found: /tileset/" + fileName);
             return null;
@@ -64,4 +66,10 @@ public class TileManager {
         }
         return null; // or return a default tile?
     }  
+
+    public boolean checkSpriteAnimation(int spriteID){
+        if (spriteID < 0 || spriteID >= tiles.size()) return false;
+        Tile t = tiles.get(spriteID);
+        return t != null && t.hasAnimation();
+    }
 }
