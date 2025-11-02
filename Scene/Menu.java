@@ -53,7 +53,7 @@ public class Menu extends GameScene implements Render, SceneMethod {
 				height = 736;
 			}
 
-            // Draw the animated GIF (ImageIcon handles the animation automatically)
+            
             g.drawImage(menuImage, 0, 0, width, height, game.getContentPane());
 
         } else {

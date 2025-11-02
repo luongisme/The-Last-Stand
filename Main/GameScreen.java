@@ -11,8 +11,8 @@ import javax.swing.JPanel;
 public class GameScreen extends JPanel implements MouseListener, MouseMotionListener {
     private Game game;
     private Dimension size; // set size panel
-    private int sizeWidth = 1504;
-    private int sizeHeight = 736;
+    private static final int sizeWidth = 1504;
+    private static final int sizeHeight = 736;
 
 
     public GameScreen(Game game) {
@@ -27,7 +27,7 @@ public class GameScreen extends JPanel implements MouseListener, MouseMotionList
     }
 
     private void setPanelSize() {
-        size = new Dimension(sizeWidth,sizeHeight); // create size of panel
+        size = new Dimension(sizeWidth,sizeHeight); 
         setPreferredSize(size);
         
     }
@@ -39,15 +39,11 @@ public class GameScreen extends JPanel implements MouseListener, MouseMotionList
         // Render based on GameState
         switch (GameState.gameState) {
             case MENU:
-                if (game.getMenu() != null) {
-                    game.getMenu().render(g);
-                } else {
-                    renderBlack(g);
-                }
+                game.getMenu().render(g);
                 break;
             case PLAYING:
                 // Render playing scene
-                renderBlack(g);
+                game.getPlaying().render(g);
                 break;
             case SETTINGS:
                 // Render settings scene

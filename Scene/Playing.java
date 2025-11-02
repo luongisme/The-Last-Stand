@@ -12,17 +12,22 @@ import Map.Tile;
 public class Playing extends GameScene implements Render, SceneMethod {
 	private int[][] lvl;
 	private TileManager tileManager;
+	private Tile selectedTile;
+	private boolean drawSelect = false;
+	private int mouseX, mouseY;
 
     public Playing(Game game){
         super(game);
-	this.tileManager = new TileManager();
-	this.lvl = new LevelBuild().getFirstMapData();
+		tileManager = new TileManager();
+		lvl = new LevelBuild().getFirstMapData();
 
     }
 
     @Override
     public void render(Graphics g) {
         drawLevel(g);
+		updateTick();
+		drawSelectedTile(g);
     }
 
     @Override
@@ -50,6 +55,23 @@ public class Playing extends GameScene implements Render, SceneMethod {
 		// Implement mouseDragged method
 	}
 
+	 private void drawSelectedTile(Graphics g) {
+        if(selectedTile != null && drawSelect){
+            g.drawImage(selectedTile.getSprite(), mouseX, mouseY, 16, 16, null);
+        }
+    }
+
+	public void updateTick(){
+        tick++;
+        if (tick>=20){
+            tick=0;
+            animationIndex++;
+            if (animationIndex>=10){
+                animationIndex=0;
+            }
+        }
+    }
+
 	public void drawLevel(Graphics g){
         // go through all the tile
         for (int y=0;y<lvl.length;y++){
@@ -57,14 +79,11 @@ public class Playing extends GameScene implements Render, SceneMethod {
                 int id=lvl[y][x];
 				Tile t = tileManager.getTile(id);
 				if (t == null) continue;
-				if (checkAnimation(id)) {
-					g.drawImage(t.getSprite(animationIndex), x*16, y*16, null);
-				} else {
 					g.drawImage(t.getSprite(), x*16, y*16, null);
 				}
             }
         }
-    }
+    
 	private boolean checkAnimation(int spriteID){
 		return tileManager != null && tileManager.checkSpriteAnimation(spriteID);
     }

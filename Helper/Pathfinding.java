@@ -1,4 +1,4 @@
-package MoveMethod;
+package Helper;
 public class Pathfinding {
     // Implement A* algorithm
 }
