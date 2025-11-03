@@ -3,6 +3,7 @@ package UI.Button;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class MenuButton extends BaseButton {
 
@@ -12,31 +13,34 @@ public class MenuButton extends BaseButton {
 
     @Override
     public void render(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+
+       
+        g2.setFont(new Font("Monospaced", Font.BOLD, 60));
+        var fm = g2.getFontMetrics();
+        int textWidth = fm.stringWidth(text);
+        int textAscent = fm.getAscent();
+        int textDescent = fm.getDescent();
         
+
+  
+        int textX = textWidth+130;
+        int textY = y + (height + textAscent - textDescent) / 2; 
+
+        
+        if (mouseOver || mousePressed) {
+            textX-=20;
+            g2.setFont(new Font("Monospaced", Font.BOLD, 80));
+        }
+
+        // Text color: darker yellow when pressed
         if (mousePressed) {
-            g.setColor(new Color(255, 255, 255, 80)); 
-        } else if (mouseOver) {
-            g.setColor(new Color(255, 255, 255, 50)); 
+            g2.setColor(new Color(200, 150, 0));
         } else {
-            g.setColor(new Color(255, 255, 255, 20)); 
+            g2.setColor(Color.YELLOW);
         }
-        g.fillRect(x, y, width, height);
+        g2.drawString(text, textX, textY);
 
-        // Button border
-        if (mouseOver) {
-            g.setColor(Color.WHITE);
-        } else {
-            g.setColor(new Color(255, 255, 255, 150));
-        }
-        g.drawRect(x, y, width, height);
-
-        // Button text
-        g.setColor(Color.WHITE); 
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        int textWidth = g.getFontMetrics().stringWidth(text);
-        int textHeight = g.getFontMetrics().getHeight();
-        int textX = x + (width - textWidth) / 2;
-        int textY = y + (height + textHeight / 2) / 2;
-        g.drawString(text, textX, textY);
+        g2.dispose();
     }
 }

@@ -27,7 +27,7 @@ public class Menu extends GameScene implements Render, SceneMethod {
 
 	private void initButtons() {
 		
-		playButton = new MenuButton(602, 350, 300, 60, "PLAY");
+		playButton = new MenuButton(240, 350,180, 60, "Play");
 		buttons.add(playButton);
 		
 		
@@ -53,7 +53,7 @@ public class Menu extends GameScene implements Render, SceneMethod {
 				height = 736;
 			}
 
-            // Draw the animated GIF (ImageIcon handles the animation automatically)
+            
             g.drawImage(menuImage, 0, 0, width, height, game.getContentPane());
 
         } else {

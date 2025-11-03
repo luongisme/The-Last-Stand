@@ -23,8 +23,5 @@ public class GameScene {
 
     }
 
-    //public BufferedImage getSprite(int spriteID){}
-
-    //public BufferedImage getSprite(int spriteID,int animationIndex){}
     
 }

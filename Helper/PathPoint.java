@@ -1,4 +1,4 @@
-package MoveMethod;
+package Helper;
 public class PathPoint {
 	private int xCord, yCord;
 

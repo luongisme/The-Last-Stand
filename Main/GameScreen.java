@@ -8,11 +8,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 
-public class GameScreen extends JPanel  {
+public class GameScreen extends JPanel implements MouseListener, MouseMotionListener {
     private Game game;
     private Dimension size; // set size panel
-    private int sizeWidth = 1504;
-    private int sizeHeight = 736;
+    private static final int sizeWidth = 1504;
+    private static final int sizeHeight = 736;
 
 
     public GameScreen(Game game) {
@@ -22,12 +22,12 @@ public class GameScreen extends JPanel  {
     }
 
     private void initInput(){
-        //addMouseListener(this);
-        //addMouseMotionListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
     }
 
     private void setPanelSize() {
-        size = new Dimension(sizeWidth,sizeHeight); // create size of panel
+        size = new Dimension(sizeWidth,sizeHeight); 
         setPreferredSize(size);
         
     }
@@ -39,15 +39,11 @@ public class GameScreen extends JPanel  {
         // Render based on GameState
         switch (GameState.gameState) {
             case MENU:
-                if (game.getMenu() != null) {
-                    game.getMenu().render(g);
-                } else {
-                    renderBlack(g);
-                }
+                game.getMenu().render(g);
                 break;
             case PLAYING:
                 // Render playing scene
-                renderBlack(g);
+                game.getPlaying().render(g);
                 break;
             case SETTINGS:
                 // Render settings scene
@@ -68,5 +64,66 @@ public class GameScreen extends JPanel  {
         g.fillRect(0, 0, sizeWidth, sizeHeight);
     }
 
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        switch (GameState.gameState) {
+            case MENU -> game.getMenu().mouseClicked(e.getX(), e.getY());
+            case PLAYING -> game.getPlaying().mouseClicked(e.getX(), e.getY());
+            case SETTINGS -> game.getSettings().mouseClicked(e.getX(), e.getY());
+            case GAME_OVER -> game.getGameOver().mouseClicked(e.getX(), e.getY());
+            default -> {}
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        switch (GameState.gameState) {
+            case MENU -> game.getMenu().mousePressed(e.getX(), e.getY());
+            case PLAYING -> game.getPlaying().mousePressed(e.getX(), e.getY());
+            case SETTINGS -> game.getSettings().mousePressed(e.getX(), e.getY());
+            case GAME_OVER -> game.getGameOver().mousePressed(e.getX(), e.getY());
+            default -> {}
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        switch (GameState.gameState) {
+            case MENU -> game.getMenu().mouseReleased(e.getX(), e.getY());
+            case PLAYING -> game.getPlaying().mouseReleased(e.getX(), e.getY());
+            case SETTINGS -> game.getSettings().mouseReleased(e.getX(), e.getY());
+            case GAME_OVER -> game.getGameOver().mouseReleased(e.getX(), e.getY());
+            default -> {}
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        switch (GameState.gameState) {
+            case MENU -> game.getMenu().mouseDragged(e.getX(), e.getY());
+            case PLAYING -> game.getPlaying().mouseDragged(e.getX(), e.getY());
+            case SETTINGS -> game.getSettings().mouseDragged(e.getX(), e.getY());
+            case GAME_OVER -> game.getGameOver().mouseDragged(e.getX(), e.getY());
+            default -> {}
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        switch (GameState.gameState) {
+            case MENU -> game.getMenu().mouseMoved(e.getX(), e.getY());
+            case PLAYING -> game.getPlaying().mouseMoved(e.getX(), e.getY());
+            case SETTINGS -> game.getSettings().mouseMoved(e.getX(), e.getY());
+            case GAME_OVER -> game.getGameOver().mouseMoved(e.getX(), e.getY());
+            default -> {}
+        }
+    }
 }
 
