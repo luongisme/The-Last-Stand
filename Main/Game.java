@@ -2,7 +2,7 @@ package Main;
 
 import javax.swing.JFrame;
 
-import Interfaces.Render;
+// import Interfaces.Render;
 import Scene.GameOver;
 import Scene.Menu;
 import Scene.Playing;
@@ -12,7 +12,7 @@ public class Game extends JFrame implements Runnable {
     private GameScreen gameScreen;
     private Thread gameThread;
     
-    private Render render;
+    // private Render render;
     private Menu menu;
     private Playing playing;
     private Settings settings;
@@ -33,7 +33,7 @@ public class Game extends JFrame implements Runnable {
     }
 
     public static void main(String[] args) {
-        Game game=new Game();
+        Game game = new Game();
         game.start();
     }
 
@@ -46,7 +46,6 @@ public class Game extends JFrame implements Runnable {
     private void updateGame(){
         
     }
-
     
     private void initClasses() {
         gameScreen = new GameScreen(this);
@@ -56,12 +55,12 @@ public class Game extends JFrame implements Runnable {
         gameOver = new GameOver(this);
     }
      
-
     /*
     private void updateGame() {
         playing.update();
     }
      */
+
     @Override
     public void run(){
 

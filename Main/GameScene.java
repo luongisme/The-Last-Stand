@@ -1,5 +1,4 @@
 package Main;
-import java.awt.image.BufferedImage;
 public class GameScene {
     protected Game game;
     protected int animationIndex;
