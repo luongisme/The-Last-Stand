@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 
 public class TileManager {
-    public Tile DIRT,SPAWN,ROAD,GRASS,SAND,WATER,WOOD,HOME,WALL,STONE;
+    public Tile DIRT,SPAWN,ROAD,GRASS,SAND,WATER,WOOD,HOME,WALL,STONE,CURB,AVAILABLEDIRT;
 
     public ArrayList<Tile> tiles = new ArrayList<>();
     private BufferedImage atlas; // The tileset sprite sheet
@@ -82,6 +82,8 @@ public class TileManager {
         tiles.add(HOME = new Tile(getSprite(7, 0), TileConstant.HOME));
         tiles.add(WALL = new Tile(getSprite(8, 0), TileConstant.WALL));
         tiles.add(STONE = new Tile(getSprite(9, 0), TileConstant.STONE));
+        tiles.add(CURB = new Tile(getSprite(1,3),TileConstant.CURB));
+        tiles.add(AVAILABLEDIRT = new Tile(getSprite(14,5), TileConstant.AVAILABLEDIRT));
         
         // **animation for WATER?**
         // BufferedImage[] waterFrames = loadWaterAnimation();
