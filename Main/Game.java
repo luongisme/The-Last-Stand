@@ -7,6 +7,7 @@ import Scene.GameOver;
 import Scene.Menu;
 import Scene.Playing;
 import Scene.Settings;
+import Main.GameState;
 
 public class Game extends JFrame implements Runnable {
     private GameScreen gameScreen;
@@ -44,7 +45,19 @@ public class Game extends JFrame implements Runnable {
     }
 
     private void updateGame(){
-        
+        switch(GameState.gameState){
+            case MENU:
+                break;
+            case PLAYING:
+                playing.update();
+                break;
+            case SETTINGS:
+                break;
+            // case GAMEOVER:
+            //     break;
+            default:
+                break;
+        }
     }
 
     

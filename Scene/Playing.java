@@ -6,6 +6,7 @@ import Map.LevelBuild;
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
+import Managers.EnemyManager;
 import Managers.TileManager;
 import Map.Tile;
 
@@ -15,11 +16,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
 	private Tile selectedTile;
 	private boolean drawSelect = false;
 	private int mouseX, mouseY;
+	private EnemyManager enemyManager;
 
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
 		lvl = new LevelBuild().getFirstMapData();
+		enemyManager = new EnemyManager(this);
 
     }
 
@@ -28,6 +31,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         drawLevel(g);
 		updateTick();
 		drawSelectedTile(g);
+		enemyManager.draw(g);
     }
 
     @Override
@@ -43,6 +47,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 	@Override
 	public void mousePressed(int x, int y) {
 		// Implement mousePressed method
+		enemyManager.addEnemy(x, y);
 	}
 
 	@Override
@@ -60,6 +65,10 @@ public class Playing extends GameScene implements Render, SceneMethod {
             g.drawImage(selectedTile.getSprite(), mouseX, mouseY, 16, 16, null);
         }
     }
+
+	public void update(){
+		enemyManager.update();
+	}
 
 	public void updateTick(){
         tick++;
