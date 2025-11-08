@@ -1,12 +1,10 @@
 package Main;
 
-import javax.swing.JFrame;
-
-// import Interfaces.Render;
 import Scene.GameOver;
 import Scene.Menu;
 import Scene.Playing;
 import Scene.Settings;
+import javax.swing.JFrame;
 
 public class Game extends JFrame implements Runnable {
     private GameScreen gameScreen;
@@ -21,6 +19,7 @@ public class Game extends JFrame implements Runnable {
     
     private final int FPS=120;
     private final int UPS=60;
+  
 
     public Game(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
