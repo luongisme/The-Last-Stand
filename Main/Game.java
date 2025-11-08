@@ -59,7 +59,7 @@ public class Game extends JFrame implements Runnable {
     private void updateGame() {
         playing.update();
     }
-     */
+    */
 
     @Override
     public void run(){
