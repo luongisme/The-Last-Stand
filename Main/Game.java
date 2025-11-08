@@ -1,12 +1,15 @@
 package Main;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 // import Interfaces.Render;
 import Scene.GameOver;
 import Scene.Menu;
 import Scene.Playing;
 import Scene.Settings;
+import Sound.MusicManager;
+import Sound.MusicSetting;
 
 public class Game extends JFrame implements Runnable {
     private GameScreen gameScreen;
@@ -30,13 +33,13 @@ public class Game extends JFrame implements Runnable {
         pack();
         setLocationRelativeTo(null); // Center the window on the screen
         setVisible(true);
+        
     }
 
     public static void main(String[] args) {
         Game game = new Game();
         game.start();
     }
-
 
     private void start(){
         gameThread=new Thread(this){};
@@ -117,3 +120,5 @@ public class Game extends JFrame implements Runnable {
         return gameOver;
     }
 }
+
+
