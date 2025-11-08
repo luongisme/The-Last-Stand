@@ -12,6 +12,7 @@ import Managers.TileManager;
 import Managers.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
+import Entities.Tower.Tower;
 
 public class Playing extends GameScene implements Render, SceneMethod {
     private final int GRID_SIZE = 16;
@@ -29,7 +30,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 		lvl = new LevelBuild().getFirstMapData();
 
 		towerManager = new TowerManager(this);
-        player = new Player(50, 100); // for example
+        player = new Player(5000, 100); // for example
     }
 
     public void update() {
@@ -46,7 +47,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
         drawPlayerStats(g);
 
-        if (!towerManager.isBuildMenuOpen()) {
+        if (!towerManager.isBuildMenuOpen() && !towerManager.isUpgradeMenuOpen()) {
             drawHighlight(g);
         }
     }
@@ -58,9 +59,14 @@ public class Playing extends GameScene implements Render, SceneMethod {
             g.setColor(Color.RED);
         }
         g.drawRect(mouseX, mouseY, GRID_SIZE, GRID_SIZE);
+
+        if (towerManager.getTowerAt(mouseX, mouseY) != null) {
+            g.setColor(Color.GREEN);
+            g.drawRect(mouseX, mouseY, GRID_SIZE, GRID_SIZE);
+        }
     }
     
-    private void drawPlayerStats(Graphics g) {
+    private void drawPlayerStats(Graphics g) { // Demo
         g.setColor(Color.YELLOW);
         g.setFont(new Font("Arial", Font.BOLD, 20));
         g.drawString("Money: " + player.getMoney(), 10, 30);
@@ -71,6 +77,11 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     @Override
 	public void mouseClicked(int x, int y) {
+        if (towerManager.isUpgradeMenuOpen()) {
+            towerManager.handleUpgradeMenuClick(x, y);
+            return;
+        }
+
 		if (towerManager.isBuildMenuOpen()) {
             towerManager.handleBuildMenuClick(x, y);
             return;
@@ -80,6 +91,12 @@ public class Playing extends GameScene implements Render, SceneMethod {
         int tileY = y / GRID_SIZE;
         int clickedPixelX = tileX * GRID_SIZE;
         int clickedPixelY = tileY * GRID_SIZE;
+
+        Tower clickedTower = towerManager.getTowerAt(clickedPixelX, clickedPixelY);
+        if (clickedTower != null) {
+            towerManager.openUpgradeMenu(clickedTower);
+            return;
+        }
 
         if (isTilePlaceable(x, y) && towerManager.getTowerAt(clickedPixelX, clickedPixelY) == null) {
             towerManager.openBuildMenu(clickedPixelX, clickedPixelY);
@@ -128,7 +145,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 				Tile t = tileManager.getTile(id);
 				if (t == null) continue;
 
-				if (t.hasAnimation()) { //
+				if (t.hasAnimation()) {
                      g.drawImage(t.getSprite(animationIndex), x * GRID_SIZE, y * GRID_SIZE, null); //
                 } else {
                      g.drawImage(t.getSprite(), x * GRID_SIZE, y * GRID_SIZE, null); //
