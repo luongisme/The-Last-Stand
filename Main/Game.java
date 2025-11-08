@@ -1,53 +1,108 @@
 package Main;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.animation.AnimationTimer;
 
-// import Interfaces.Render;
+import Input.KeyboardListener;
 import Scene.GameOver;
 import Scene.Menu;
 import Scene.Playing;
 import Scene.Settings;
-import Sound.MusicManager;
-import Sound.MusicSetting;
 
-public class Game extends JFrame implements Runnable {
+public class Game extends Application {
     private GameScreen gameScreen;
-    private Thread gameThread;
+    private AnimationTimer gameLoop;
     
-    // private Render render;
     private Menu menu;
     private Playing playing;
     private Settings settings;
     private GameOver gameOver;
-     
     
-    private final int FPS=120;
-    private final int UPS=60;
+    private Stage primaryStage;
+    
+    private final int FPS = 120;
+    private final int UPS = 60;
+    
+    private static final int WINDOW_WIDTH = 1504;  // 94 tiles * 16
+    private static final int WINDOW_HEIGHT = 736;  // 46 tiles * 16
 
-    public Game(){
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setResizable(true);
-        initClasses();
-        add(gameScreen);
-        pack();
-        setLocationRelativeTo(null); // Center the window on the screen
-        setVisible(true);
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         
+        initClasses();
+        
+        // Wrap GameScreen (Canvas) in a Pane
+        javafx.scene.layout.Pane root = new javafx.scene.layout.Pane();
+        root.getChildren().add(gameScreen);
+        
+        // Create JavaFX Scene
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        
+        // Setup keyboard listeners
+        scene.setOnKeyPressed(KeyboardListener::handleKeyPressed);
+        scene.setOnKeyReleased(KeyboardListener::handleKeyReleased);
+        scene.setOnKeyTyped(KeyboardListener::handleKeyTyped);
+        
+        primaryStage.setTitle("The Last Stand - Tower Defense");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+        
+        // Request focus for keyboard events
+        gameScreen.requestFocus();
+        
+        startGameLoop();
     }
 
     public static void main(String[] args) {
-        Game game = new Game();
-        game.start();
+        launch(args);
     }
 
-    private void start(){
-        gameThread=new Thread(this){};
-        gameThread.start();
-    }
-
-    private void updateGame(){
+    private void startGameLoop() {
+        final long[] lastFrame = {System.nanoTime()};
+        final long[] lastUpdate = {System.nanoTime()};
+        final long[] lastTimeCheck = {System.currentTimeMillis()};
+        final int[] frames = {0};
+        final int[] updates = {0};
         
+        double timePerFrame = 1000000000.0 / FPS;
+        double timePerUpdate = 1000000000.0 / UPS;
+        
+        gameLoop = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                // Render
+                if (now - lastFrame[0] >= timePerFrame) {
+                    gameScreen.render();
+                    lastFrame[0] = now;
+                    frames[0]++;
+                }
+                
+                // Update
+                if (now - lastUpdate[0] >= timePerUpdate) {
+                    updateGame();
+                    lastUpdate[0] = now;
+                    updates[0]++;
+                }
+                
+                // FPS/UPS counter
+                if (System.currentTimeMillis() - lastTimeCheck[0] >= 1000) {
+                    System.out.println("FPS: " + frames[0] + " | UPS: " + updates[0]);
+                    frames[0] = 0;
+                    updates[0] = 0;
+                    lastTimeCheck[0] = System.currentTimeMillis();
+                }
+            }
+        };
+        
+        gameLoop.start();
+    }
+
+    private void updateGame() {
+        // Update game logic here
     }
     
     private void initClasses() {
@@ -57,52 +112,6 @@ public class Game extends JFrame implements Runnable {
         settings = new Settings(this);
         gameOver = new GameOver(this);
     }
-     
-    /*
-    private void updateGame() {
-        playing.update();
-    }
-    */
-
-    @Override
-    public void run(){
-
-        double timePerFrame = 1000000000.0/FPS;//16.6667 nano secs = 0.016666 secs per frame
-        double timePerUdpdate = 1000000000.0/UPS;
-        long lastFrame = System.nanoTime();
-        long lastTimeCheck = System.currentTimeMillis();
-        long lastUpdate = System.nanoTime();
-
-        int frames = 0;
-        int updates = 0;
-
-        long now;
-
-        while(true) {
-            now = System.nanoTime();
-            //render
-            if (now - lastFrame >= timePerFrame) {
-                repaint();
-                lastFrame = now;
-                frames++;
-            }
-            //update
-            if(now - lastUpdate >= timePerUdpdate){
-                updateGame();
-                lastUpdate = now;
-                updates++;
-            }
-
-            if(System.currentTimeMillis() - lastTimeCheck >= 1000){
-                System.out.println("FPS: " + frames + "| UPS: " + updates);
-                frames = 0;
-                updates = 0;
-                lastTimeCheck = System.currentTimeMillis();
-            }
-        }
-    }
-
-    
 
     public Menu getMenu(){
         return menu;

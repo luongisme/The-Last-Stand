@@ -1,4 +1,7 @@
 package Main;
+
+
+
 public class GameScene {
     protected Game game;
     protected int animationIndex;
@@ -21,6 +24,8 @@ public class GameScene {
     public void updateTick(){
 
     }
+
+   
 
     
 }

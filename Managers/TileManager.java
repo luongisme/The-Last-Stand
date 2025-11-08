@@ -3,19 +3,19 @@ package Managers;
 import Constant.TileConstant;
 import Map.Tile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-
 public class TileManager {
-    public Tile DIRT,SPAWN,ROAD,GRASS,SAND,WATER,WOOD,HOME,WALL,STONE,CURB,AVAILABLEDIRT;
+    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT;
 
     public ArrayList<Tile> tiles = new ArrayList<>();
-    private BufferedImage atlas; // The tileset sprite sheet
+    private Image atlas; // The tileset sprite sheet
     private final int TILE_SIZE = 16; 
 
     public TileManager() {
@@ -30,20 +30,30 @@ public class TileManager {
         }
     }
     
-    private BufferedImage getSprite(int xCord, int yCord){
-        return atlas.getSubimage(xCord * TILE_SIZE , yCord * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    private Image getSprite(int xCord, int yCord) {
+        if (atlas == null) return null;
+        
+        // Calculate pixel coordinates
+        int x = xCord * TILE_SIZE;
+        int y = yCord * TILE_SIZE;
+        
+        // Extract sub-image using JavaFX PixelReader
+        PixelReader reader = atlas.getPixelReader();
+        WritableImage subImage = new WritableImage(reader, x, y, TILE_SIZE, TILE_SIZE);
+        
+        return subImage;
     }
 
-    private BufferedImage loadImage(String fileName) {
+    private Image loadImage(String fileName) {
         // Try classpath first (preferred when resource folder is on classpath)
         String[] cpRoots = { "/assets/assets/tileset/", "/assets/tileset/" };
         for (String root : cpRoots) {
             String cpPath = root + fileName;
             try (InputStream is = TileManager.class.getResourceAsStream(cpPath)) {
                 if (is != null) {
-                    return ImageIO.read(is);
+                    return new Image(is);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.err.println("Failed to read classpath resource: " + cpPath);
                 e.printStackTrace();
             }
@@ -58,8 +68,8 @@ public class TileManager {
             File f = new File(root + fileName);
             if (f.exists()) {
                 try {
-                    return ImageIO.read(f);
-                } catch (IOException e) {
+                    return new Image(new FileInputStream(f));
+                } catch (Exception e) {
                     System.err.println("Failed to read file: " + f.getAbsolutePath());
                     e.printStackTrace();
                 }
@@ -102,7 +112,7 @@ public class TileManager {
         return tiles.get(id);
     }
 
-    public BufferedImage getSprite(int id){
+    public Image getSprite(int id){
         return tiles.get(id).getSprite();
     }
 }

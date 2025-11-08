@@ -1,34 +1,51 @@
 package Input;
 
+import javafx.scene.input.KeyEvent;
+import Main.GameState;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-public class KeyboardListener implements KeyListener {
-    @Override
-    public void keyTyped(KeyEvent e) {
-
+public class KeyboardListener {
+    
+    /**
+     * Handle key pressed events
+     */
+    public static void handleKeyPressed(KeyEvent e) {
+        switch (e.getCode()) {
+            case M:
+                GameState.SetGameState(GameState.MENU);
+                System.out.println("Switched to MENU state");
+                break;
+            case P:
+                GameState.SetGameState(GameState.PLAYING);
+                System.out.println("Switched to PLAYING state");
+                break;
+            case S:
+                GameState.SetGameState(GameState.SETTINGS);
+                System.out.println("Switched to SETTINGS state");
+                break;
+            case ESCAPE:
+                GameState.SetGameState(GameState.MENU);
+                System.out.println("ESC - Switched to MENU state");
+                break;
+            case SPACE:
+                // Can be used for pause/resume
+                System.out.println("SPACE pressed");
+                break;
+            default:
+                break;
+        }
     }
-    @Override
-    public void keyPressed(KeyEvent e) {
-        // switch(e.getKeyCode()){
-        //     case KeyEvent.VK_M:
-        //         GameState.gameState = GameState.GameStates.MENU;
-        //         break;
-        //      case KeyEvent.VK_SPACE:
-        //         GameState.gameState = GameState.GameStates.PLAY;
-        //         break;
-        //     case KeyEvent.VK_P:
-        //         GameState.gameState = GameState.GameStates.SETTINGS;
-        //         break;
-        //     default:
-        //         break;
-        // }
-        // Chưa có game GameState nên tạm thời để commnent
+
+    /**
+     * Handle key released events
+     */
+    public static void handleKeyReleased(KeyEvent e) {
+        // Handle key release logic here if needed
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-        
+    /**
+     * Handle key typed events
+     */
+    public static void handleKeyTyped(KeyEvent e) {
+        // Handle key typed logic here if needed
     }
 }

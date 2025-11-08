@@ -1,10 +1,10 @@
 package Scene;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-
 import Player.Player;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
@@ -27,7 +27,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		lvl = new LevelBuild().getFirstMapData();
+		lvl = LevelBuild.getFirstMapData();
 
 		towerManager = new TowerManager(this);
         player = new Player(5000, 100); // for example
@@ -39,40 +39,42 @@ public class Playing extends GameScene implements Render, SceneMethod {
     }
 
     @Override
-    public void render(Graphics g) {
-        drawLevel(g);
+    public void render(GraphicsContext gc) {
+        drawLevel(gc);
 		updateTick();
 
-		towerManager.draw(g);
+		towerManager.draw(gc);
 
-        drawPlayerStats(g);
+        drawPlayerStats(gc);
 
         if (!towerManager.isBuildMenuOpen() && !towerManager.isUpgradeMenuOpen()) {
-            drawHighlight(g);
+            drawHighlight(gc);
         }
     }
 
-    private void drawHighlight(Graphics g) {
+    private void drawHighlight(GraphicsContext gc) {
         if (isTilePlaceable(mouseX, mouseY) && towerManager.getTowerAt(mouseX, mouseY) == null) {
-            g.setColor(Color.WHITE);
+            gc.setStroke(Color.WHITE);
         } else {
-            g.setColor(Color.RED);
+            gc.setStroke(Color.RED);
         }
-        g.drawRect(mouseX, mouseY, GRID_SIZE, GRID_SIZE);
+        gc.setLineWidth(2);
+        gc.strokeRect(mouseX, mouseY, GRID_SIZE, GRID_SIZE);
 
         if (towerManager.getTowerAt(mouseX, mouseY) != null) {
-            g.setColor(Color.GREEN);
-            g.drawRect(mouseX, mouseY, GRID_SIZE, GRID_SIZE);
+            gc.setStroke(Color.GREEN);
+            gc.setLineWidth(2);
+            gc.strokeRect(mouseX, mouseY, GRID_SIZE, GRID_SIZE);
         }
     }
     
-    private void drawPlayerStats(Graphics g) { // Demo
-        g.setColor(Color.YELLOW);
-        g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("Money: " + player.getMoney(), 10, 30);
+    private void drawPlayerStats(GraphicsContext gc) { // Demo
+        gc.setFill(Color.YELLOW);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        gc.fillText("Money: " + player.getMoney(), 10, 30);
         
-        g.setColor(Color.RED);
-        g.drawString("Health: " + player.getHealth(), 10, 60);
+        gc.setFill(Color.RED);
+        gc.fillText("Health: " + player.getHealth(), 10, 60);
     }
 
     @Override
@@ -137,7 +139,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         }
     }
 
-	public void drawLevel(Graphics g){
+	public void drawLevel(GraphicsContext gc){
         // go through all the tile
         for (int y=0;y<lvl.length;y++){
             for (int x=0;x<lvl[y].length;x++){
@@ -146,13 +148,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
 				if (t == null) continue;
 
 				if (t.hasAnimation()) {
-                     g.drawImage(t.getSprite(animationIndex), x * GRID_SIZE, y * GRID_SIZE, null); //
+                     gc.drawImage(t.getSprite(animationIndex), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
                 } else {
-                     g.drawImage(t.getSprite(), x * GRID_SIZE, y * GRID_SIZE, null); //
+                     gc.drawImage(t.getSprite(), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
                 }
-				}
-            }
+			}
         }
+    }
     
 	private boolean checkAnimation(int spriteID){
 		return tileManager != null && tileManager.checkSpriteAnimation(spriteID);
@@ -180,4 +182,6 @@ public class Playing extends GameScene implements Render, SceneMethod {
         
         return t.canPlaceTower(); 
     }
+
+    
 }

@@ -1,34 +1,34 @@
 package UI.Button;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import javafx.scene.canvas.GraphicsContext;
 
 public abstract class BaseButton {
-    protected int x, y, width, height;
+    protected double x, y, width, height;
     protected String text;
-    protected Rectangle bounds;
     protected boolean mouseOver = false;
     protected boolean mousePressed = false;
 
-    public BaseButton(int x, int y, int width, int height, String text) {
+    public BaseButton(double x, double y, double width, double height, String text) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.text = text;
-        this.bounds = new Rectangle(x, y, width, height);
     }
 
-    
-    public abstract void render(Graphics g);
+    public abstract void render(GraphicsContext gc);
 
-    
     public void update(int mouseX, int mouseY) {
-        mouseOver = bounds.contains(mouseX, mouseY);
+        mouseOver = contains(mouseX, mouseY);
     }
 
     public boolean isMouseOver(int mouseX, int mouseY) {
-        return bounds.contains(mouseX, mouseY);
+        return contains(mouseX, mouseY);
+    }
+    
+    private boolean contains(double pointX, double pointY) {
+        return pointX >= x && pointX <= x + width && 
+               pointY >= y && pointY <= y + height;
     }
 
     public void setMousePressed(boolean pressed) {
@@ -39,20 +39,19 @@ public abstract class BaseButton {
         return mousePressed;
     }
 
-    
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
@@ -60,22 +59,16 @@ public abstract class BaseButton {
         return text;
     }
 
-    public Rectangle getBounds() {
-        return bounds;
-    }
-
     public boolean isMouseOver() {
         return mouseOver;
     }
 
-    
     public void setText(String text) {
         this.text = text;
     }
 
-    public void setPosition(int x, int y) {
+    public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
-        this.bounds = new Rectangle(x, y, width, height);
     }
 }

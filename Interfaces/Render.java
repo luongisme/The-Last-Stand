@@ -1,7 +1,7 @@
 package Interfaces;
-
-import java.awt.Graphics;
+import javafx.scene.canvas.GraphicsContext;
 
 public interface Render {
-    public void render(Graphics g);
+    public void render(GraphicsContext gc);
+
 }

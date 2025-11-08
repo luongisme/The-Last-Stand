@@ -1,30 +1,30 @@
 package Map;
+import javafx.scene.image.Image;
 
 import Constant.TileConstant;
-import java.awt.image.BufferedImage;
 
 public class Tile {
     private final TileConstant tileType;
-    private final BufferedImage[] sprites;
+    private final Image[] sprites;
 
     // constructor for tile has one picture
-    public Tile(BufferedImage sprite, TileConstant tileType) {
-        this.sprites = new BufferedImage[1];
+    public Tile(Image sprite, TileConstant tileType) {
+        this.sprites = new Image[1];
         this.sprites[0] = sprite;
         this.tileType = tileType;
     }
 
     // constructor for tile has many pictures
-    public Tile(BufferedImage[] sprites, TileConstant tileType) {
+    public Tile(Image[] sprites, TileConstant tileType) {
         this.sprites = sprites;
         this.tileType = tileType;
     }
 
-    public BufferedImage getSprite() {
+    public Image getSprite() {
         return sprites[0];
     }
     
-    public BufferedImage getSprite(int animationIndex) {
+    public Image getSprite(int animationIndex) {
         // make sure animationIndex does not exceed the number of frames
         if (animationIndex >= sprites.length) {
             animationIndex = 0;

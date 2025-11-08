@@ -78,13 +78,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>Main.Game</mainClass>
-                    <modules>
-                        <module>javafx.controls</module>
-                        <module>javafx.graphics</module>
-                        <module>javafx.fxml</module>
-                        <module>javafx.media</module>
-                    </modules>
+                    <mainClass>com.thelaststand/Main.Game</mainClass>
                 </configuration>
             </plugin>
 

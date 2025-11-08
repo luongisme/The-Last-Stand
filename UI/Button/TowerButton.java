@@ -1,35 +1,43 @@
 package UI.Button;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
+import javafx.scene.image.Image;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class TowerButton extends BaseButton {
     private int id;
-    private BufferedImage img;
+    private Image img;
 
-    public TowerButton(BufferedImage img, int x, int y, int width, int height, int id) {
-        super(x, y, width, height,"");
+    public TowerButton(Image img, double x, double y, double width, double height, int id) {
+        super(x, y, width, height, "");
         this.id = id;
         this.img = img;
     }
 
     @Override
-    public void render(Graphics g) {
-        if (img != null) 
-            g.drawImage(img, x, y, width,height,null);
-        drawBorder(g);
+    public void render(GraphicsContext gc) {
+        // Draw tower image
+        if (img != null) {
+            gc.drawImage(img, x, y, width, height);
+        }
+        drawBorder(gc);
     }
 
-    private void drawBorder(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.drawRect(x, y, width, height);
+    private void drawBorder(GraphicsContext gc) {
+        // Draw outer border (always black)
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(1);
+        gc.strokeRect(x, y, width, height);
+        
+        // Draw additional border based on state
         if (mousePressed) {
-            g.setColor(Color.BLACK);
-            g.drawRect(x + 1, y + 1, width - 2, height - 2);
+            // Inner black border when pressed
+            gc.setStroke(Color.BLACK);
+            gc.strokeRect(x + 1, y + 1, width - 2, height - 2);
         } else if (mouseOver) {
-            g.setColor(Color.WHITE);
-            g.drawRect(x, y, width - 1, height - 1);
+            // White border when mouse over
+            gc.setStroke(Color.WHITE);
+            gc.strokeRect(x, y, width - 1, height - 1);
         }
     }
 

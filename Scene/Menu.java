@@ -6,13 +6,12 @@ import Main.GameScene;
 import Main.GameState;
 import UI.Button.MenuButton;
 
-import java.awt.Graphics;
-import java.awt.Image;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.ImageIcon;
 
 public class Menu extends GameScene implements Render, SceneMethod {
 	private Image menuImage;
@@ -26,43 +25,29 @@ public class Menu extends GameScene implements Render, SceneMethod {
 	}
 
 	private void initButtons() {
-		
-		playButton = new MenuButton(240, 350,180, 60, "Play");
+		playButton = new MenuButton(240, 350, 180, 60, "Play");
 		buttons.add(playButton);
-		
-		
 	}
 
-
 	@Override
-	public void render(Graphics g) {
+	public void render(GraphicsContext gc) {
 		if (menuImage == null) {
             loadMenuImage();
         }
 		
         if (menuImage != null) {
-            // Scale the menu image to fit the panel size
-            int width, height;
-
-			if (g.getClipBounds() != null) {
-				width = g.getClipBounds().width;
-				height = g.getClipBounds().height;
-
-			} else {
-				width = 1504;
-				height = 736;
-			}
-
+            // Scale the menu image to fit the canvas size
+            int width = 1504;
+            int height = 736;
             
-            g.drawImage(menuImage, 0, 0, width, height, game.getContentPane());
-
+            gc.drawImage(menuImage, 0, 0, width, height);
         } else {
             System.err.println("Menu image is null, cannot render");
         }
 
         // Render all buttons
         for (MenuButton button : buttons) {
-            button.render(g);
+            button.render(gc);
         }
 	}
 
@@ -70,10 +55,9 @@ public class Menu extends GameScene implements Render, SceneMethod {
 		try {
 			File imageFile = new File("resource/assets/assets/Menu_bg.gif");
 			if (imageFile.exists()) {
-				// Use ImageIcon to preserve GIF animation
-				ImageIcon menuImageIcon = new ImageIcon(imageFile.getAbsolutePath());
-				menuImage = menuImageIcon.getImage();
-				System.out.println("Successfully loaded animated menu background from file path");
+				// Load GIF image using JavaFX Image
+				menuImage = new Image(new FileInputStream(imageFile));
+				System.out.println("Successfully loaded menu background from file path");
 			} else {
 				System.err.println("Menu background file not found: " + imageFile.getAbsolutePath());
 			}

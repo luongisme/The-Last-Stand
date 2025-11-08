@@ -1,46 +1,48 @@
 package UI.Button;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 public class MenuButton extends BaseButton {
 
-    public MenuButton(int x, int y, int width, int height, String text) {
+    public MenuButton(double x, double y, double width, double height, String text) {
         super(x, y, width, height, text);
     }
 
     @Override
-    public void render(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
-
-       
-        g2.setFont(new Font("Monospaced", Font.BOLD, 60));
-        var fm = g2.getFontMetrics();
-        int textWidth = fm.stringWidth(text);
-        int textAscent = fm.getAscent();
-        int textDescent = fm.getDescent();
+    public void render(GraphicsContext gc) {
+        // Set font - JavaFX font size roughly equivalent to AWT
+        Font baseFont = Font.font("Monospaced", FontWeight.BOLD, 60);
         
-
-  
-        int textX = textWidth+130;
-        int textY = y + (height + textAscent - textDescent) / 2; 
-
+        // Calculate text dimensions using JavaFX Text node
+        Text textNode = new Text(text);
+        textNode.setFont(baseFont);
+        double textWidth = textNode.getLayoutBounds().getWidth();
+        double textHeight = textNode.getLayoutBounds().getHeight();
         
+        // Position calculations (keeping same logic as AWT version)
+        double textX = textWidth + 130;
+        double textY = y + (height + textHeight) / 2;
+        
+        // Scale up font and adjust position when mouse over or pressed
         if (mouseOver || mousePressed) {
-            textX-=20;
-            g2.setFont(new Font("Monospaced", Font.BOLD, 80));
+            textX -= 20;
+            baseFont = Font.font("Monospaced", FontWeight.BOLD, 80);
+            textNode.setFont(baseFont);
         }
-
+        
+        gc.setFont(baseFont);
+        
         // Text color: darker yellow when pressed
         if (mousePressed) {
-            g2.setColor(new Color(200, 150, 0));
+            gc.setFill(Color.rgb(200, 150, 0));
         } else {
-            g2.setColor(Color.YELLOW);
+            gc.setFill(Color.YELLOW);
         }
-        g2.drawString(text, textX, textY);
-
-        g2.dispose();
+        
+        gc.fillText(text, textX, textY);
     }
 }

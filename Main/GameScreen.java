@@ -1,127 +1,117 @@
 package Main;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import javax.swing.JPanel;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 
-public class GameScreen extends JPanel implements MouseListener, MouseMotionListener {
+public class GameScreen extends Canvas {
     private Game game;
-    private Dimension size; // set size panel
+    private GraphicsContext gc;
     private static final int sizeWidth = 1504;
     private static final int sizeHeight = 736;
 
-
     public GameScreen(Game game) {
+        super(sizeWidth, sizeHeight);
         this.game = game;
-        setPanelSize();
+        this.gc = getGraphicsContext2D();
         initInput();
     }
 
-    private void initInput(){
-        addMouseListener(this);
-        addMouseMotionListener(this);
+    private void initInput() {
+        // JavaFX mouse events
+        setOnMouseClicked(this::handleMouseClicked);
+        setOnMousePressed(this::handleMousePressed);
+        setOnMouseReleased(this::handleMouseReleased);
+        setOnMouseDragged(this::handleMouseDragged);
+        setOnMouseMoved(this::handleMouseMoved);
     }
 
-    private void setPanelSize() {
-        size = new Dimension(sizeWidth,sizeHeight); 
-        setPreferredSize(size);
-        
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void render() {
+        // Clear canvas
+        gc.clearRect(0, 0, sizeWidth, sizeHeight);
         
         // Render based on GameState
         switch (GameState.gameState) {
             case MENU:
-                game.getMenu().render(g);
+                game.getMenu().render(gc);
                 break;
             case PLAYING:
-                // Render playing scene
-                game.getPlaying().render(g);
+                game.getPlaying().render(gc);
                 break;
             case SETTINGS:
-                // Render settings scene
-                renderBlack(g);
+                renderBlack();
                 break;
             case GAME_OVER:
-                // Render game over scene
-                renderBlack(g);
+                renderBlack();
                 break;
             default:
-                renderBlack(g);
+                renderBlack();
                 break;
         }
     }
     
-    private void renderBlack(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, sizeWidth, sizeHeight);
+    private void renderBlack() {
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, sizeWidth, sizeHeight);
     }
 
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
+    private void handleMouseClicked(MouseEvent e) {
+        int x = (int) e.getX();
+        int y = (int) e.getY();
         switch (GameState.gameState) {
-            case MENU -> game.getMenu().mouseClicked(e.getX(), e.getY());
-            case PLAYING -> game.getPlaying().mouseClicked(e.getX(), e.getY());
-            case SETTINGS -> game.getSettings().mouseClicked(e.getX(), e.getY());
-            case GAME_OVER -> game.getGameOver().mouseClicked(e.getX(), e.getY());
+            case MENU -> game.getMenu().mouseClicked(x, y);
+            case PLAYING -> game.getPlaying().mouseClicked(x, y);
+            case SETTINGS -> game.getSettings().mouseClicked(x, y);
+            case GAME_OVER -> game.getGameOver().mouseClicked(x, y);
             default -> {}
         }
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
+    private void handleMousePressed(MouseEvent e) {
+        int x = (int) e.getX();
+        int y = (int) e.getY();
         switch (GameState.gameState) {
-            case MENU -> game.getMenu().mousePressed(e.getX(), e.getY());
-            case PLAYING -> game.getPlaying().mousePressed(e.getX(), e.getY());
-            case SETTINGS -> game.getSettings().mousePressed(e.getX(), e.getY());
-            case GAME_OVER -> game.getGameOver().mousePressed(e.getX(), e.getY());
+            case MENU -> game.getMenu().mousePressed(x, y);
+            case PLAYING -> game.getPlaying().mousePressed(x, y);
+            case SETTINGS -> game.getSettings().mousePressed(x, y);
+            case GAME_OVER -> game.getGameOver().mousePressed(x, y);
             default -> {}
         }
     }
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
+    private void handleMouseReleased(MouseEvent e) {
+        int x = (int) e.getX();
+        int y = (int) e.getY();
         switch (GameState.gameState) {
-            case MENU -> game.getMenu().mouseReleased(e.getX(), e.getY());
-            case PLAYING -> game.getPlaying().mouseReleased(e.getX(), e.getY());
-            case SETTINGS -> game.getSettings().mouseReleased(e.getX(), e.getY());
-            case GAME_OVER -> game.getGameOver().mouseReleased(e.getX(), e.getY());
+            case MENU -> game.getMenu().mouseReleased(x, y);
+            case PLAYING -> game.getPlaying().mouseReleased(x, y);
+            case SETTINGS -> game.getSettings().mouseReleased(x, y);
+            case GAME_OVER -> game.getGameOver().mouseReleased(x, y);
             default -> {}
         }
     }
 
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-
-    @Override
-    public void mouseExited(MouseEvent e) {}
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
+    private void handleMouseDragged(MouseEvent e) {
+        int x = (int) e.getX();
+        int y = (int) e.getY();
         switch (GameState.gameState) {
-            case MENU -> game.getMenu().mouseDragged(e.getX(), e.getY());
-            case PLAYING -> game.getPlaying().mouseDragged(e.getX(), e.getY());
-            case SETTINGS -> game.getSettings().mouseDragged(e.getX(), e.getY());
-            case GAME_OVER -> game.getGameOver().mouseDragged(e.getX(), e.getY());
+            case MENU -> game.getMenu().mouseDragged(x, y);
+            case PLAYING -> game.getPlaying().mouseDragged(x, y);
+            case SETTINGS -> game.getSettings().mouseDragged(x, y);
+            case GAME_OVER -> game.getGameOver().mouseDragged(x, y);
             default -> {}
         }
     }
 
-    @Override
-    public void mouseMoved(MouseEvent e) {
+    private void handleMouseMoved(MouseEvent e) {
+        int x = (int) e.getX();
+        int y = (int) e.getY();
         switch (GameState.gameState) {
-            case MENU -> game.getMenu().mouseMoved(e.getX(), e.getY());
-            case PLAYING -> game.getPlaying().mouseMoved(e.getX(), e.getY());
-            case SETTINGS -> game.getSettings().mouseMoved(e.getX(), e.getY());
-            case GAME_OVER -> game.getGameOver().mouseMoved(e.getX(), e.getY());
+            case MENU -> game.getMenu().mouseMoved(x, y);
+            case PLAYING -> game.getPlaying().mouseMoved(x, y);
+            case SETTINGS -> game.getSettings().mouseMoved(x, y);
+            case GAME_OVER -> game.getGameOver().mouseMoved(x, y);
             default -> {}
         }
     }

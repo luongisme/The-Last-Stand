@@ -1,10 +1,11 @@
 package Scene;
 
-import java.awt.Graphics;
+
 
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
+import javafx.scene.canvas.GraphicsContext;
 
 
 public class GameOver extends GameScene implements Render, SceneMethod {
@@ -40,12 +41,11 @@ public class GameOver extends GameScene implements Render, SceneMethod {
 	}
 
 
-
-    @Override
-    public void render(Graphics g) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'render'");
-    }
+	@Override
+	public void render(GraphicsContext gc) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'render'");
+	}
 
     
 }
