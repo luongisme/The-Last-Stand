@@ -16,7 +16,8 @@ public class TowerButton extends BaseButton {
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(img, x, y, width,height,null);
+        if (img != null) 
+            g.drawImage(img, x, y, width,height,null);
         drawBorder(g);
     }
 

@@ -7,21 +7,51 @@ public class Tower {
     private int x, y, id, cooldownTick, damage, effectType, range, cooldown;
     private String effectDescription;
     private TowerConstant towerType;
+    private int level;
+    private int totalBuildCost;
 
     public Tower(int x, int y, int id, TowerConstant towerType) {
         this.x = x;
         this.y = y;
         this.id = id;
         this.towerType = towerType;
-        setDefault();
+        this.level = 1; // always start in level 1
+        this.totalBuildCost = towerType.getCost(this.level);
+        
+        updateStatsToLevel();
     }
 
-    private void setDefault() {
-        this.damage = towerType.getDamage();
+    private void updateStatsToLevel() {
+        this.damage = towerType.getDamage(this.level);
+        this.range = towerType.getRange(this.level);
+        this.cooldown = towerType.getCooldown(this.level);
+        
         this.effectType = towerType.getEffectType();
-        this.range = towerType.getRange();
-        this.cooldown = towerType.getCooldown();
         this.effectDescription = towerType.getEffectDescription();
+    }
+
+    public void upgradeTower(int upgradeCost) {
+        if (level >= towerType.getMaxLevel()) return;
+        this.level++;
+        this.totalBuildCost += upgradeCost;
+        updateStatsToLevel();
+    }
+
+    public int getLevel() {
+        return level;
+    }
+    
+    public int getTotalBuildCost() {
+        return totalBuildCost;
+    }
+
+    public int getNextUpgradeCost() {
+        if (level >= towerType.getMaxLevel()) return 0;
+        return towerType.getCost(this.level + 1);
+    }
+    
+    public boolean isMaxLevel() {
+        return level >= towerType.getMaxLevel();
     }
 
     public int getX() {
@@ -56,11 +86,11 @@ public class Tower {
         return damage;
     }
 
-    public float getRange() {
+    public int getRange() {
         return range;
     }  
 
-    public float getCooldown() {
+    public int getCooldown() {
         return cooldown;
     }
 
