@@ -82,7 +82,7 @@ public class TileManager {
 
     private void createTiles() {
         
-        tiles.add(DIRT = new Tile(getSprite(5, 8), TileConstant.DIRT));
+        tiles.add(DIRT = new Tile(getSprite(5, 7), TileConstant.DIRT));
         tiles.add(SPAWN = new Tile(getSprite(1, 0), TileConstant.SPAWN));
         tiles.add(ROAD = new Tile(getSprite(2, 0), TileConstant.ROAD));
         tiles.add(GRASS = new Tile(getSprite(8, 2), TileConstant.GRASS));
