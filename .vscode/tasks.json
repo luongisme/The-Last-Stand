@@ -1,0 +1,33 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "javac build module",
+            "type": "shell",
+            "command": "javac",
+            "args": [
+                "--module-source-path", "./",
+                "-d", "target/classes",
+                "$(Get-ChildItem -Recurse -Filter *.java | ForEach-Object { $_.FullName })"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$javac"]
+        },
+        {
+            "label": "java run module",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "--module-path", "target/classes",
+                "--module", "com.thelaststand/Main.Game"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}
