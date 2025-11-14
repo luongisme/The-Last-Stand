@@ -73,6 +73,8 @@ public class Menu extends GameScene implements Render, SceneMethod {
 		if (playButton.isMouseOver(x, y)) {
 			System.out.println("Play button clicked!");
 			GameState.SetGameState(GameState.PLAYING);
+			game.onEnterPlaying();
+
 		}
 	}
 
