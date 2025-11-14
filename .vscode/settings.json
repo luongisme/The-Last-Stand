@@ -1,4 +1,18 @@
 {
     "java.debug.settings.onBuildFailureProceed": true,
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.project.sourcePaths": [
+        "Main",
+        "Scene",
+        "Managers",
+        "Map",
+        "Player",
+        "Constant",
+        "Entities/Enemy",
+        "Entities/Tower",
+        "UI/Button",
+        "Interfaces",
+        "Input"
+    ],
+    "java.project.outputPath": "target/classes"
 }
