@@ -11,6 +11,11 @@ import Scene.Menu;
 import Scene.Playing;
 import Scene.Settings;
 
+import Sound.MusicManager;
+import Sound.MusicSetting;
+import javafx.scene.layout.StackPane;
+
+
 public class Game extends Application {
     private GameScreen gameScreen;
     private AnimationTimer gameLoop;
@@ -19,6 +24,10 @@ public class Game extends Application {
     private Playing playing;
     private Settings settings;
     private GameOver gameOver;
+
+    private MusicManager musicManager;
+    private MusicSetting musicSetting;
+
     
     private Stage primaryStage;
     
@@ -33,9 +42,13 @@ public class Game extends Application {
         this.primaryStage = primaryStage;
         
         initClasses();
+
+        musicManager = MusicManager.getInstance();
+        musicManager.playMenuMusic(); // phát nhạc menu khi mở game
+
         
         // Wrap GameScreen (Canvas) in a Pane
-        javafx.scene.layout.Pane root = new javafx.scene.layout.Pane();
+        StackPane root = new StackPane();
         root.getChildren().add(gameScreen);
         
         // Create JavaFX Scene
@@ -50,6 +63,8 @@ public class Game extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+        musicSetting = new MusicSetting(primaryStage, root);
+
         
         // Request focus for keyboard events
         gameScreen.requestFocus();
@@ -128,6 +143,14 @@ public class Game extends Application {
     public GameOver getGameOver() {
         return gameOver;
     }
+    public void onEnterPlaying() {
+        musicManager.playGameplayMusic();
+    }
+
+    public void onEnterMenu() {
+        musicManager.playMenuMusic();
+    }
+
 }
 
 

@@ -30,7 +30,7 @@ public class MusicSetting {
     }
 
     private ImageView createGearButton() {
-        Image gearImg = new Image("file:resource/sounds/gear.png");
+        Image gearImg = new Image("file:resource/sounds/music gear.png");
         ImageView gearView = new ImageView(gearImg);
         gearView.setFitWidth(32);
         gearView.setFitHeight(32);

@@ -23,8 +23,10 @@ buildNumber.properties
 out/
 
 # VS Code
-.vscode/
+.vscode/settings.json
+.vscode/launch.json
 *.code-workspace
+# Keep .vscode/settings.json.example for team reference
 
 # Java
 *.class

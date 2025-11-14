@@ -1,0 +1,20 @@
+{
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.import.maven.enabled": true,
+    "java.compile.nullAnalysis.mode": "automatic",
+    "maven.executable.path": "${workspaceFolder}/mvnw.cmd",
+    "java.project.sourcePaths": [
+        "Constant",
+        "Entities",
+        "Interfaces", 
+        "Main",
+        "Managers",
+        "Map",
+        "Player",
+        "Scene",
+        "Sound",
+        "UI",
+        "Input"
+    ]
+}

@@ -8,30 +8,75 @@
 
 ## Cách chạy dự án / How to Run the Project
 
-### Windows
+### Bước 1: Setup lần đầu (bắt buộc) / First-time Setup (required)
 
 ```powershell
-# Bước 1: Clone repository
+# Clone repository
 git clone <repository-url>
 cd The-Last-Stand
 
-# Bước 2: Chạy game với Maven Wrapper
+# Tải tất cả dependencies (chạy 1 lần duy nhất)
+# Download all dependencies (run once only)
+.\mvnw.cmd clean install -U
+
+# Nếu dùng Linux/macOS
+# If using Linux/macOS
+chmod +x mvnw
+./mvnw clean install -U
+```
+
+### Bước 2: Chạy game / Run the Game
+
+### Windows
+
+```powershell
 .\mvnw.cmd clean javafx:run
 ```
 
 ### macOS / Linux
 
 ```bash
-# Bước 1: Clone repository
-git clone <repository-url>
-cd The-Last-Stand
-
-# Bước 2: Cấp quyền thực thi cho Maven Wrapper
-chmod +x mvnw
-
-# Bước 3: Chạy game
 ./mvnw clean javafx:run
 ```
+
+## Setup VS Code (Cho team members)
+
+### Bước 1: Cài Extension Pack for Java
+1. Mở VS Code
+2. Ctrl+Shift+X → Tìm "Extension Pack for Java"
+3. Install extension
+
+### Bước 2: Tạo file settings.json
+```powershell
+# Copy file example thành settings.json
+Copy-Item .vscode\settings.json.example .vscode\settings.json
+```
+
+Hoặc tạo thủ công file `.vscode/settings.json` với nội dung:
+```json
+{
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.import.maven.enabled": true,
+    "java.compile.nullAnalysis.mode": "automatic",
+    "maven.executable.path": "${workspaceFolder}/mvnw.cmd"
+}
+```
+
+### Bước 3: Clean Java Language Server (nếu gặp lỗi)
+```
+1. Ctrl+Shift+P
+2. Gõ: "Java: Clean Java Language Server Workspace"
+3. Chọn "Restart and delete"
+4. Ctrl+Shift+P → "Developer: Reload Window"
+```
+
+## ⚠️ Lưu ý quan trọng / Important Notes
+
+1. **Luôn dùng Maven Wrapper** (`mvnw.cmd`/`mvnw`) thay vì `mvn` global
+2. **Không commit** file `.vscode/settings.json` (đã có trong .gitignore)
+3. **Chạy `.\mvnw.cmd clean install -U`** lần đầu sau khi clone để tải dependencies
+4. **Đảm bảo JAVA_HOME** trỏ đến JDK 17 hoặc cao hơn
 
 ## Giải thích / Explanation
 
@@ -117,6 +162,53 @@ Use IDEs like IntelliJ IDEA, Eclipse, or VS Code with Java Extension Pack.
 
 ### Import vào VS Code
 1. Mở thư mục `The-Last-Stand`
-2. Extension Pack for Java sẽ tự động cấu hình
-3. Chờ Maven tải dependencies
-4. Run: F5 hoặc Run → Start Debugging
+2. Copy file cấu hình: `Copy-Item .vscode\settings.json.example .vscode\settings.json`
+3. Extension Pack for Java sẽ tự động cấu hình
+4. Chạy: `.\mvnw.cmd clean install -U` (lần đầu)
+5. Nếu có lỗi: Ctrl+Shift+P → "Java: Clean Java Language Server Workspace"
+6. Run: F5 hoặc Run → Start Debugging
+
+## Xử lý lỗi thường gặp / Common Issues
+
+### 1. Lỗi "The package Main/Scene/... does not exist"
+**Nguyên nhân**: VS Code chưa build Maven project
+
+**Giải pháp**:
+```powershell
+# Bước 1: Tải dependencies
+.\mvnw.cmd clean install -U
+
+# Bước 2: Clean Java Language Server
+# Ctrl+Shift+P → "Java: Clean Java Language Server Workspace"
+# Chọn "Restart and delete"
+
+# Bước 3: Reload window
+# Ctrl+Shift+P → "Developer: Reload Window"
+```
+
+### 2. Lỗi "java.lang.Object cannot be resolved"
+**Nguyên nhân**: JAVA_HOME hoặc PATH không đúng
+
+**Kiểm tra**:
+```powershell
+java -version          # Phải hiển thị Java 17+
+$env:JAVA_HOME         # Phải trỏ đến JDK folder
+```
+
+**Giải pháp**: Xem phần "JAVA_HOME not found" ở trên
+
+### 3. Lỗi "179 problems" trong VS Code
+**Nguyên nhân**: Java Extension chưa nhận Maven dependencies
+
+**Giải pháp**:
+1. Đảm bảo đã chạy: `.\mvnw.cmd clean install -U`
+2. Check file `.vscode/settings.json` có đúng như example
+3. Restart VS Code hoàn toàn (đóng tất cả window)
+4. Clean Java workspace (Ctrl+Shift+P)
+
+### 4. Maven Wrapper không tải được
+**Giải pháp**: Tải thủ công maven-wrapper.jar
+```powershell
+# Download
+Invoke-WebRequest -Uri "https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.2.0/maven-wrapper-3.2.0.jar" -OutFile ".mvn/wrapper/maven-wrapper.jar"
+```
