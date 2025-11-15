@@ -3,62 +3,81 @@ package Managers;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import Entities.Enemy.Enemy;
+
+import Constant.EntityConstant;
+import Entities.Enemies.Enemy;
 import Helper.loadImg;
 import Scene.Playing;
-
 public class EnemyManager {
 
     private Playing playing;
     private ArrayList<Enemy> enemies = new ArrayList<>();
     private float directionX, directionY;
-    private BufferedImage[][] enemyImgs; // [type][frame] array to hold enemy images
+    private BufferedImage[][][] enemyImgs; // [type][direction][frame] array to hold enemy images
+    private final int DIRECTIONS = 4;
+    private final int FRAMES = 3;
+    private final int enemyTypes = EntityConstant.values().length;
 
     public EnemyManager(Playing playing) {
         this.playing = playing;
         enemies = new ArrayList<>();
         directionX = 0;
         directionY = 0;
-    enemyImgs = new BufferedImage[5][15]; // Assuming 5 different enemy types and up to 15 frames each
-        addEnemy(2*16, 37*16);
+
+        
+        enemyImgs = new BufferedImage[enemyTypes][DIRECTIONS][FRAMES];
         loadEnemyImgs();
+        // addEnemy(2*16, 37*16, EntityConstant.SLIME);
+        addEnemy(4*16, 37*16, EntityConstant.SKELETON);
+        addEnemy(6*16, 37*16, EntityConstant.GOBLIN);
+        addEnemy(8*16, 37*16, EntityConstant.GOBLIN_BOSS);
     }
 
-    public void update(){
-        for(Enemy e : enemies){
-            e.move(0.5f, 0);
-            e.updateAnimation(); // update animation frame
+    public void update(float dt){
+        for (Enemy e : enemies) {
+            e.update(dt);
         }
     }
 
     private void loadEnemyImgs() {
-        BufferedImage atlas = loadImg.getSpriteAtlas();
-        if (atlas == null) {
-            System.err.println("Failed to load sprite atlas");
-            return;
-        }
 
         int frameW = 32;
         int frameH = 32;
+        int frames = enemyImgs[0].length;
 
-        for (int type = 0; type < enemyImgs.length; type++){
-            for (int frame = 0; frame < enemyImgs[0].length; frame++){
-                int x = frame * frameW;
-                int y = type * frameH;
-                // ensure subimage is within atlas bounds
-                if (x + frameW <= atlas.getWidth() && y + frameH <= atlas.getHeight()) {
-                    enemyImgs[type][frame] = atlas.getSubimage(x, 3*32, frameW, frameH);
-                } else {
-                    // if out of bounds, set null and continue
-                    enemyImgs[type][frame] = null;
+        for (EntityConstant type : EntityConstant.values()) {
+            int id = type.getId();
+
+            // Load the specific PNG for this enemy
+            String path = "resource/assets/sprites/" + type.getSpriteName();
+            BufferedImage atlas = loadImg.load(path);
+
+            if (atlas == null) {
+                System.err.println("Failed to load: " + path);
+                continue;
+            }
+
+            // Slice the PNG into frames horizontally
+            for (int dir = 0; dir < DIRECTIONS; dir++) {
+                for (int frame = 0; frame < FRAMES; frame++) {
+                    int x = frame * frameW;
+                    int y = dir * frameH;
+
+                    enemyImgs[id][dir][frame] = atlas.getSubimage(x, y, frameW, frameH);
                 }
             }
         }
     }
 
 
-    public void addEnemy(int x, int y){
-        enemies.add(new Enemy(x, y, 1, 100, 10, 2, 2, 1)); // Example enemy
+
+    public void addEnemy(float x, float y, EntityConstant type) {
+        Enemy enemy = type.createEnemy(x, y);
+        if (enemy != null) {
+            enemies.add(enemy);
+        } else {
+            System.err.println("Failed to create enemy type: " + type);
+        }
     }
 
     public void draw(Graphics g){
@@ -69,15 +88,18 @@ public class EnemyManager {
     }
 
     public void drawEnemy(Enemy e, Graphics g){
-        int type = Math.max(0, Math.min(enemyImgs.length - 1, e.getEnemyType()));
+        int type = e.getEnemyType();  // 0,1,2 → matches enum id
         int frame = e.getAnimationIndex();
-        // guard frame/index bounds
-        if (frame < 0) frame = 0;
-        if (frame >= enemyImgs[type].length) frame = 0;
+        int dir = e.getLastDir();
 
-        BufferedImage img = enemyImgs[type][frame];
+        // Clamp values to avoid out-of-bounds
+        if (type < 0 || type >= enemyImgs.length) type = 0;
+        if (frame < 0 || frame >= enemyImgs[type][dir].length) frame = 0;
+
+        BufferedImage img = enemyImgs[type][dir][frame];
+
         if (img != null) {
-            g.drawImage(img, (int)e.getX(), (int)e.getY(), null);
+            g.drawImage(img, (int) e.getX(), (int) e.getY(), null);
         }
     }
 

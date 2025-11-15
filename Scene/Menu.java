@@ -122,5 +122,4 @@ public class Menu extends GameScene implements Render, SceneMethod {
 	public void mouseDragged(int x, int y) {
 		// Implement mouseDragged method
 	}
-
 }

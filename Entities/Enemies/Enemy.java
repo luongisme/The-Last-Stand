@@ -1,10 +1,10 @@
-package Entities.Enemy;
+package Entities.Enemies;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-public class Enemy {
+public abstract class Enemy {
     private float x, y;
     private int enemyID;
     private int health;
@@ -13,27 +13,46 @@ public class Enemy {
     private int enemyType;
     private int barWidth;
     private int barLength = 5;
-    private int lastDir; // 0: up, 1: right, 2: down, 3: left
+
+    // 0 = Up, 1 = Right, 2 = Down, 3 = Left
+    public static final int DOWN = 0;
+    public static final int LEFT = 1;
+    public static final int RIGHT = 2;
+    public static final int UP = 3;
+
+    // override lastDir default
+    private int lastDir = DOWN;  // default
+    // Patrol logic
+    private float patrolTimer = 0;
+    private float patrolInterval = 2000; // milliseconds per direction
+    private int patrolStep = 0;
+
+    // Patrol order (change this to your liking)
+    private final int[] patrolDirections = {
+        RIGHT, DOWN, LEFT, UP
+    };
+
+
 
     private Rectangle bounds;
 
     protected int animationIndex = 0;
     protected int animationTick = 0;
     protected int animationSpeed = 10; // Lower is faster
-    protected int maxAnimationFrames = 15; // Set this to the number of frames per enemy
+    protected int maxAnimationFrames = 3; // Set this to the number of frames per enemy
 
-    public Enemy(float x, float y, int enemyID, int health, int damage, float speedX, float speedY, int enemyType) {
+    public Enemy(float x, float y, int enemyType) {
         this.x = x;
         this.y = y;
-        this.enemyID = enemyID;
-        this.health = health;
-        this.damage = damage;
-        this.speedX = speedX;
-        this.speedY = speedY;
+        // this.enemyID = enemyID;
+        // this.health = health;
+        // this.damage = damage;
+        // this.speedX = speedX;
+        // this.speedY = speedY;
         this.enemyType = enemyType;
         this.barWidth = 50; // default health bar width
         this.bounds = new Rectangle((int)x, (int)y, 32, 32); // Example hitbox size
-        this.lastDir = -1; // No direction
+        this.lastDir = lastDir; // No direction
     }
 
     public float getX() {
@@ -126,7 +145,7 @@ public class Enemy {
         else{
             g.setColor(Color.GREEN);
         }
-        g.fillRect(barX+5, barY+15,barWidth,barLength);
+        g.fillRect(barX-8, barY+5,barWidth,barLength);
     }
 
 
@@ -142,7 +161,33 @@ public class Enemy {
     }
 
     public void update(float dt) {
-        // Update enemy position and state
+        patrolTimer += dt;
+
+        // When time exceeds patrol interval → change direction
+        if (patrolTimer >= patrolInterval) {
+            patrolTimer = 0;
+
+            patrolStep++;
+            if (patrolStep >= patrolDirections.length)
+                patrolStep = 0;
+
+            lastDir = patrolDirections[patrolStep]; 
+        }
+
+        // Move according to current direction
+        float speed = 0.5f;
+        float dx = 0;
+        float dy = 0;
+
+        switch (lastDir) {
+            case RIGHT -> dx = speed;
+            case LEFT  -> dx = -speed;
+            case UP    -> dy = -speed;
+            case DOWN  -> dy = speed;
+        }
+
+        move(dx, dy);
+        updateAnimation();
     }
 
     // Expose current animation frame for external renderers
@@ -150,9 +195,18 @@ public class Enemy {
         return animationIndex;
     }
     
-    public void move(float x, float y) {
-        this.x += x;
-        this.y += y;
+    public void move(float mx, float my) {
+        this.x += mx;
+        this.y += my;
+
+        // Set direction based on movement
+        if (Math.abs(mx) > Math.abs(my)) {
+            if (mx > 0){ lastDir = RIGHT; }
+            else if (mx < 0) { lastDir = LEFT; }
+        } else {
+            if (my > 0) { lastDir = DOWN; }
+            else if (my < 0) { lastDir = UP; }
+        }
         this.bounds.setLocation((int)this.x, (int)this.y);
     }
 

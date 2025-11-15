@@ -7,6 +7,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import Managers.EnemyManager;
 
 public class GameScreen extends JPanel implements MouseListener, MouseMotionListener {
     private Game game;
@@ -24,6 +27,9 @@ public class GameScreen extends JPanel implements MouseListener, MouseMotionList
     private void initInput(){
         addMouseListener(this);
         addMouseMotionListener(this);
+        // addKeyListener(this);
+        // setFocusable(true);
+        // requestFocusInWindow();
     }
 
     private void setPanelSize() {
@@ -125,5 +131,26 @@ public class GameScreen extends JPanel implements MouseListener, MouseMotionList
             default -> {}
         }
     }
+
+    // @Override
+    // public void keyTyped(KeyEvent e) {
+
+    // }
+    // @Override
+    // public void keyPressed(KeyEvent e) {
+    //     switch (GameState.gameState) {
+    //         case PLAYING -> game.getPlaying().onKeyPressed(e.getKeyCode());
+    //         default -> {}
+    //     }
+    // }
+
+    // @Override
+    // public void keyReleased(KeyEvent e) {
+    //     switch (GameState.gameState) {
+    //         case PLAYING -> game.getPlaying().onKeyReleased(e.getKeyCode());
+    //         default -> {}
+    //     }
+    // }
+
 }
 

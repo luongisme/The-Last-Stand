@@ -6,23 +6,19 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class loadImg {
-    public static BufferedImage getSpriteAtlas() {
+    public static BufferedImage load(String path) {
         BufferedImage img = null;
         try {
-            String path = "resource/assets/sprites/Multi_Slime_Spritesheet.png";
             File file = new File(path);
             if (!file.exists()) {
-                System.err.println("File not found at: " + file.getAbsolutePath());
-                throw new RuntimeException("Sprite atlas not found at: " + path);
+                System.err.println("File not found: " + file.getAbsolutePath());
+                return null;
             }
             img = ImageIO.read(file);
-            if (img == null) {
-                throw new RuntimeException("Failed to load sprite atlas");
-            }
         } catch (IOException e) {
-            System.err.println("Error loading sprite atlas: " + e.getMessage());
             e.printStackTrace();
         }
         return img;
     }
+
 }

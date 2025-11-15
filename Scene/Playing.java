@@ -1,5 +1,9 @@
 package Scene;
 
+import static Constant.EntityConstant.GOBLIN;
+import static Constant.EntityConstant.GOBLIN_BOSS;
+import static Constant.EntityConstant.SKELETON;
+
 import java.awt.Graphics;
 
 import Map.LevelBuild;
@@ -9,6 +13,7 @@ import Main.GameScene;
 import Managers.EnemyManager;
 import Managers.TileManager;
 import Map.Tile;
+
 
 public class Playing extends GameScene implements Render, SceneMethod {
 	private int[][] lvl;
@@ -47,7 +52,9 @@ public class Playing extends GameScene implements Render, SceneMethod {
 	@Override
 	public void mousePressed(int x, int y) {
 		// Implement mousePressed method
-		enemyManager.addEnemy(x, y);
+		enemyManager.addEnemy(x, y, GOBLIN);
+		enemyManager.addEnemy(x-75, y, SKELETON);
+		enemyManager.addEnemy(x+75, y, GOBLIN_BOSS);
 	}
 
 	@Override
@@ -60,14 +67,15 @@ public class Playing extends GameScene implements Render, SceneMethod {
 		// Implement mouseDragged method
 	}
 
-	 private void drawSelectedTile(Graphics g) {
+	private void drawSelectedTile(Graphics g) {
         if(selectedTile != null && drawSelect){
             g.drawImage(selectedTile.getSprite(), mouseX, mouseY, 16, 16, null);
         }
     }
 
 	public void update(){
-		enemyManager.update();
+		float dt = 16f;
+		enemyManager.update(dt);
 	}
 
 	public void updateTick(){
