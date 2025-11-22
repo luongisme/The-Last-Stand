@@ -81,7 +81,10 @@ public class Game extends Application {
     }
 
     public void updateGame() {
-        // Update game logic here
+        // Update current scene
+        if (GameState.gameState == GameState.PLAYING) {
+            playing.update();
+        }
     }
     
     private void initClasses() {

@@ -2,7 +2,10 @@ package Scenes;
 
 
 import Button.SkillUI;
+import Helper.LoadImages.LoadImageSkill;
+import Player.Skill.SkillAnimation;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -18,18 +21,20 @@ import Map.Tile;
 import Entities.Tower.Tower;
 import Player.Player;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 
 public class Playing extends GameScene implements Render, SceneMethod {
     private static final int GRID_SIZE = 16;
-    private static final int SKILL_SLOT_SIZE = 60;
-    private static final int SKILL_SLOT_SPRITE_SIZE = 30;
 
 	private int[][] lvl;
 	private TileManager tileManager;
     private TowerManager towerManager;
     private Player player;
-    private SkillUI[] skillSlots;
     private SkillUI skillUI;
+    private List<SkillAnimation> activeSkillAnimations = new ArrayList<>();
 
 
 	private int mouseX, mouseY;
@@ -58,17 +63,33 @@ public class Playing extends GameScene implements Render, SceneMethod {
     public void update() {
         updateTick();
         towerManager.update();
+        double dt = 0.016; // ~60 FPS (16ms per frame)
+
+        if (!activeSkillAnimations.isEmpty()) {
+            System.out.println("🔄 Updating " + activeSkillAnimations.size() + " active animations (dt=" + dt + ")");
+        }
+
+        Iterator<SkillAnimation> it = activeSkillAnimations.iterator();
+        while (it.hasNext()) {
+            SkillAnimation anim = it.next();
+            anim.update(dt);
+            if (anim.isFinished()) {
+                it.remove();
+                System.out.println("✅ Animation finished and removed");
+            }
+        }
     }
 
     @Override
     public void render(GraphicsContext gc) {
         drawLevel(gc);
-		updateTick();
-
         renderSkillUI(gc);
-
-		towerManager.draw(gc);
+        towerManager.draw(gc);
         drawPlayerStats(gc);
+
+        for (SkillAnimation anim : activeSkillAnimations) {
+            anim.render(gc);
+        }
 
         if (!towerManager.isBuildMenuOpen() && !towerManager.isUpgradeMenuOpen()) {
             drawHighlight(gc);
@@ -108,20 +129,34 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     @Override
 	public void mouseClicked(int x, int y) {
-        // Check if skill icon was clicked first
+        // Check if clicking on skill icon to select/deselect
         int clickedSkill = skillUI.handleClick(x, y);
         if (clickedSkill != -1) {
-            // A skill was clicked, handle it
+            // Clicked on skill icon area
             String skillName = skillUI.getSelectedSkillName();
             if (skillName != null) {
-                System.out.println("Skill selected: " + skillName);
-                // TODO: Implement skill activation logic here
+                System.out.println("Skill selected: " + skillName + " (index: " + clickedSkill + ")");
+                System.out.println("Now click on the map to cast the skill!");
             } else {
                 System.out.println("Skill deselected");
             }
-            return; // Don't process tower clicks when clicking on skill UI
+            return; // Don't process map clicks when clicking skill UI
         }
 
+        // Check if a skill is selected and we're clicking on the map to cast it
+        int selectedSkill = skillUI.getSelectedSkillIndex();
+        if (selectedSkill != -1) {
+            // A skill is selected, cast it at the clicked position
+            System.out.println("Casting skill " + selectedSkill + " at (" + x + ", " + y + ")");
+            castSkill(selectedSkill, x, y);
+
+            // Deselect the skill after casting
+            skillUI.deselectSkill();
+            System.out.println("Skill cast complete, deselected");
+            return;
+        }
+
+        // Normal tower placement logic
         if (towerManager.isUpgradeMenuOpen()) {
             towerManager.handleUpgradeMenuClick(x, y);
             return;
@@ -147,6 +182,41 @@ public class Playing extends GameScene implements Render, SceneMethod {
             towerManager.openBuildMenu(clickedPixelX, clickedPixelY);
         }
 	}
+
+    private void castSkill(int skillIndex, int x, int y) {
+        Image[] frames = null;
+
+        switch (skillIndex) {
+            case 0: frames = LoadImageSkill.loadDarkGhostAnim(); break;
+            case 1: frames = LoadImageSkill.loadSandStoneAnim(); break;
+            case 2: frames = LoadImageSkill.loadThunderBoltAnim(); break;
+            case 3: frames = LoadImageSkill.loadWaterStrikeAnim(); break;
+        }
+
+        if (frames == null) {
+            System.out.println(" WARNING: Frames null for skill: " + skillIndex);
+            return;
+        }
+
+        System.out.println(" Skill " + skillIndex + " loaded with " + frames.length + " frames");
+
+        double w = 96;
+        double h = 96;
+        double frameDuration = 0.05; // 100ms per frame
+
+        SkillAnimation anim = new SkillAnimation(
+                frames,
+                frameDuration,
+                x - w/2.0,
+                y - h/2.0,
+                w, h
+        );
+
+        activeSkillAnimations.add(anim);
+        System.out.println("✅ Animation added at (" + x + ", " + y + ")");
+        System.out.println("✅ Total active animations: " + activeSkillAnimations.size());
+    }
+
 
     @Override
 	public void mouseMoved(int x, int y) {
@@ -174,6 +244,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 	public void mouseDragged(int x, int y) {
 
 	}
+
 
 	public void updateTick(){
         tick++;
