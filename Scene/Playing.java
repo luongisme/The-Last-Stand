@@ -27,7 +27,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		lvl = LevelBuild.getSecondMapData();
+		lvl = LevelBuild.getThirdMapData();
 
 		towerManager = new TowerManager(this);
         player = new Player(5000, 100); // for example

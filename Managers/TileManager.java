@@ -84,13 +84,13 @@ public class TileManager {
         
         tiles.add(DIRT = new Tile(getSprite(17, 1), TileConstant.DIRT));
         tiles.add(SPAWN = new Tile(getSprite(1, 0), TileConstant.SPAWN));
-        tiles.add(ROAD = new Tile(getSprite(2, 0), TileConstant.ROAD));
-        tiles.add(GRASS = new Tile(getSprite(8, 2), TileConstant.GRASS));
+        tiles.add(ROAD = new Tile(getSprite(1, 0), TileConstant.ROAD));
+        tiles.add(GRASS = new Tile(getSprite(0, 0), TileConstant.GRASS));
         tiles.add(SAND = new Tile(getSprite(4, 0), TileConstant.SAND));
         tiles.add(WATER = new Tile(getSprite(5, 0), TileConstant.WATER));
         tiles.add(WOOD = new Tile(getSprite(6, 0), TileConstant.WOOD));
         tiles.add(HOME = new Tile(getSprite(7, 0), TileConstant.HOME));
-        tiles.add(WALL = new Tile(getSprite(8, 0), TileConstant.WALL));
+        tiles.add(WALL = new Tile(getSprite(10, 13), TileConstant.WALL));
         tiles.add(STONE = new Tile(getSprite(9, 0), TileConstant.STONE));
         tiles.add(CURB = new Tile(getSprite(1,3),TileConstant.CURB));
         tiles.add(AVAILABLEDIRT = new Tile(getSprite(14,5), TileConstant.AVAILABLEDIRT));
