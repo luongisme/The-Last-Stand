@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
-import javafx.scene.image.PixelWriter;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -18,8 +17,8 @@ import javafx.scene.text.Text;
 
 import Constant.TowerConstant;
 import Entities.Tower.Tower;
-import Scene.Playing;
-import UI.Button.TowerButton;
+import Scenes.Playing;
+import Button.TowerButton;
 
 public class TowerManager {
     private Playing playing;
@@ -36,8 +35,8 @@ public class TowerManager {
     private TowerButton[] upgradeButtons;
     private Tower selectedTower;
     private Image sellIcon, upgradeIcon;
-    private final int SELL_ID = -1;
-    private final int UPGRADE_ID = -2;
+    private final static int SELL_ID = -1;
+    private static final int  UPGRADE_ID = -2;
 
     private String notification = null;
     private long notificationEndTime = 0;
@@ -64,7 +63,7 @@ public class TowerManager {
         // Extract sprites for level 1
         towerImagesLevel1[0] = getSubImage(atlas, 4, 8*13-1, 8*2+4, 8*3+1); // CANNON - Done
         towerImagesLevel1[1] = getSubImage(atlas, 0, 8*7, 8*4, 8*4); // POISON - Done
-        towerImagesLevel1[2] = getSubImage(atlas, 2, 8*1+2, 8*3-2, 8*4); // FROST - Done
+        towerImagesLevel1[2] = getSubImage(atlas, 2, 8+2, 8*3-2, 8*4); // FROST - Done
 
         // Extract sprites for level 2
         towerImagesLevel2[0] = getSubImage(atlas, 8*6+1, 8*12+1, 8*3, 8*4-1); // CANNON - Done
@@ -98,10 +97,6 @@ public class TowerManager {
             towerIcons[1] = createDummyImage(48, 48);
             towerIcons[2] = createDummyImage(40, 40);
         }
-
-        // image for sell and upgrade icon
-        // sellIcon = loadImage("sell_icon.png");
-        // upgradeIcon = loadImage("upgrade_icon.png");
     }
 
     private void createDummyImages() {

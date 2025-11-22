@@ -1,10 +1,10 @@
-package Scene;
+package Scenes;
 
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
 import Main.GameState;
-import UI.Button.MenuButton;
+import Button.MenuButton;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -12,10 +12,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class Menu extends GameScene implements Render, SceneMethod {
+	private static final Logger logger = Logger.getLogger(Menu.class.getName());
 	private Image menuImage;
-	private List<MenuButton> buttons = new ArrayList<>();
+	private final List<MenuButton> buttons = new ArrayList<>();
 	private MenuButton playButton;
 
 	public Menu(Game game) {
@@ -42,7 +45,7 @@ public class Menu extends GameScene implements Render, SceneMethod {
             
             gc.drawImage(menuImage, 0, 0, width, height);
         } else {
-            System.err.println("Menu image is null, cannot render");
+            logger.warning("Menu image is null, cannot render");
         }
 
         // Render all buttons
@@ -57,13 +60,12 @@ public class Menu extends GameScene implements Render, SceneMethod {
 			if (imageFile.exists()) {
 				// Load GIF image using JavaFX Image
 				menuImage = new Image(new FileInputStream(imageFile));
-				System.out.println("Successfully loaded menu background from file path");
+				logger.info("Successfully loaded menu background from file path");
 			} else {
-				System.err.println("Menu background file not found: " + imageFile.getAbsolutePath());
+				logger.severe("Menu background file not found: " + imageFile.getAbsolutePath());
 			}
 		} catch (Exception ex) {
-			System.err.println("Failed to load menu image: " + ex.getMessage());
-			ex.printStackTrace();
+			logger.log(Level.SEVERE, "Failed to load menu image", ex);
 		}
 	}
 
@@ -71,7 +73,7 @@ public class Menu extends GameScene implements Render, SceneMethod {
 	public void mouseClicked(int x, int y) {
 		// Check if play button was clicked
 		if (playButton.isMouseOver(x, y)) {
-			System.out.println("Play button clicked!");
+			logger.info("Play button clicked!");
 			GameState.SetGameState(GameState.PLAYING);
 			game.onEnterPlaying();
 

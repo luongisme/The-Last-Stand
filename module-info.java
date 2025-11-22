@@ -4,13 +4,14 @@ module com.thelaststand {
     requires javafx.graphics;
     requires javafx.base;
     requires javafx.media;
-    
+    requires java.logging;
+
     
     exports Main;
     
     
-    exports Scene;
-    exports UI.Button;
+    exports Scenes;
+    exports Button;
     exports Interfaces;
     exports Managers;
     exports Map;
@@ -23,5 +24,6 @@ module com.thelaststand {
     
     
     opens Main to javafx.graphics;
-    opens Scene to javafx.graphics;
+    opens Scenes to javafx.graphics;
+    exports Player.Skill;
 }

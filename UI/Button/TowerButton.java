@@ -1,4 +1,4 @@
-package UI.Button;
+package Button;
 
 import javafx.scene.image.Image;
 import javafx.scene.canvas.GraphicsContext;

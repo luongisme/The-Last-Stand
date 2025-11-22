@@ -1,10 +1,13 @@
-package Scene;
+package Scenes;
 
-import Player.Player;
+
+import Button.SkillUI;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
+
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
@@ -13,24 +16,56 @@ import Managers.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
 import Entities.Tower.Tower;
+import Player.Player;
+
 
 public class Playing extends GameScene implements Render, SceneMethod {
-    private final int GRID_SIZE = 16;
+    private static final int GRID_SIZE = 16;
+    private static final int SKILL_SLOT_SIZE = 60;
+    private static final int SKILL_SLOT_SPRITE_SIZE = 30;
 
 	private int[][] lvl;
 	private TileManager tileManager;
     private TowerManager towerManager;
     private Player player;
+    private SkillUI[] skillSlots;
+    private SkillUI skillUI;
+
 
 	private int mouseX, mouseY;
+
 
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		lvl = LevelBuild.getSecondMapData();
+		lvl = LevelBuild.getFirstMapData();
+
+        initializeSkillUI();
 
 		towerManager = new TowerManager(this);
         player = new Player(5000, 100); // for example
+    }
+
+
+    private void initializeSkillUI() {
+
+        skillUI = new SkillUI(
+            1360, 50, (int)(100*1.5), (int)(110*2),
+            0, 0, 80, 95);
+
+
+        skillSlots = new SkillUI[4];
+        int[] slotXPositions = {1300, 1332, 1364, 1396};
+        int[] slotYPositions = {50, 100, -15, -15};
+
+        for (int i = 0; i < skillSlots.length; i++) {
+            skillSlots[i] = new SkillUI(
+                slotXPositions[i], slotYPositions[i],
+                1, 1,
+                0, 0,
+                1,1
+            );
+        }
     }
 
     public void update() {
@@ -43,13 +78,19 @@ public class Playing extends GameScene implements Render, SceneMethod {
         drawLevel(gc);
 		updateTick();
 
-		towerManager.draw(gc);
+        renderSkillUI(gc);
 
+		towerManager.draw(gc);
         drawPlayerStats(gc);
 
         if (!towerManager.isBuildMenuOpen() && !towerManager.isUpgradeMenuOpen()) {
             drawHighlight(gc);
         }
+    }
+
+
+    private void renderSkillUI(GraphicsContext gc) {
+        skillUI.render(gc);
     }
 
     private void drawHighlight(GraphicsContext gc) {
@@ -67,7 +108,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
             gc.strokeRect(mouseX, mouseY, GRID_SIZE, GRID_SIZE);
         }
     }
-    
+
+
     private void drawPlayerStats(GraphicsContext gc) { // Demo
         gc.setFill(Color.YELLOW);
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
@@ -115,6 +157,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
 	@Override
 	public void mousePressed(int x, int y) {
+
 		towerManager.handleMousePressed(x, y);
 	}
 
@@ -125,7 +168,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
 	@Override
 	public void mouseDragged(int x, int y) {
-		// Implement mouseDragged method
+
 	}
 
 	public void updateTick(){

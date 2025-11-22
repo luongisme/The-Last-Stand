@@ -3,13 +3,12 @@ package Main;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.animation.AnimationTimer;
 
 import Input.KeyboardListener;
-import Scene.GameOver;
-import Scene.Menu;
-import Scene.Playing;
-import Scene.Settings;
+import Scenes.GameOver;
+import Scenes.Menu;
+import Scenes.Playing;
+import Scenes.Settings;
 
 import Sound.MusicManager;
 import Sound.MusicSetting;
@@ -18,8 +17,8 @@ import javafx.scene.layout.StackPane;
 
 public class Game extends Application {
     private GameScreen gameScreen;
-    private AnimationTimer gameLoop;
-    
+    private GameLoop gameLoop;
+
     private Menu menu;
     private Playing playing;
     private Settings settings;
@@ -77,46 +76,11 @@ public class Game extends Application {
     }
 
     private void startGameLoop() {
-        final long[] lastFrame = {System.nanoTime()};
-        final long[] lastUpdate = {System.nanoTime()};
-        final long[] lastTimeCheck = {System.currentTimeMillis()};
-        final int[] frames = {0};
-        final int[] updates = {0};
-        
-        double timePerFrame = 1000000000.0 / FPS;
-        double timePerUpdate = 1000000000.0 / UPS;
-        
-        gameLoop = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                // Render
-                if (now - lastFrame[0] >= timePerFrame) {
-                    gameScreen.render();
-                    lastFrame[0] = now;
-                    frames[0]++;
-                }
-                
-                // Update
-                if (now - lastUpdate[0] >= timePerUpdate) {
-                    updateGame();
-                    lastUpdate[0] = now;
-                    updates[0]++;
-                }
-                
-                // FPS/UPS counter
-                if (System.currentTimeMillis() - lastTimeCheck[0] >= 1000) {
-                    System.out.println("FPS: " + frames[0] + " | UPS: " + updates[0]);
-                    frames[0] = 0;
-                    updates[0] = 0;
-                    lastTimeCheck[0] = System.currentTimeMillis();
-                }
-            }
-        };
-        
+        gameLoop = new GameLoop(this, gameScreen, FPS, UPS);
         gameLoop.start();
     }
 
-    private void updateGame() {
+    public void updateGame() {
         // Update game logic here
     }
     
