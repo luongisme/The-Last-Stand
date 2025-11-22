@@ -17,6 +17,7 @@ public class TileManager {
     public ArrayList<Tile> tiles = new ArrayList<>();
     private Image atlas; // The tileset sprite sheet (cho grass.png)
     private Image waterAtlas; 
+    private Image propsAtlas;
     
     private final int TILE_SIZE = 16; 
 
@@ -108,8 +109,8 @@ public class TileManager {
     private void createTiles() {
         
 
-        tiles.add(DIRT = new Tile(getSprite(0, 2), TileConstant.DIRT));
-        tiles.add(SPAWN = new Tile(getSprite(2, 11), TileConstant.SPAWN));
+        tiles.add(DIRT = new Tile(getSprite(1, 2), TileConstant.DIRT));
+        tiles.add(SPAWN = new Tile(getSprite(2, 1), TileConstant.SPAWN));
         tiles.add(ROAD = new Tile(getSprite(0, 2), TileConstant.ROAD));
         tiles.add(GRASS = new Tile(getSprite(8, 0), TileConstant.GRASS));
         tiles.add(SAND = new Tile(getSprite(1, 1), TileConstant.SAND));
@@ -118,9 +119,9 @@ public class TileManager {
         
         
         tiles.add(WOOD = new Tile(getSprite(5, 8), TileConstant.WOOD));
-        tiles.add(HOME = new Tile(getSprite(7, 0), TileConstant.HOME));
+        tiles.add(HOME = new Tile(getSprite(17, 8), TileConstant.HOME));
         tiles.add(WALL = new Tile(getSprite(8, 0), TileConstant.WALL));
-        tiles.add(STONE = new Tile(getSprite(11, 8), TileConstant.STONE));
+        tiles.add(STONE = new Tile(getSprite(20, 8), TileConstant.STONE));
         tiles.add(CURB = new Tile(getSprite(1,3),TileConstant.CURB));
         tiles.add(AVAILABLEDIRT = new Tile(getSprite(14,5), TileConstant.AVAILABLEDIRT));
     

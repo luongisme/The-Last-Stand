@@ -1,10 +1,6 @@
 package Scene;
 
-import Player.Player;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import Entities.Tower.Tower;
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
@@ -12,7 +8,11 @@ import Managers.TileManager;
 import Managers.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
-import Entities.Tower.Tower;
+import Player.Player;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class Playing extends GameScene implements Render, SceneMethod {
     private final int GRID_SIZE = 16;
@@ -27,7 +27,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		lvl = LevelBuild.getSecondMapData();
+		lvl = LevelBuild.getFirstMapData();
 
 		towerManager = new TowerManager(this);
         player = new Player(5000, 100); // for example
