@@ -53,19 +53,6 @@ public class Playing extends GameScene implements Render, SceneMethod {
             1360, 50, (int)(100*1.5), (int)(110*2),
             0, 0, 80, 95);
 
-
-        skillSlots = new SkillUI[4];
-        int[] slotXPositions = {1300, 1332, 1364, 1396};
-        int[] slotYPositions = {50, 100, -15, -15};
-
-        for (int i = 0; i < skillSlots.length; i++) {
-            skillSlots[i] = new SkillUI(
-                slotXPositions[i], slotYPositions[i],
-                1, 1,
-                0, 0,
-                1,1
-            );
-        }
     }
 
     public void update() {
@@ -121,6 +108,20 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     @Override
 	public void mouseClicked(int x, int y) {
+        // Check if skill icon was clicked first
+        int clickedSkill = skillUI.handleClick(x, y);
+        if (clickedSkill != -1) {
+            // A skill was clicked, handle it
+            String skillName = skillUI.getSelectedSkillName();
+            if (skillName != null) {
+                System.out.println("Skill selected: " + skillName);
+                // TODO: Implement skill activation logic here
+            } else {
+                System.out.println("Skill deselected");
+            }
+            return; // Don't process tower clicks when clicking on skill UI
+        }
+
         if (towerManager.isUpgradeMenuOpen()) {
             towerManager.handleUpgradeMenuClick(x, y);
             return;
@@ -147,10 +148,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
         }
 	}
 
-	@Override
+    @Override
 	public void mouseMoved(int x, int y) {
 		mouseX = (x / GRID_SIZE) * GRID_SIZE;
         mouseY = (y / GRID_SIZE) * GRID_SIZE;
+
+        // Update hover state for skill UI
+        skillUI.updateHover(x, y);
 
         towerManager.handleMouseMoved(x, y);
 	}
