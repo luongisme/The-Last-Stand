@@ -133,7 +133,7 @@ The-Last-Stand/
 ├── Constant/          # Hằng số game / Game constants
 ├── Entities/          # Các đối tượng trong game / Game entities
 ├── Managers/          # Quản lý logic / Logic managers
-├── Scene/             # Các màn hình / Game scenes
+├── Scenes/             # Các màn hình / Game scenes
 ├── UI/                # Giao diện người dùng / UI components
 ├── resource/          # Tài nguyên (sprites, images) / Resources
 ├── pom.xml            # Maven configuration
@@ -170,7 +170,7 @@ Use IDEs like IntelliJ IDEA, Eclipse, or VS Code with Java Extension Pack.
 
 ## Xử lý lỗi thường gặp / Common Issues
 
-### 1. Lỗi "The package Main/Scene/... does not exist"
+### 1. Lỗi "The package Main/Scenes/... does not exist"
 **Nguyên nhân**: VS Code chưa build Maven project
 
 **Giải pháp**:
