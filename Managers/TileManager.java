@@ -1,21 +1,26 @@
 package Managers;
 
-import Constant.TileConstant;
-import Map.Tile;
-
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import Constant.TileConstant;
+import Map.Tile;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+
 public class TileManager {
-    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT;
+    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT,TREE;
 
     public ArrayList<Tile> tiles = new ArrayList<>();
-    private Image atlas; // The tileset sprite sheet
+    private Image atlas; // The tileset sprite sheet (cho grass.png)
+    private Image waterAtlas; 
+    private Image propsAtlas;
+    
     private final int TILE_SIZE = 16; 
 
     public TileManager() {
@@ -24,12 +29,49 @@ public class TileManager {
     }
     
     private void loadAtlas() {
-        atlas = loadImage("grass.png"); // Load your tileset image
+        // Load atlas chính (grass.png)
+        atlas = loadImage("grass.png"); 
         if (atlas == null) {
-            System.err.println("Failed to load tileset atlas!");
+            System.err.println("Failed to load main tileset atlas!");
+        }
+        
+        // load water atlas riêng (image.png)
+        waterAtlas = loadImage("image.png"); 
+        if (waterAtlas == null) {
+            System.err.println("Failed to load water tileset atlas!");
+        }
+
+        propsAtlas = loadImage("props.png");
+        if (propsAtlas == null) {
+            System.err.println("Failed to load props tileset atlas!");
         }
     }
     
+    private Image mergeImages(Image background, Image overlay) {
+        if (background == null || overlay == null) return background;
+
+        int w = (int) background.getWidth();
+        int h = (int) background.getHeight();
+        
+        WritableImage newImage = new WritableImage(w, h);
+        PixelReader bgReader = background.getPixelReader();
+        PixelReader ovReader = overlay.getPixelReader();
+        PixelWriter writer = newImage.getPixelWriter();
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                Color bgColor = bgReader.getColor(x, y);
+                Color ovColor = ovReader.getColor(x, y);
+                if (ovColor.getOpacity() > 0) { // If overlay pixel is not transparent
+                    writer.setColor(x, y, ovColor);
+                } else { // Use background pixel
+                    writer.setColor(x, y, bgColor);
+                }
+            }
+        }
+        return newImage;
+    }
+    // dùng atlas chính
     private Image getSprite(int xCord, int yCord) {
         if (atlas == null) return null;
         
@@ -39,6 +81,21 @@ public class TileManager {
         
         // Extract sub-image using JavaFX PixelReader
         PixelReader reader = atlas.getPixelReader();
+        WritableImage subImage = new WritableImage(reader, x, y, TILE_SIZE, TILE_SIZE);
+        
+        return subImage;
+    }
+
+    // cho phép chỉ định dùng atlas nào
+    private Image getSprite(Image sourceAtlas, int xCord, int yCord) {
+        if (sourceAtlas == null) return null;
+        
+        // Calculate pixel coordinates
+        int x = xCord * TILE_SIZE;
+        int y = yCord * TILE_SIZE;
+        
+        // Extract sub-image using JavaFX PixelReader
+        PixelReader reader = sourceAtlas.getPixelReader();
         WritableImage subImage = new WritableImage(reader, x, y, TILE_SIZE, TILE_SIZE);
         
         return subImage;
@@ -82,20 +139,29 @@ public class TileManager {
 
     private void createTiles() {
         
-        tiles.add(DIRT = new Tile(getSprite(17, 1), TileConstant.DIRT));
-        tiles.add(SPAWN = new Tile(getSprite(1, 0), TileConstant.SPAWN));
-        tiles.add(ROAD = new Tile(getSprite(2, 0), TileConstant.ROAD));
-        tiles.add(GRASS = new Tile(getSprite(8, 2), TileConstant.GRASS));
-        tiles.add(SAND = new Tile(getSprite(4, 0), TileConstant.SAND));
-        tiles.add(WATER = new Tile(getSprite(5, 0), TileConstant.WATER));
-        tiles.add(WOOD = new Tile(getSprite(6, 0), TileConstant.WOOD));
-        tiles.add(HOME = new Tile(getSprite(7, 0), TileConstant.HOME));
+
+        tiles.add(DIRT = new Tile(getSprite(1, 2), TileConstant.DIRT));
+        tiles.add(SPAWN = new Tile(getSprite(2, 1), TileConstant.SPAWN));
+        tiles.add(ROAD = new Tile(getSprite(0, 2), TileConstant.ROAD));
+        tiles.add(GRASS = new Tile(getSprite(8, 0), TileConstant.GRASS));
+        tiles.add(SAND = new Tile(getSprite(1, 1), TileConstant.SAND));
+
+        tiles.add(WATER = new Tile(getSprite(this.waterAtlas, 6, 1), TileConstant.WATER));
+        
+        
+        tiles.add(WOOD = new Tile(getSprite(5, 8), TileConstant.WOOD));
+        tiles.add(HOME = new Tile(getSprite(17, 8), TileConstant.HOME));
         tiles.add(WALL = new Tile(getSprite(8, 0), TileConstant.WALL));
-        tiles.add(STONE = new Tile(getSprite(9, 0), TileConstant.STONE));
+        tiles.add(STONE = new Tile(getSprite(20, 8), TileConstant.STONE));
         tiles.add(CURB = new Tile(getSprite(1,3),TileConstant.CURB));
         tiles.add(AVAILABLEDIRT = new Tile(getSprite(14,5), TileConstant.AVAILABLEDIRT));
     
-        
+        if (propsAtlas != null) {
+            Image bgGrass = getSprite(atlas, 8, 0);
+            Image treeOverlay = getSprite(propsAtlas, 11, 12); 
+            Image finalTreeTile = mergeImages(bgGrass, treeOverlay); // merge 2 image lại
+            tiles.add(TREE = new Tile(finalTreeTile, TileConstant.TREE));
+        }
         // **animation for WATER?**
         // BufferedImage[] waterFrames = loadWaterAnimation();
         // Tile animatedWater = new Tile(waterFrames, TileConstant.WATER);
