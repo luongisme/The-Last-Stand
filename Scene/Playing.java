@@ -13,6 +13,10 @@ import Managers.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
 import Entities.Tower.Tower;
+import Managers.EnemyManager;
+import Managers.TileManager;
+
+import Constant.EntityConstant;
 
 public class Playing extends GameScene implements Render, SceneMethod {
     private final int GRID_SIZE = 16;
@@ -21,21 +25,29 @@ public class Playing extends GameScene implements Render, SceneMethod {
 	private TileManager tileManager;
     private TowerManager towerManager;
     private Player player;
+    private EnemyManager enemyManager;
+    private long lastUpdateTime = System.nanoTime();
 
 	private int mouseX, mouseY;
 
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		lvl = LevelBuild.getSecondMapData();
+		lvl = LevelBuild.getFirstMapData();
 
 		towerManager = new TowerManager(this);
+        enemyManager = new EnemyManager(this);
         player = new Player(5000, 100); // for example
     }
 
     public void update() {
+        long now = System.nanoTime();
+        float dt = (now - lastUpdateTime) / 1_000_000f;
+        lastUpdateTime = now;
+        
         updateTick();
         towerManager.update();
+        enemyManager.update(dt);
     }
 
     @Override
@@ -43,9 +55,11 @@ public class Playing extends GameScene implements Render, SceneMethod {
         drawLevel(gc);
 		updateTick();
 
-		towerManager.draw(gc);
+        towerManager.draw(gc);
 
         drawPlayerStats(gc);
+
+        enemyManager.draw(gc);
 
         if (!towerManager.isBuildMenuOpen() && !towerManager.isUpgradeMenuOpen()) {
             drawHighlight(gc);
@@ -116,6 +130,9 @@ public class Playing extends GameScene implements Render, SceneMethod {
 	@Override
 	public void mousePressed(int x, int y) {
 		towerManager.handleMousePressed(x, y);
+        enemyManager.addEnemy(x-50, y, EntityConstant.SKELETON);
+        enemyManager.addEnemy(x, y, EntityConstant.GOBLIN);
+        enemyManager.addEnemy(x+50, y, EntityConstant.GOBLIN_BOSS);
 	}
 
 	@Override
@@ -133,7 +150,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         if (tick>=20){
             tick=0;
             animationIndex++;
-            if (animationIndex>=10){
+            if (animationIndex>=4){
                 animationIndex=0;
             }
         }

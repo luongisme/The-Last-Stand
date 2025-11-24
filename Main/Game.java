@@ -118,6 +118,9 @@ public class Game extends Application {
 
     private void updateGame() {
         // Update game logic here
+        if (playing != null) {
+            playing.update();
+        }
     }
     
     private void initClasses() {
