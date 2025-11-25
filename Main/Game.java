@@ -44,7 +44,7 @@ public class Game extends Application {
         initClasses();
 
         musicManager = MusicManager.getInstance();
-        musicManager.playMenuMusic(); // phát nhạc menu khi mở game
+        musicManager.playMenuMusic();
 
         
         // Wrap GameScreen (Canvas) in a Pane
@@ -117,7 +117,23 @@ public class Game extends Application {
     }
 
     private void updateGame() {
-        // Update game logic here
+        switch (GameState.gameState) {
+            case MENU:
+                // menu.update();
+                break;
+
+            case PLAYING:
+                playing.update();
+                break;
+
+            case SETTINGS:
+                // settings.update();
+                break;
+
+            case GAME_OVER:
+                // gameOver.update();
+                break;
+        }
     }
     
     private void initClasses() {
@@ -143,6 +159,7 @@ public class Game extends Application {
     public GameOver getGameOver() {
         return gameOver;
     }
+
     public void onEnterPlaying() {
         musicManager.playGameplayMusic();
     }

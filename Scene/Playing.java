@@ -9,7 +9,7 @@ import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
 import Managers.TileManager;
-import Managers.TowerManager;
+import Managers.Tower.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
 import Entities.Tower.Tower;
@@ -24,10 +24,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
 	private int mouseX, mouseY;
 
+    private int tick = 0;
+    private int animationIndex = 0;
+
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		lvl = LevelBuild.getSecondMapData();
+		lvl = LevelBuild.getFirstMapData();
 
 		towerManager = new TowerManager(this);
         player = new Player(5000, 100); // for example
@@ -47,7 +50,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
         drawPlayerStats(gc);
 
-        if (!towerManager.isBuildMenuOpen() && !towerManager.isUpgradeMenuOpen()) {
+        if (!towerManager.getMenu().isBuildMenuOpen() && !towerManager.getMenu().isUpgradeMenuOpen()) {
             drawHighlight(gc);
         }
     }
@@ -79,13 +82,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     @Override
 	public void mouseClicked(int x, int y) {
-        if (towerManager.isUpgradeMenuOpen()) {
-            towerManager.handleUpgradeMenuClick(x, y);
+        if (towerManager.getMenu().isUpgradeMenuOpen()) {
+            towerManager.getMenu().handleUpgradeMenuClick(x, y);
             return;
         }
 
-		if (towerManager.isBuildMenuOpen()) {
-            towerManager.handleBuildMenuClick(x, y);
+        if (towerManager.getMenu().isBuildMenuOpen()) {
+            towerManager.getMenu().handleBuildMenuClick(x, y);
             return;
         }
 
@@ -96,12 +99,12 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
         Tower clickedTower = towerManager.getTowerAt(clickedPixelX, clickedPixelY);
         if (clickedTower != null) {
-            towerManager.openUpgradeMenu(clickedTower);
+            towerManager.getMenu().openUpgradeMenu(clickedTower);
             return;
         }
 
-        if (isTilePlaceable(x, y) && towerManager.getTowerAt(clickedPixelX, clickedPixelY) == null) {
-            towerManager.openBuildMenu(clickedPixelX, clickedPixelY);
+        if (isTilePlaceable(x, y) && !towerManager.isOccupied(clickedPixelX, clickedPixelY)) {
+            towerManager.getMenu().openBuildMenu(clickedPixelX, clickedPixelY);
         }
 	}
 
@@ -110,17 +113,17 @@ public class Playing extends GameScene implements Render, SceneMethod {
 		mouseX = (x / GRID_SIZE) * GRID_SIZE;
         mouseY = (y / GRID_SIZE) * GRID_SIZE;
 
-        towerManager.handleMouseMoved(x, y);
+        towerManager.getMenu().handleMouseMoved(x, y);
 	}
 
 	@Override
 	public void mousePressed(int x, int y) {
-		towerManager.handleMousePressed(x, y);
+		towerManager.getMenu().handleMousePressed(x, y);
 	}
 
 	@Override
 	public void mouseReleased(int x, int y) {
-		towerManager.handleMouseReleased(x, y);
+		towerManager.getMenu().handleMouseReleased(x, y);
 	}
 
 	@Override
@@ -182,6 +185,4 @@ public class Playing extends GameScene implements Render, SceneMethod {
         
         return t.canPlaceTower(); 
     }
-
-    
 }

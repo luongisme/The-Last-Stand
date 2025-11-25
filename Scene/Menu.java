@@ -4,7 +4,7 @@ import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
 import Main.GameState;
-import UI.Button.MenuButton;
+import Button.MenuButton;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;

@@ -10,7 +10,7 @@ module com.thelaststand {
     
     
     exports Scene;
-    exports UI.Button;
+    exports Button;
     exports Interfaces;
     exports Managers;
     exports Map;
@@ -24,4 +24,6 @@ module com.thelaststand {
     
     opens Main to javafx.graphics;
     opens Scene to javafx.graphics;
+    exports Managers.Tower;
+    exports Managers.UI;
 }
