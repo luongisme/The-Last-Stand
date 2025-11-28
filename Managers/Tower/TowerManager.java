@@ -7,7 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import Constant.TowerConstant;
 import Entities.Tower.Tower;
-import Scene.Playing;
+import Scenes.Playing;
 import Managers.UI.NotificationManager;
 import Managers.UI.TowerMenuManager;
 

@@ -1,15 +1,15 @@
 module com.thelaststand {
-    
+
     requires javafx.controls;
     requires javafx.graphics;
     requires javafx.base;
     requires javafx.media;
     requires java.logging;
 
-    
+
     exports Main;
-    
-    
+
+
     exports Scenes;
     exports Button;
     exports Interfaces;
@@ -21,10 +21,9 @@ module com.thelaststand {
     exports Entities.Tower;
     exports Input;
     exports Sound;
-    
-    
+
+
     opens Main to javafx.graphics;
-    opens Scene to javafx.graphics;
     exports Managers.Tower;
     exports Managers.UI;
     opens Scenes to javafx.graphics;

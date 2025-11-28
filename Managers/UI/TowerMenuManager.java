@@ -2,7 +2,7 @@ package Managers.UI;
 
 import Constant.TowerConstant;
 import Entities.Tower.Tower;
-import Scene.Playing;
+import Scenes.Playing;
 import Button.TowerButton;
 import Managers.Tower.TowerManager;
 import javafx.scene.canvas.GraphicsContext;
