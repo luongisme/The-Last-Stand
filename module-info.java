@@ -17,7 +17,7 @@ module com.thelaststand {
     exports Map;
     exports Player;
     exports Constant;
-    exports Entities.Enemy;
+    exports Entities.Enemies;
     exports Entities.Tower;
     exports Input;
     exports Sound;
