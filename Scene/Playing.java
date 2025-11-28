@@ -10,11 +10,11 @@ import Main.Game;
 import Main.GameScene;
 import Managers.TileManager;
 import Managers.TowerManager;
+import Managers.WaveManager;
 import Map.LevelBuild;
 import Map.Tile;
 import Entities.Tower.Tower;
 import Managers.EnemyManager;
-import Managers.TileManager;
 
 import Constant.EntityConstant;
 
@@ -24,9 +24,12 @@ public class Playing extends GameScene implements Render, SceneMethod {
 	private int[][] lvl;
 	private TileManager tileManager;
     private TowerManager towerManager;
+    private WaveManager waveManager;
     private Player player;
     private EnemyManager enemyManager;
     private long lastUpdateTime = System.nanoTime();
+    private boolean levelSwitched = false;
+    private int levelIndex = 0;
 
 	private int mouseX, mouseY;
 
@@ -37,7 +40,9 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
 		towerManager = new TowerManager(this);
         enemyManager = new EnemyManager(this);
+        waveManager = new WaveManager(this);
         player = new Player(5000, 100); // for example
+        loadLevel(levelIndex);
     }
 
     public void update() {
@@ -48,6 +53,26 @@ public class Playing extends GameScene implements Render, SceneMethod {
         updateTick();
         towerManager.update();
         enemyManager.update(dt);
+    }
+    public void loadNextLevel() {
+        levelIndex++;
+        if (levelIndex > 2) { // If we passed level 3 (index 2)
+            System.out.println("GAME COMPLETED!");
+            levelIndex = 0; // Loop back to start or go to Menu
+        }
+        
+        loadLevel(levelIndex);
+    }
+
+private void loadLevel(int index) {
+        System.out.println("Loading Level Index: " + index);
+        
+        lvl = LevelBuild.getLevelData(index);
+        
+        enemyManager.reset();
+        //towerManager.reset();
+        
+        waveManager.reset(); 
     }
 
     @Override
@@ -180,6 +205,10 @@ public class Playing extends GameScene implements Render, SceneMethod {
 	public TileManager getTileManager(){
 		return tileManager;
     }
+    
+    public WaveManager getWaveManager(){
+        return waveManager;
+    }
 
 	public Player getPlayer() {
         return player;
@@ -200,5 +229,5 @@ public class Playing extends GameScene implements Render, SceneMethod {
         return t.canPlaceTower(); 
     }
 
-    
+    public int getLevelIndex() { return levelIndex; }
 }

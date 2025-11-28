@@ -2,6 +2,15 @@ package Map;
 
 public class LevelBuild {
     private static int[][] map;
+
+    public static int[][] getLevelData(int levelIndex) {
+        switch (levelIndex) {
+            case 0: return getFirstMapData();
+            case 1: return getSecondMapData();
+            case 2: return getThirdMapData();
+            default: return getFirstMapData(); // Loop back to start or return null
+        }
+    }
     
     // all 3 maps are demo version data, there will be further edits
     public static int[][] getFirstMapData() {

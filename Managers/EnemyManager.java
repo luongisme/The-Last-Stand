@@ -31,17 +31,87 @@ public class EnemyManager {
 
         enemyImgs = new Image[enemyTypes][DIRECTIONS][FRAMES];
         loadEnemyImgs();
+    }
 
-        // Test enemies
-        addEnemy(4 * 16, 37 * 16, EntityConstant.SKELETON);
-        addEnemy(6 * 16, 37 * 16, EntityConstant.GOBLIN);
-        addEnemy(8 * 16, 37 * 16, EntityConstant.GOBLIN_BOSS);
+    public void reset(){
+        enemies.clear();
     }
 
     public void update(float dt){
+
+        playing.getWaveManager().update(dt);
+
+        if(isTimeForNewEnemy()){
+            spawnEnemy();
+        }
+
         for (Enemy e : enemies) {
             e.update(dt);
         }
+
+        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
+
+        for (Enemy e : enemies) {
+            e.update(dt);
+            
+            if (e.getX() >= 1604) { 
+                enemiesToRemove.add(e);
+            }
+        }
+
+        // REMOVE THEM SAFELY
+        for (Enemy e : enemiesToRemove) {
+            enemies.remove(e);
+            
+            if (isWaveFinished()) {
+                playing.loadNextLevel();
+            }
+        }
+    }
+
+    private boolean isWaveFinished() {
+        // 1. Are there any enemies alive?
+        if (!enemies.isEmpty()) {
+            return false;
+        }
+        
+        // 2. Are there more enemies waiting to spawn?
+        if (playing.getWaveManager().isThereMoreEnemiesInWave()) {
+            return false;
+        }
+
+        // 3. (Optional) Are there more waves? 
+        // If you only have 1 wave per level, the code above is enough.
+        
+        return true; 
+    }
+
+
+    private void spawnEnemy(){
+        // 2. Get ID from Wave
+        int enemyId = playing.getWaveManager().getNextEnemy();
+        
+        // 3. Convert ID to Enum (Assumes Enum order matches ID)
+        // Check bounds to prevent crash
+        if(enemyId < EntityConstant.values().length) {
+            EntityConstant enemyType = EntityConstant.values()[enemyId];
+            
+            // 4. Define Spawn Location (Left side: x=0, y= middle of screen approx)
+            float startX = 0;
+            float startY = 10 * 16; // Example: Row 10 * GridSize
+            
+            addEnemy(startX, startY, enemyType);
+        }
+    }
+
+    public boolean isTimeForNewEnemy(){
+        // 5. Fix Syntax error (added parentheses)
+        if(playing.getWaveManager().isTimeForNewEnemy()){
+            if(playing.getWaveManager().isThereMoreEnemiesInWave()){
+                return true;
+            }
+        }
+        return false;
     }
 
     /** ───────────────────────────────────────────────

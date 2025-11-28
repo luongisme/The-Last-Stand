@@ -26,7 +26,7 @@ public abstract class Enemy {
     public static final int RIGHT = 2;
     public static final int UP = 3;
 
-    private int lastDir = DOWN;
+    private int lastDir = RIGHT;
 
     // Patrol logic
     private float patrolTimer = 0;
@@ -56,39 +56,6 @@ public abstract class Enemy {
         
         updateBounds();
     }
-    
-    public void setSpriteSize(int w, int h) {
-        this.frameW = w;
-        this.frameH = h;
-        updateBounds();
-    }
-
-    public int getFrameW() { return frameW; }
-    public int getFrameH() { return frameH; }
-
-    // ==================== Getters ====================
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public int getEnemyId() { return enemyID; }
-    public int getEnemyHealth() { return health; }
-    public int getMaxHealth(){return maxHealth;}
-    public int getEnemyDamage() { return damage; }
-    public float getEnemySpeedX() { return speedX; }
-    public float getEnemySpeedY() { return speedY; }
-    public Rectangle2D getBounds() { return bounds; }
-    public int getEnemyType() { return enemyType; }
-    public int getLastDir() { return lastDir; }
-    public int getAnimationIndex() { return animationIndex; }
-
-    // ==================== Setters ====================
-    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
-    public void setEnemyHealth(int health) { this.health = health; }
-    public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
-    public void setEnemyDamage(int damage) { this.damage = damage; }
-    public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
-    public void setEnemySpeedY(float speedY) { this.speedY = speedY; }
-    public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
-    public void setLastDir(int lastDir) { this.lastDir = lastDir; }
 
     // Update the JavaFX hitbox
     public void updateBounds() {
@@ -139,8 +106,11 @@ public abstract class Enemy {
         // 1. Update Animation
         updateAnimation(dt);
         
-        // 2. Update Movement Logic
-        updateMove(dt);
+        float speed = 50.0f; 
+        x += speed * (dt / 1000.0f);
+        
+        // Set direction to Right (assuming 2 is right in your sprite sheet)
+        lastDir = 2;
     }
 
     private void updateAnimation(float dt) {
@@ -194,4 +164,38 @@ public abstract class Enemy {
     public void render(GraphicsContext gc) {
         // Rendering handled by EnemyManager, so this is empty
     }
+
+        public void setSpriteSize(int w, int h) {
+        this.frameW = w;
+        this.frameH = h;
+        updateBounds();
+    }
+
+    public int getFrameW() { return frameW; }
+    public int getFrameH() { return frameH; }
+
+    // ==================== Getters ====================
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public int getEnemyId() { return enemyID; }
+    public int getEnemyHealth() { return health; }
+    public int getMaxHealth(){return maxHealth;}
+    public int getEnemyDamage() { return damage; }
+    public float getEnemySpeedX() { return speedX; }
+    public float getEnemySpeedY() { return speedY; }
+    public Rectangle2D getBounds() { return bounds; }
+    public int getEnemyType() { return enemyType; }
+    public int getLastDir() { return lastDir; }
+    public int getAnimationIndex() { return animationIndex; }
+
+    // ==================== Setters ====================
+    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
+    public void setEnemyHealth(int health) { this.health = health; }
+    public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
+    public void setEnemyDamage(int damage) { this.damage = damage; }
+    public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
+    public void setEnemySpeedY(float speedY) { this.speedY = speedY; }
+    public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
+    public void setLastDir(int lastDir) { this.lastDir = lastDir; }
+
 }
