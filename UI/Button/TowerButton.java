@@ -6,29 +6,58 @@ import javafx.scene.paint.Color;
 
 public class TowerButton extends BaseButton {
     private int id;
-    private Image img;
+    private Image[] images;
 
+    private int animIndex = 0;
+    private int animTick = 0;
+    private int animSpeed = 20;
+
+    // for animations
+    public TowerButton(Image[] images, double x, double y, double width, double height, int id) {
+        super(x, y, width, height, "");
+        this.id = id;
+        this.images = images;
+    }
+
+    // for 1 image
     public TowerButton(Image img, double x, double y, double width, double height, int id) {
         super(x, y, width, height, "");
         this.id = id;
-        this.img = img;
+        this.images = new Image[1];
+        this.images[0] = img;
+    }
+
+    public void update() {
+        // If there is only 1 frame (still image), no calculation is needed.
+        if (images == null || images.length <= 1) return;
+
+        animTick++;
+        if (animTick >= animSpeed) {
+            animTick = 0;
+            animIndex++;
+            if (animIndex >= images.length) {
+                animIndex = 0;
+            }
+        }
     }
 
     @Override
     public void render(GraphicsContext gc) {
-        // Draw tower image
-        if (img != null) {
-            gc.drawImage(img, x, y, width, height);
+        // Draw the current frame based on animIndex
+        if (images != null && images.length > 0) {
+            // Ensure safe indexing
+            if (animIndex >= images.length) animIndex = 0;
+            gc.drawImage(images[animIndex], x, y, width, height);
         }
         drawBorder(gc);
     }
 
     private void drawBorder(GraphicsContext gc) {
-        // Draw outer border (always black)
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1);
-        gc.strokeRect(x, y, width, height);
-        
+//        // Draw outer border (always black)
+//        gc.setStroke(Color.BLACK);
+//        gc.setLineWidth(1);
+//        gc.strokeRect(x, y, width, height);
+
         // Draw additional border based on state
         if (mousePressed) {
             // Inner black border when pressed
@@ -48,5 +77,9 @@ public class TowerButton extends BaseButton {
 
     public int getId() {
         return id;
+    }
+
+    public void setAnimSpeed(int speed) {
+        this.animSpeed = speed;
     }
 }

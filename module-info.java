@@ -24,6 +24,9 @@ module com.thelaststand {
     
     
     opens Main to javafx.graphics;
+    opens Scene to javafx.graphics;
+    exports Managers.Tower;
+    exports Managers.UI;
     opens Scenes to javafx.graphics;
     exports Player.Skill;
 }
