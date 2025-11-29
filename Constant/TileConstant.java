@@ -14,7 +14,8 @@ public enum TileConstant {
     STONE(9, "stone.png", false),
     CURB(10,"curb.png",false),
     AVAILABLEDIRT(11,"Adirt.png",true),
-    TREE(12, "tree.png", false);
+    TREE(12, "TREE.png", false),
+    BOSS(13, "skeleton_boss.png", false);
 
     private final int id;
     private final String spriteName;

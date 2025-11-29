@@ -14,13 +14,13 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class TileManager {
-    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT,TREE;
+    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT,TREE, BOSS;
 
     public ArrayList<Tile> tiles = new ArrayList<>();
     private Image atlas; // The tileset sprite sheet (cho grass.png)
     private Image waterAtlas; 
     private Image propsAtlas;
-    
+    private Image bossImg;
     private final int TILE_SIZE = 16; 
 
     public TileManager() {
@@ -41,9 +41,14 @@ public class TileManager {
             System.err.println("Failed to load water tileset atlas!");
         }
 
-        propsAtlas = loadImage("props.png");
+        propsAtlas = loadImage("Objects2.png");
         if (propsAtlas == null) {
             System.err.println("Failed to load props tileset atlas!");
+        }
+
+        bossImg = loadImage("skeleton_boss.png"); //  load ảnh boss
+            if (bossImg == null) {
+                System.err.println("Failed to load skeleton_boss.png!");
         }
     }
     
@@ -52,7 +57,6 @@ public class TileManager {
 
         int w = (int) background.getWidth();
         int h = (int) background.getHeight();
-        
         WritableImage newImage = new WritableImage(w, h);
         PixelReader bgReader = background.getPixelReader();
         PixelReader ovReader = overlay.getPixelReader();
@@ -161,11 +165,15 @@ public class TileManager {
             Image treeOverlay = getSprite(propsAtlas, 11, 12); 
             Image finalTreeTile = mergeImages(bgGrass, treeOverlay); // merge 2 image lại
             tiles.add(TREE = new Tile(finalTreeTile, TileConstant.TREE));
+        } else {
+            // Nếu load lỗi propsAtlas thì add null để giữ đúng thứ tự index cho Boss
+            tiles.add(null);
         }
-        // **animation for WATER?**
-        // BufferedImage[] waterFrames = loadWaterAnimation();
-        // Tile animatedWater = new Tile(waterFrames, TileConstant.WATER);
-        // tiles.set(TileConstant.WATER.getId(), animatedWater);
+
+        if (bossImg != null) {
+            // dùng trực tiếp ảnh bossImg, không cần cắt (getSprite)
+            tiles.add(BOSS = new Tile(bossImg, TileConstant.BOSS));
+        }
     }
 
 
@@ -180,6 +188,7 @@ public class TileManager {
     }
 
     public Image getSprite(int id){
+        if (id < 0 || id >= tiles.size()) return null; // check null
         return tiles.get(id).getSprite();
     }
 }

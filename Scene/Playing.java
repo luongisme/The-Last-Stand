@@ -8,8 +8,10 @@ import Managers.TileManager;
 import Managers.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
+import Constant.TileConstant;
 import Player.Player;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -23,6 +25,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private Player player;
 
 	private int mouseX, mouseY;
+    private int tick = 0; // updateTick and animation
+    private int animationIndex = 0;
 
     public Playing(Game game){
         super(game);
@@ -139,20 +143,54 @@ public class Playing extends GameScene implements Render, SceneMethod {
         }
     }
 
-	public void drawLevel(GraphicsContext gc){
-        // go through all the tile
-        for (int y=0;y<lvl.length;y++){
-            for (int x=0;x<lvl[y].length;x++){
-                int id=lvl[y][x];
-				Tile t = tileManager.getTile(id);
-				if (t == null) continue;
+    public void drawLevel(GraphicsContext gc) {
+        // Lấy Tile cỏ làm nền chung
+        Tile grassTile = tileManager.getTile(TileConstant.GRASS.getId());
 
-				if (t.hasAnimation()) {
-                     gc.drawImage(t.getSprite(animationIndex), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
-                } else {
-                     gc.drawImage(t.getSprite(), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        // vẽ nền 16x16
+        for (int y = 0; y < lvl.length; y++) {
+            for (int x = 0; x < lvl[y].length; x++) {
+                int id = lvl[y][x];
+                Tile t = tileManager.getTile(id);
+                if (t == null) continue;
+
+                // Trường hợp đặc biệt: Nếu là BOSS
+                if (id == TileConstant.BOSS.getId()) {
+                    if (grassTile != null) {
+                        // Lấp đầy ô vuông 16x16 dưới tile Boss
+                        gc.drawImage(grassTile.getSprite(), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+                    }
                 }
-			}
+                // Trường hợp bình thường: Vẽ Tile của chính nó
+                else {
+                    if (t.hasAnimation()) {
+                        gc.drawImage(t.getSprite(animationIndex), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+                    } else {
+                        gc.drawImage(t.getSprite(), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+                    }
+                }
+            }
+        }
+        // Boss được vẽ sau cùng (trên nền)
+        for (int y = 0; y < lvl.length; y++) {
+            for (int x = 0; x < lvl[y].length; x++) {
+                int id = lvl[y][x];
+
+                if (id == TileConstant.BOSS.getId()) {
+                    Tile t = tileManager.getTile(id);
+                    if (t == null) continue;
+
+                    Image bossImg = t.getSprite();
+
+                    // Tính toán tọa độ vẽ
+                    double drawX = x * GRID_SIZE;
+                    // Căn chỉnh Y: Đẩy ảnh lên trên bằng phần chiều cao thừa ra.
+                    double drawY = (y * GRID_SIZE) - (bossImg.getHeight() - GRID_SIZE);
+
+                    // Vẽ Boss kích thước thật (Chỉnh kích thước bằng getWidth/getHeight để tránh lỗi gọi hàm)
+                    gc.drawImage(bossImg, drawX, drawY, bossImg.getWidth(), bossImg.getHeight());
+                }
+            }
         }
     }
     
