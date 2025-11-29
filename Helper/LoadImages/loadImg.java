@@ -1,10 +1,8 @@
-package Helper;
+package Helper.LoadImages;
 
 import javafx.scene.image.Image;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 public class loadImg {
 
