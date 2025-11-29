@@ -1,4 +1,4 @@
-package Helper;
+package Helper.LoadImages;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;

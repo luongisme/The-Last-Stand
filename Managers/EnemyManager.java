@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 import Constant.EntityConstant;
 import Entities.Enemies.Enemy;
-import Helper.loadImg;
-import Scene.Playing;
+import Helper.LoadImages.loadImg;
+import Scenes.Playing;
 
 public class EnemyManager {
 

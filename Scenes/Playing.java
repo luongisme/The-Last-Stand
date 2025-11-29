@@ -2,7 +2,9 @@ package Scenes;
 
 
 import Button.SkillUI;
+import Entities.Enemies.Enemy;
 import Helper.LoadImages.LoadImageSkill;
+import Managers.EnemyManager;
 import Player.Skill.SkillAnimation;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -34,6 +36,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private TowerManager towerManager;
     private Player player;
     private SkillUI skillUI;
+    private EnemyManager enemyManager;
     private List<SkillAnimation> activeSkillAnimations = new ArrayList<>();
 
 
@@ -50,6 +53,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
         initializeSkillUI();
 
+        enemyManager= new EnemyManager(this);
 		towerManager = new TowerManager(this);
         player = new Player(5000, 100); // for example
     }
@@ -89,6 +93,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
         renderSkillUI(gc);
         towerManager.draw(gc);
         drawPlayerStats(gc);
+        enemyManager.draw(gc);
+
 
         for (SkillAnimation anim : activeSkillAnimations) {
             anim.render(gc);
