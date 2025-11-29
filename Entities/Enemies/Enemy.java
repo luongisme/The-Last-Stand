@@ -190,8 +190,5 @@ public abstract class Enemy {
         return true;
     }
 
-    // ==================== Render Stub (unused in JavaFX) ====================
-    public void render(GraphicsContext gc) {
-        // Rendering handled by EnemyManager, so this is empty
-    }
+
 }
