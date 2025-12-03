@@ -17,6 +17,8 @@ public class TileManager {
     public ArrayList<Tile> tiles = new ArrayList<>();
     private Image atlas; // The tileset sprite sheet
     private Image atlas1;
+    private Image atlas2;
+    private Image atlas3;
     private final int TILE_SIZE = 16; 
 
     public TileManager() {
@@ -25,12 +27,20 @@ public class TileManager {
     }
     
     private void loadAtlas() {
-        atlas = loadImage("grass.png");
-        atlas1 = loadImage("image.png"); // Load your tileset image 
-        if (atlas == null) {
+        atlas = loadImage("grass.png");// Load your tileset image
+        atlas1 = loadImage("DirtRoad.png");
+        atlas2 = loadImage("tile1.png");
+        atlas3 = loadImage ( "tile2.png");  
+        if (atlas == null ) {
             System.err.println("Failed to load tileset atlas!");
         }
         if (atlas1 == null) {
+            System.err.println("Failed to load tileset atlas!");
+        }
+        if (atlas2 == null) {
+            System.err.println("Failed to load tileset atlas!");
+        }
+        if (atlas3 == null) {
             System.err.println("Failed to load tileset atlas!");
         }
     }
@@ -89,10 +99,10 @@ public class TileManager {
         
         tiles.add(DIRT = new Tile(getSprite(atlas, 17, 1), TileConstant.DIRT));
         tiles.add(SPAWN = new Tile(getSprite(atlas, 1, 0), TileConstant.SPAWN));
-        tiles.add(ROAD = new Tile(getSprite(atlas, 1, 2), TileConstant.ROAD));
-        tiles.add(GRASS = new Tile(getSprite(atlas, 20, 4), TileConstant.GRASS));
+        tiles.add(ROAD = new Tile(getSprite(atlas1, 4, 1), TileConstant.ROAD));
+        tiles.add(GRASS = new Tile(getSprite(atlas2, 1, 5), TileConstant.GRASS));
         tiles.add(SAND = new Tile(getSprite(atlas, 4, 0), TileConstant.SAND));
-        tiles.add(WATER = new Tile(getSprite(atlas1,0, 3), TileConstant.WATER));
+        tiles.add(WATER = new Tile(getSprite(atlas3,3, 15), TileConstant.WATER));
         tiles.add(WOOD = new Tile(getSprite(atlas, 22, 11), TileConstant.WOOD));
         tiles.add(HOME = new Tile(getSprite(atlas, 7, 0), TileConstant.HOME));
         tiles.add(WALL = new Tile(getSprite(atlas, 8, 0), TileConstant.WALL));
