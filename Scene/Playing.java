@@ -30,8 +30,12 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private long lastUpdateTime = System.nanoTime();
     private boolean levelSwitched = false;
     private int levelIndex = 0;
-
 	private int mouseX, mouseY;
+
+    private int bX = 150; // Adjust these to fit your UI
+    private int bY = 30;
+    private int bW = 100;
+    private int bH = 30;
 
     public Playing(Game game){
         super(game);
@@ -79,12 +83,10 @@ private void loadLevel(int index) {
     public void render(GraphicsContext gc) {
         drawLevel(gc);
 		updateTick();
-
         towerManager.draw(gc);
-
-        drawPlayerStats(gc);
-
+        drawInfo(gc);
         enemyManager.draw(gc);
+        drawSkipButton(gc);
 
         if (!towerManager.isBuildMenuOpen() && !towerManager.isUpgradeMenuOpen()) {
             drawHighlight(gc);
@@ -106,14 +108,43 @@ private void loadLevel(int index) {
             gc.strokeRect(mouseX, mouseY, GRID_SIZE, GRID_SIZE);
         }
     }
+
+    private void drawSkipButton(GraphicsContext gc) {
+        boolean canSkip = waveManager.isThereMoreWaves() && waveManager.isWaveSpawningFinished();
+        if (canSkip) {
+            // background
+            gc.setFill(Color.FORESTGREEN);
+            gc.fillRect(bX, bY, bW, bH);
+            // border
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(2);
+            gc.strokeRect(bX, bY, bW, bH);
+            // text
+            gc.setFill(Color.WHITE);
+            gc.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+            gc.fillText("SKIP WAVE", bX + 5, bY + 20);
+        }
+    }
     
-    private void drawPlayerStats(GraphicsContext gc) { // Demo
+    private void drawInfo(GraphicsContext gc) { // Demo
         gc.setFill(Color.YELLOW);
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         gc.fillText("Money: " + player.getMoney(), 10, 30);
         
         gc.setFill(Color.RED);
         gc.fillText("Health: " + player.getHealth(), 10, 60);
+
+        gc.setFill(Color.BLACK);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        gc.fillText("Wave: " + waveManager.getWaveIndex() + " / " + waveManager.getTotalWaves(), 10, 90);
+
+        gc.setFill(Color.BLACK);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        gc.fillText("Next Wave in : ", 10, 120);
+        if (waveManager.isWaveTimerStarted()) {
+            float timeLeft = waveManager.getTimeLeft();
+            gc.fillText("Next Wave in : " + String.format("%.1f", timeLeft), 10, 120);
+        }
     }
 
     @Override
@@ -142,6 +173,14 @@ private void loadLevel(int index) {
         if (isTilePlaceable(x, y) && towerManager.getTowerAt(clickedPixelX, clickedPixelY) == null) {
             towerManager.openBuildMenu(clickedPixelX, clickedPixelY);
         }
+
+        boolean canSkip = waveManager.isThereMoreWaves() && waveManager.isWaveSpawningFinished();
+        if (canSkip) {
+            if (x >= bX && x <= bX + bW && y >= bY && y <= bY + bH) {
+                waveManager.skipWave();
+                return;
+            }
+        }
 	}
 
 	@Override
@@ -155,9 +194,6 @@ private void loadLevel(int index) {
 	@Override
 	public void mousePressed(int x, int y) {
 		towerManager.handleMousePressed(x, y);
-        enemyManager.addEnemy(x-50, y, EntityConstant.SKELETON);
-        enemyManager.addEnemy(x, y, EntityConstant.GOBLIN);
-        enemyManager.addEnemy(x+50, y, EntityConstant.GOBLIN_BOSS);
 	}
 
 	@Override

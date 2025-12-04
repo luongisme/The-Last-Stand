@@ -63,49 +63,56 @@ public class EnemyManager {
         for (Enemy e : enemiesToRemove) {
             enemies.remove(e);
             
-            if (isWaveFinished()) {
-                playing.loadNextLevel();
+        }
+        if (enemies.isEmpty()) {
+            
+            //Are there more enemies to spawn in CURRENT wave?
+            if (!playing.getWaveManager().isThereMoreEnemiesInWave()) {
+                
+                //Are there MORE WAVES in this level?
+                if (playing.getWaveManager().isThereMoreWaves()) {
+                    // Start the 5 second timer (if not already started)
+                    playing.getWaveManager().startWaveTimer();
+                } 
+                //No more waves? Then the LEVEL IS DONE.
+                else {
+                    //Make sure we don't trigger this if the wave timer is currently ticking down
+                    if (!playing.getWaveManager().isWaveTimerStarted()) {
+                        playing.loadNextLevel();
+                    }
+                }
             }
         }
     }
 
     private boolean isWaveFinished() {
-        // 1. Are there any enemies alive?
         if (!enemies.isEmpty()) {
             return false;
         }
         
-        // 2. Are there more enemies waiting to spawn?
         if (playing.getWaveManager().isThereMoreEnemiesInWave()) {
             return false;
         }
-
-        // 3. (Optional) Are there more waves? 
-        // If you only have 1 wave per level, the code above is enough.
         
         return true; 
     }
 
 
     private void spawnEnemy(){
-        // 2. Get ID from Wave
         int enemyId = playing.getWaveManager().getNextEnemy();
         
-        // 3. Convert ID to Enum (Assumes Enum order matches ID)
         // Check bounds to prevent crash
         if(enemyId < EntityConstant.values().length) {
             EntityConstant enemyType = EntityConstant.values()[enemyId];
             
-            // 4. Define Spawn Location (Left side: x=0, y= middle of screen approx)
             float startX = 0;
-            float startY = 10 * 16; // Example: Row 10 * GridSize
+            float startY = 20*16; // Example: Row 10 * GridSize
             
             addEnemy(startX, startY, enemyType);
         }
     }
 
     public boolean isTimeForNewEnemy(){
-        // 5. Fix Syntax error (added parentheses)
         if(playing.getWaveManager().isTimeForNewEnemy()){
             if(playing.getWaveManager().isThereMoreEnemiesInWave()){
                 return true;

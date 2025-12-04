@@ -64,8 +64,8 @@ public abstract class Enemy {
 
     // ==================== Health Bar Drawing ====================
     public void drawHealthBar(GraphicsContext gc) {
-        float maxHealth = getMaxHealth();   // Add getter or store in class
-        float currentHealth = this.health;  // your existing variable
+        float maxHealth = getMaxHealth();   
+        float currentHealth = this.health; 
 
         if (currentHealth <= 0) return;
 
@@ -93,30 +93,27 @@ public abstract class Enemy {
             gc.setFill(Color.RED);
         }
 
-        // Draw outline (optional)
+        // hp bar outline
         gc.setStroke(Color.BLACK);
         gc.strokeRect(barX - 5, barY, fullWidth, 5);
 
-        // Draw filled HP bar
+        // hp bar
         gc.fillRect(barX - 5, barY, hpWidth, 5);
     }
 
     // ==================== Animation System ====================
     public void update(float dt) {
-        // 1. Update Animation
         updateAnimation(dt);
         
         float speed = 50.0f; 
         x += speed * (dt / 1000.0f);
-        
-        // Set direction to Right (assuming 2 is right in your sprite sheet)
-        lastDir = 2;
+        lastDir = 2; // default is right = 2
     }
 
     private void updateAnimation(float dt) {
         animationTimer += dt;
         if (animationTimer >= animationSpeed) {
-            animationTimer = 0; // or -= animationSpeed
+            animationTimer = 0;
             animationIndex++;
             if (animationIndex >= maxAnimationFrames) {
                 animationIndex = 0;
@@ -137,7 +134,7 @@ public abstract class Enemy {
         // SPEED: pixels per millisecond
         // 0.05f * 16ms ≈ 0.8 pixels per frame. 
         // 0.1f * 16ms ≈ 1.6 pixels per frame.
-        float speed = 0.05f; 
+        float speed = 0.1f; 
         
         float distance = speed * dt;
 
@@ -158,11 +155,6 @@ public abstract class Enemy {
     // ==================== Attack Logic ====================
     public boolean canAttack() {
         return true;
-    }
-
-    // ==================== Render Stub (unused in JavaFX) ====================
-    public void render(GraphicsContext gc) {
-        // Rendering handled by EnemyManager, so this is empty
     }
 
         public void setSpriteSize(int w, int h) {
