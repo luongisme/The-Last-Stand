@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class TileManager {
-    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT, TREE;
+    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT, TREE, TRUNK, ROCK;
 
     public ArrayList<Tile> tiles = new ArrayList<>();
     private Image atlas; // The tileset sprite sheet
@@ -20,6 +20,8 @@ public class TileManager {
     private Image atlas2;
     private Image atlas3;
     private Image treeImage;
+    private Image trunkImage;
+    private Image rockImage;
     private final int TILE_SIZE = 16; 
 
     public TileManager() {
@@ -32,7 +34,9 @@ public class TileManager {
         atlas1 = loadImage("DirtRoad.png");
         atlas2 = loadImage("tile1.png");
         atlas3 = loadImage ( "tile2.png"); 
-        treeImage = loadImage("TX Plant1.png"); 
+        treeImage = loadImage("Tree (1).png"); 
+        trunkImage = loadImage("Trunk (1).png");
+        rockImage = loadImage("Rock (2).png");
         if (atlas == null ) {
             System.err.println("Failed to load tileset atlas!");
         }
@@ -47,6 +51,12 @@ public class TileManager {
         }
         if (treeImage == null) { 
             System.err.println("Failed to load tree image!");
+        }
+        if (trunkImage == null) { 
+            System.err.println("Failed to load trunk image!");
+        }
+        if (rockImage == null) { 
+            System.err.println("Failed to load trunk image!");
         }
     }
     
@@ -111,11 +121,12 @@ public class TileManager {
         tiles.add(WOOD = new Tile(getSprite(atlas, 22, 11), TileConstant.WOOD));
         tiles.add(HOME = new Tile(getSprite(atlas, 7, 0), TileConstant.HOME));
         tiles.add(WALL = new Tile(getSprite(atlas, 8, 0), TileConstant.WALL));
-        tiles.add(STONE = new Tile(getSprite(atlas, 0, 13), TileConstant.STONE));
+        tiles.add(STONE = new Tile(getSprite(atlas2, 1, 5), TileConstant.STONE));
         tiles.add(CURB = new Tile(getSprite(atlas, 1,3),TileConstant.CURB));
         tiles.add(AVAILABLEDIRT = new Tile(getSprite(atlas, 14,5), TileConstant.AVAILABLEDIRT));
         tiles.add(TREE = new Tile(treeImage, TileConstant.TREE));
-        
+        tiles.add(TRUNK = new Tile(trunkImage, TileConstant.TRUNK));
+        tiles.add(ROCK = new Tile(rockImage, TileConstant.ROCK));
         // **animation for WATER?**
         // BufferedImage[] waterFrames = loadWaterAnimation();
         // Tile animatedWater = new Tile(waterFrames, TileConstant.WATER);

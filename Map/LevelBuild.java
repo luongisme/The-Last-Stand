@@ -1,7 +1,7 @@
 package Map;
 
 import Constant.TileConstant;
-
+import java.util.Random;
 public class LevelBuild {
     private static int[][] map;
     public static final int emptyTile = -1;
@@ -174,19 +174,72 @@ public class LevelBuild {
                 objectMap[i][j] = emptyTile; 
             }
         }
-        
-        // Đặt một vài cây (ID 12) lên trên vùng cỏ (ID 3)
-        objectMap[7][0] = TileConstant.TREE.getId();
-        objectMap[8][5] = TileConstant.TREE.getId();
-        objectMap[12][0] = TileConstant.TREE.getId(); 
-        objectMap[15][6] = TileConstant.TREE.getId();
-        objectMap[18][0] = TileConstant.TREE.getId();
-        objectMap[22][0] = TileConstant.TREE.getId();
-        objectMap[25][0] = TileConstant.TREE.getId();
-        objectMap[33][0] = TileConstant.TREE.getId();
-        objectMap[40][0] = TileConstant.TREE.getId();
+
+        placeRandomTrees(objectMap,100, 0, 0, 30, 12 );  // rừng lớn hơn
+        placeRandomTrees(objectMap,15, 30, 0, 35, 10 );
+        placeRandomTrees(objectMap,35, 0, 12, 4, 45 );
+        placeRandomTrees(objectMap,10, 4, 12, 8, 20 );
+        placeRandomTrees(objectMap,15, 0, 58,3, 76 );
+        placeRandomTrees(objectMap, 20, 0, 76,5, 85 );
+        placeRandomTrees(objectMap,5, 37, 22,40, 25 );
+        placeRandomTrees(objectMap,30, 40, 18,45, 30 );
+        placeRandomTrees(objectMap,80, 43, 40,45, 92 );
+        placeRandomTrees(objectMap,50, 12, 88,43, 92 );
+        placeRandomTrees(objectMap,10, 36, 84,43, 88 );
+
+        placeRandomTrunk(objectMap,30, 0, 0, 30, 15 );
+        placeRandomTrunk(objectMap,20, 43, 40,45, 92 );
+        placeRandomTrunk(objectMap,10, 12, 88,43, 92 );
+
+        placeRandomRock(objectMap,5, 9,40,17, 66 );
+        placeRandomRock(objectMap,3, 14,26,19, 40 );
+        placeRandomRock(objectMap,5, 31,40,36, 70 );
+        placeRandomRock(objectMap,3, 22,70,34, 77 );
         return objectMap;
     }
+
+        // Đặt một vài cây (ID 12) lên trên vùng cỏ (ID 3)
+    public static void placeRandomTrees(int[][] objectMap, int treeCount, int startX, int startY, int endX, int endY) {
+        Random rand = new Random();
+        int treeId = TileConstant.TREE.getId();
+        int placed = 0;
+        while (placed < treeCount){
+            int x = rand.nextInt(endX - startX + 1) + startX;
+            int y = rand.nextInt(endY - startY + 1) + startY;
+            if (objectMap[x][y] != treeId) {
+                objectMap[x][y] = treeId;
+                placed++;
+            }
+        }
+    }
+    public static void placeRandomTrunk(int[][] objectMap, int trunkCount, int startX, int startY, int endX, int endY) {
+        Random rand = new Random();
+        int trunkId = TileConstant.TRUNK.getId();
+        int placed = 0;
+        while (placed < trunkCount){
+            int x = rand.nextInt(endX - startX + 1) + startX;
+            int y = rand.nextInt(endY - startY + 1) + startY;
+            if (objectMap[x][y] != trunkId) {
+                objectMap[x][y] = trunkId;
+                placed++;
+            }
+        }
+    }
+    public static void placeRandomRock(int[][] objectMap, int rockCount, int startX, int startY, int endX, int endY) {
+        Random rand = new Random();
+        int rockId = TileConstant.ROCK.getId();
+        int placed = 0;
+        while (placed < rockCount){
+            int x = rand.nextInt(endX - startX + 1) + startX;
+            int y = rand.nextInt(endY - startY + 1) + startY;
+            if (objectMap[x][y] != rockId) {
+                objectMap[x][y] = rockId;
+                placed++;
+            }
+        }
+    }
+
+
     // public static void main(String[] args) {
     //     int[][] a = getFirstMapData();
     //     int count = 0;
