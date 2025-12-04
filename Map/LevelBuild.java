@@ -1,8 +1,10 @@
 package Map;
 
+import Constant.TileConstant;
+
 public class LevelBuild {
     private static int[][] map;
-    
+    public static final int emptyTile = -1;
     // all 3 maps are demo version data, there will be further edits
     public static int[][] getFirstMapData() {
         map = new int[][] {
@@ -160,6 +162,31 @@ public class LevelBuild {
         return map;
     }
 
+    public static int[][] getSecondObjectMapData() {
+        int[][] baseMap = getSecondMapData();
+        int ROWS = baseMap.length;
+        int COLS = baseMap[0].length;
+        int[][] objectMap = new int[ROWS][COLS];
+        
+        // Thiết lập Object Map mặc định là EMPTY_TILE
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                objectMap[i][j] = emptyTile; 
+            }
+        }
+        
+        // Đặt một vài cây (ID 12) lên trên vùng cỏ (ID 3)
+        objectMap[7][0] = TileConstant.TREE.getId();
+        objectMap[8][5] = TileConstant.TREE.getId();
+        objectMap[12][0] = TileConstant.TREE.getId(); 
+        objectMap[15][6] = TileConstant.TREE.getId();
+        objectMap[18][0] = TileConstant.TREE.getId();
+        objectMap[22][0] = TileConstant.TREE.getId();
+        objectMap[25][0] = TileConstant.TREE.getId();
+        objectMap[33][0] = TileConstant.TREE.getId();
+        objectMap[40][0] = TileConstant.TREE.getId();
+        return objectMap;
+    }
     // public static void main(String[] args) {
     //     int[][] a = getFirstMapData();
     //     int count = 0;

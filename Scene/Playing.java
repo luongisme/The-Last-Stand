@@ -2,6 +2,7 @@ package Scene;
 
 import Player.Player;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -12,12 +13,14 @@ import Managers.TileManager;
 import Managers.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
+import Constant.TileConstant;
 import Entities.Tower.Tower;
 
 public class Playing extends GameScene implements Render, SceneMethod {
     private final int GRID_SIZE = 16;
 
-	private int[][] lvl;
+    private int[][] baseLvl;
+	private int[][] objectLvl;
 	private TileManager tileManager;
     private TowerManager towerManager;
     private Player player;
@@ -27,7 +30,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		lvl = LevelBuild.getSecondMapData();
+		baseLvl = LevelBuild.getSecondMapData();
+        objectLvl = LevelBuild.getSecondObjectMapData();
 
 		towerManager = new TowerManager(this);
         player = new Player(5000, 100); // for example
@@ -141,9 +145,9 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
 	public void drawLevel(GraphicsContext gc){
         // go through all the tile
-        for (int y=0;y<lvl.length;y++){
-            for (int x=0;x<lvl[y].length;x++){
-                int id=lvl[y][x];
+        for (int y=0; y < baseLvl.length; y++){
+            for (int x=0; x < baseLvl[y].length; x++){
+                int id= baseLvl[y][x];
 				Tile t = tileManager.getTile(id);
 				if (t == null) continue;
 
@@ -153,6 +157,35 @@ public class Playing extends GameScene implements Render, SceneMethod {
                      gc.drawImage(t.getSprite(), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
                 }
 			}
+        }
+
+        for (int y = 0; y < objectLvl.length; y++){
+            for (int x = 0; x < objectLvl[y].length; x++){
+                int id = objectLvl[y][x]; // Lấy ID của Object Tile
+                
+                // Chỉ vẽ nếu ô đó KHÔNG phải là EMPTY_TILE (-1)
+                if (id != LevelBuild.emptyTile){
+                    Tile t = tileManager.getTile(id);
+                    if (t == null) continue;
+                    
+                    double drawX = x * GRID_SIZE;
+                    double drawY = y * GRID_SIZE;
+                    Image sprite = t.getSprite();
+                    
+                    // Nếu là CÂY, điều chỉnh vị trí Y để nó nằm đúng
+                    if (id == TileConstant.TREE.getId() && sprite != null && sprite.getHeight() > GRID_SIZE) {
+                        double yOffset = sprite.getHeight() - GRID_SIZE;
+                        drawY -= yOffset; // Đẩy sprite lên trên
+                        
+                        // Vẽ cây với kích thước thật (sẽ to hơn 16x16)
+                        gc.drawImage(sprite, drawX, drawY, sprite.getWidth(), sprite.getHeight());
+                        
+                    } else if (sprite != null) {
+                        // Vẽ các vật thể 16x16 khác
+                        gc.drawImage(sprite, drawX, drawY, GRID_SIZE, GRID_SIZE);
+                    }
+                }
+            }
         }
     }
     
@@ -168,20 +201,29 @@ public class Playing extends GameScene implements Render, SceneMethod {
         return player;
     }
     
-	private boolean isTilePlaceable(int x, int y) {
+    private boolean isTilePlaceable(int x, int y) {
         int tileX = x / GRID_SIZE;
         int tileY = y / GRID_SIZE;
 
-        if (tileY < 0 || tileY >= lvl.length || tileX < 0 || tileX >= lvl[0].length) {
+        // >>> START ADD/CHANGE: Sửa kiểm tra biên
+        if (tileY < 0 || tileY >= baseLvl.length || tileX < 0 || tileX >= baseLvl[0].length) {
             return false;
         }
+        // >>> END ADD/CHANGE: Sửa kiểm tra biên
 
-        int id = lvl[tileY][tileX];
-        Tile t = tileManager.getTile(id); 
+        // >>> START ADD/CHANGE: Kiểm tra Layer Vật thể (Object Layer) <<<
+        int objectId = objectLvl[tileY][tileX];
+        if (objectId != LevelBuild.emptyTile && !tileManager.getTile(objectId).canPlaceTower()) {
+            return false;
+        }
+        // >>> END ADD/CHANGE: Kiểm tra Layer Vật thể
+        
+        // Kiểm tra Layer Nền (Base Layer)
+        int baseId = baseLvl[tileY][tileX]; // Đổi từ 'id' thành 'baseId'
+        Tile t = tileManager.getTile(baseId); 
         if (t == null) return false;
         
         return t.canPlaceTower(); 
     }
 
-    
 }
