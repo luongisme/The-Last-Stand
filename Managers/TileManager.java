@@ -16,6 +16,8 @@ public class TileManager {
 
     public ArrayList<Tile> tiles = new ArrayList<>();
     private Image atlas; // The tileset sprite sheet
+    private Image atlas1;
+    private Image atlas2;
     private final int TILE_SIZE = 16; 
 
     public TileManager() {
@@ -25,7 +27,15 @@ public class TileManager {
     
     private void loadAtlas() {
         atlas = loadImage("grass.png"); // Load your tileset image
+        atlas1 = loadImage("DirtRoad.png");
+        atlas2 = loadImage("tile1.png");
         if (atlas == null) {
+            System.err.println("Failed to load tileset atlas!");
+        }
+        if (atlas1 == null) {
+            System.err.println("Failed to load tileset atlas!");
+        }
+        if (atlas2 == null) {
             System.err.println("Failed to load tileset atlas!");
         }
     }
