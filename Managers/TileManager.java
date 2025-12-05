@@ -10,9 +10,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.PrimitiveIterator;
 
 public class TileManager {
-    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT, TREE, TRUNK, ROCK;
+    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT, TREE, TRUNK, ROCK, WALLLAST1, WALLLAST2, WALL1, DOOR;
 
     public ArrayList<Tile> tiles = new ArrayList<>();
     private Image atlas; // The tileset sprite sheet
@@ -21,6 +22,10 @@ public class TileManager {
     private Image treeImage;
     private Image trunkImage;
     private Image rockImage;
+    private Image walllast1Image;
+    private Image walllast2Image;
+    private Image wallImage;
+    private Image doorImage;
     private final int TILE_SIZE = 16; 
 
     public TileManager() {
@@ -35,6 +40,10 @@ public class TileManager {
         treeImage = loadImage("Tree (1).png");
         trunkImage = loadImage("Trunk (1).png");
         rockImage = loadImage("Rock (2).png");
+        walllast1Image = loadImage("Castle_last2.png");
+        walllast2Image = loadImage("Castle_last1.png");
+        wallImage = loadImage("Castle_wall1.png");
+        doorImage = loadImage("Castle_door.png");
         if (atlas == null) {
             System.err.println("Failed to load tileset atlas!");
         }
@@ -52,6 +61,18 @@ public class TileManager {
         }
         if (rockImage == null) {
             System.err.println("Failed to load tile trunk!");
+        }
+        if (walllast1Image == null) {
+            System.err.println("Failed to load tile wall last left!");
+        }
+        if (walllast2Image == null) {
+            System.err.println("Failed to load tile wall last right!");
+        }
+        if (wallImage == null) {
+            System.err.println("Failed to load tile wall!");
+        }
+        if (doorImage == null) {
+            System.err.println("Failed to load tile wall door!");
         }
     }
     
@@ -115,14 +136,17 @@ public class TileManager {
         tiles.add(WATER = new Tile(getSprite(atlas,5, 0), TileConstant.WATER));
         tiles.add(WOOD = new Tile(getSprite(atlas,6, 0), TileConstant.WOOD));
         tiles.add(HOME = new Tile(getSprite(atlas,7, 0), TileConstant.HOME));
-        tiles.add(WALL = new Tile(getSprite(atlas, 10, 13), TileConstant.WALL));
+        tiles.add(WALL = new Tile(getSprite(atlas2,1, 5), TileConstant.WALL));
         tiles.add(STONE = new Tile(getSprite(atlas,9, 0), TileConstant.STONE));
         tiles.add(CURB = new Tile(getSprite(atlas, 1,3),TileConstant.CURB));
         tiles.add(AVAILABLEDIRT = new Tile(getSprite(atlas, 14,5), TileConstant.AVAILABLEDIRT));
         tiles.add(TREE = new Tile(treeImage, TileConstant.TREE));
         tiles.add(TRUNK = new Tile(trunkImage, TileConstant.TRUNK));
         tiles.add(ROCK = new Tile(rockImage, TileConstant.ROCK));
-
+        tiles.add(WALLLAST1 = new Tile(walllast1Image, TileConstant.WALLLAST1));
+        tiles.add(WALLLAST2 = new Tile(walllast2Image, TileConstant.WALLLAST2));
+        tiles.add(WALL1 = new Tile(wallImage, TileConstant.WALL1));
+        tiles.add(DOOR = new Tile(doorImage, TileConstant.DOOR));
         
         // **animation for WATER?**
         // BufferedImage[] waterFrames = loadWaterAnimation();
