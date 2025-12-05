@@ -1,7 +1,7 @@
 package Input;
 
-import javafx.scene.input.KeyEvent;
 import Main.GameState;
+import javafx.scene.input.KeyEvent;
 
 public class KeyboardListener {
     

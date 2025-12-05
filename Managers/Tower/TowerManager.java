@@ -1,15 +1,14 @@
 package Managers.Tower;
 
-import java.util.ArrayList;
-
-import javafx.scene.image.Image;
-import javafx.scene.canvas.GraphicsContext;
-
 import Constant.TowerConstant;
 import Entities.Tower.Tower;
-import Scenes.Playing;
 import Managers.UI.NotificationManager;
 import Managers.UI.TowerMenuManager;
+import Scenes.Playing;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+import java.util.ArrayList;
 
 public class TowerManager {
     private Playing playing;

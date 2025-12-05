@@ -2,26 +2,23 @@ package Scenes;
 
 
 import Button.SkillUI;
-import Entities.Enemies.Enemy;
+import Entities.Tower.Tower;
 import Helper.LoadImages.LoadImageSkill;
+import Interfaces.Render;
+import Main.Game;
+import Main.GameScene;
 import Managers.EnemyManager;
+import Managers.TileManager;
+import Managers.Tower.TowerManager;
+import Map.LevelBuild;
+import Map.Tile;
+import Player.Player;
 import Player.Skill.SkillAnimation;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-
-
-import Interfaces.Render;
-import Main.Game;
-import Main.GameScene;
-import Managers.TileManager;
-import Managers.Tower.TowerManager;
-import Map.LevelBuild;
-import Map.Tile;
-import Entities.Tower.Tower;
-import Player.Player;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -71,9 +68,11 @@ public class Playing extends GameScene implements Render, SceneMethod {
         updateTick();
         towerManager.update();
         double dt = 0.016; // ~60 FPS (16ms per frame)
+        enemyManager.update((float)dt);
+
 
         if (!activeSkillAnimations.isEmpty()) {
-            System.out.println("🔄 Updating " + activeSkillAnimations.size() + " active animations (dt=" + dt + ")");
+            System.out.println("Updating " + activeSkillAnimations.size() + " active animations (dt=" + dt + ")");
         }
 
         Iterator<SkillAnimation> it = activeSkillAnimations.iterator();
@@ -82,7 +81,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
             anim.update(dt);
             if (anim.isFinished()) {
                 it.remove();
-                System.out.println("✅ Animation finished and removed");
+                System.out.println("Animation finished and removed");
             }
         }
     }
@@ -308,5 +307,31 @@ public class Playing extends GameScene implements Render, SceneMethod {
         if (t == null) return false;
         
         return t.canPlaceTower(); 
+    }
+
+    public int getTileTypeAt(int x, int y) {
+        int tileX = x / GRID_SIZE;
+        int tileY = y / GRID_SIZE;
+
+        if (tileY < 0 || tileY >= lvl.length || tileX < 0 || tileX >= lvl[0].length) {
+            return -1;
+        }
+
+        return lvl[tileY][tileX];
+    }
+
+    public boolean isTileWalkable(int x, int y) {
+        int tileX = x / GRID_SIZE;
+        int tileY = y / GRID_SIZE;
+
+        if (tileY < 0 || tileY >= lvl.length || tileX < 0 || tileX >= lvl[0].length) {
+            return false;
+        }
+
+        int id = lvl[tileY][tileX];
+        Tile t = tileManager.getTile(id);
+        if (t == null) return false;
+
+        return t.isWalkable();
     }
 }

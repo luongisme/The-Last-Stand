@@ -1,6 +1,9 @@
 package Constant;
 
-import Entities.Enemies.*;
+import Entities.Enemies.Enemy;
+import Entities.Enemies.Goblin;
+import Entities.Enemies.GoblinBoss;
+import Entities.Enemies.Skeleton;
 
 public enum EntityConstant {
 

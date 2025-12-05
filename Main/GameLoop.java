@@ -1,6 +1,7 @@
 package Main;
 
 import javafx.animation.AnimationTimer;
+
 import java.util.logging.Logger;
 
 public class GameLoop extends AnimationTimer {

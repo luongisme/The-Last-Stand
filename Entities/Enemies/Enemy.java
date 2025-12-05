@@ -1,8 +1,8 @@
 package Entities.Enemies;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.geometry.Rectangle2D;
 
 public abstract class Enemy {
 
@@ -14,11 +14,14 @@ public abstract class Enemy {
     private float speedX, speedY;
     private int enemyType;
 
+    private boolean isHit;
+    private boolean isAlive;
+
     protected int frameW = 32;
     protected int frameH = 32;
 
     private int barWidth;
-    private final int barLength = 5;
+    private final int barLength = 4;
 
     // Directions
     public static final int DOWN = 0;
@@ -26,30 +29,24 @@ public abstract class Enemy {
     public static final int RIGHT = 2;
     public static final int UP = 3;
 
-    private int lastDir = DOWN;
+    private int lastDir = RIGHT;
 
-    // Patrol logic
-    private float patrolTimer = 0;
-    private float patrolInterval = 2000; 
-    private int patrolStep = 0;
-
-    private final int[] patrolDirections = {
-        RIGHT, DOWN, LEFT, UP
-    };
 
     // JavaFX hitbox
     private Rectangle2D bounds;
 
     // Animation (time-based)
     protected int animationIndex = 0;
-    protected float animationTimer = 0f; // accumulated time in ms
-    protected float animationSpeed = 100f; // ms per frame (default)
+    protected float animationTimer = 5f; // accumulated time in ms
+    protected float animationSpeed = 0.1f; // 0.1s = 100ms / frame
     protected int maxAnimationFrames = 3;
 
     public Enemy(float x, float y, int enemyType) {
         this.x = x;
         this.y = y;
         this.enemyType = enemyType;
+        this.isHit=false;
+        this.isAlive=true;
         this.maxHealth = 50; 
         this.health = maxHealth;
         this.bounds = new Rectangle2D(x, y, 32, 32);
@@ -73,12 +70,16 @@ public abstract class Enemy {
     public int getEnemyHealth() { return health; }
     public int getMaxHealth(){return maxHealth;}
     public int getEnemyDamage() { return damage; }
+    public boolean getIsAlive() {return isAlive;}
     public float getEnemySpeedX() { return speedX; }
     public float getEnemySpeedY() { return speedY; }
     public Rectangle2D getBounds() { return bounds; }
     public int getEnemyType() { return enemyType; }
     public int getLastDir() { return lastDir; }
     public int getAnimationIndex() { return animationIndex; }
+    public boolean isHit() {return isHit;}
+
+
 
     // ==================== Setters ====================
     public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
@@ -86,6 +87,8 @@ public abstract class Enemy {
     public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
     public void setEnemyDamage(int damage) { this.damage = damage; }
     public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
+    public void setAlive(boolean alive) {isAlive = alive;}
+    public void setHit(boolean hit) {isHit = hit;}
     public void setEnemySpeedY(float speedY) { this.speedY = speedY; }
     public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
     public void setLastDir(int lastDir) { this.lastDir = lastDir; }
@@ -155,19 +158,9 @@ public abstract class Enemy {
     }
 
     private void updateMove(float dt) {
-        // Simple Patrol Logic
-        patrolTimer += dt;
-        if (patrolTimer >= patrolInterval) {
-            patrolTimer = 0;
-            patrolStep++;
-            if (patrolStep >= patrolDirections.length) patrolStep = 0;
-            lastDir = patrolDirections[patrolStep];
-        }
 
-        // SPEED: pixels per millisecond
-        // 0.05f * 16ms ≈ 0.8 pixels per frame. 
-        // 0.1f * 16ms ≈ 1.6 pixels per frame.
-        float speed = 0.05f; 
+
+        float speed = 100f;
         
         float distance = speed * dt;
 
@@ -183,6 +176,7 @@ public abstract class Enemy {
         this.x += dx;
         this.y += dy;
         updateBounds();
+
     }
 
     // ==================== Attack Logic ====================
@@ -190,8 +184,16 @@ public abstract class Enemy {
         return true;
     }
 
-    // ==================== Render Stub (unused in JavaFX) ====================
-    public void render(GraphicsContext gc) {
-        // Rendering handled by EnemyManager, so this is empty
+    // ==================== Take Damage Logic ====================
+
+    //handle damage taken and death
+    public void takeDamage(int damage){
+        this.isHit=true;
+        this.health-=damage;
+        if(this.health<=0) {
+            this.isAlive = false;
+            this.health = 0;
+        }
     }
+
 }

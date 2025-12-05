@@ -1,7 +1,5 @@
 package Player.Skill;
 
-import Main.GameScreen;
-
 public abstract class AreaEffectSkill {
     private int id;
     private String name;

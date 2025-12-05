@@ -1,18 +1,16 @@
 package Main;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
 import Input.KeyboardListener;
 import Scenes.GameOver;
 import Scenes.Menu;
 import Scenes.Playing;
 import Scenes.Settings;
-
 import Sound.MusicManager;
 import Sound.MusicSetting;
+import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 
 public class Game extends Application {

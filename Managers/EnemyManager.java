@@ -1,5 +1,10 @@
 package Managers;
 
+import Constant.EntityConstant;
+import Entities.Enemies.Enemy;
+import Helper.LoadImages.loadImg;
+import Map.LevelBuild;
+import Scenes.Playing;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -7,15 +12,11 @@ import javafx.scene.image.WritableImage;
 
 import java.util.ArrayList;
 
-import Constant.EntityConstant;
-import Entities.Enemies.Enemy;
-import Helper.LoadImages.loadImg;
-import Scenes.Playing;
-
 public class EnemyManager {
 
     private Playing playing;
     private ArrayList<Enemy> enemies = new ArrayList<>();
+    private LevelBuild levelBuild;
 
     private float directionX, directionY;
 
@@ -40,6 +41,21 @@ public class EnemyManager {
 
     public void update(float dt){
         for (Enemy e : enemies) {
+            if(e.getIsAlive()){
+
+                int centerX = (int)(e.getX() + e.getFrameW() / 2f);
+                int centerY = (int)(e.getY() + e.getFrameH() / 2f);
+
+                int tileType = getTileTypeAt(centerX, centerY);
+
+                System.out.println(
+                "[EnemyManager] Enemy type=" + e.getEnemyType()
+                        + " pos=(" + centerX + "," + centerY + ")"
+                        + " tileType=" + tileType
+                );
+
+
+            }
             e.update(dt);
         }
     }
@@ -55,7 +71,7 @@ public class EnemyManager {
             int fw = type.getFrameW();
             int fh = type.getFrameH();
 
-            String path = "resource/sprites/" + type.getSpriteName();
+            String path = "resource/assets/assets/sprites/" + type.getSpriteName();
             Image atlas = loadImg.load(path);
 
             if (atlas == null) {
@@ -91,6 +107,7 @@ public class EnemyManager {
         }
     }
 
+
     public void draw(GraphicsContext gc){
         for (Enemy e : enemies) {
             drawEnemy(e, gc);
@@ -114,6 +131,19 @@ public class EnemyManager {
             gc.drawImage(img, e.getX(), e.getY());
         }
     }
+
+    private int getTileTypeAt(int x, int y){
+        // currently getting firstMap as them all have the same size
+
+        int maxY= levelBuild.getRowFirst()*16;
+        int maxX= levelBuild.getColFirst()*16;
+
+        if (x<0 || x>=maxX || y<0 || y>=maxY){
+            return -1;
+        }
+        return playing.getTileTypeAt(x,y);
+    }
+
 
     public float getDirectionX() { return directionX; }
     public float getDirectionY() { return directionY; }

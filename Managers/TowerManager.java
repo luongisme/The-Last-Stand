@@ -1,24 +1,23 @@
 package Managers;
 
-import java.util.ArrayList;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
-
+import Button.TowerButton;
+import Constant.TowerConstant;
+import Entities.Tower.Tower;
+import Scenes.Playing;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import Constant.TowerConstant;
-import Entities.Tower.Tower;
-import Scenes.Playing;
-import Button.TowerButton;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 public class TowerManager {
     private Playing playing;

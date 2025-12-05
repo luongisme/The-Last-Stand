@@ -1,19 +1,19 @@
 package Scenes;
 
+import Button.MenuButton;
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
 import Main.GameState;
-import Button.MenuButton;
-
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Menu extends GameScene implements Render, SceneMethod {
 	private static final Logger logger = Logger.getLogger(Menu.class.getName());
