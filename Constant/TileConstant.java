@@ -13,7 +13,10 @@ public enum TileConstant {
     WALL(8, "wall.png", false),
     STONE(9, "stone.png", false),
     CURB(10,"curb.png",false),
-    AVAILABLEDIRT(11,"Adirt.png",true);
+    AVAILABLEDIRT(11,"Adirt.png",true),
+    TREE(12,"Tree.png",false),
+    TRUNK(13,"Trunk.png",false),
+    ROCK(14,"Rock.png",false);
     
 
     private final int id;

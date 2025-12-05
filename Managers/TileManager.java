@@ -12,12 +12,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class TileManager {
-    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT;
+    public Tile DIRT, SPAWN, ROAD, GRASS, SAND, WATER, WOOD, HOME, WALL, STONE, CURB, AVAILABLEDIRT, TREE, TRUNK, ROCK;
 
     public ArrayList<Tile> tiles = new ArrayList<>();
     private Image atlas; // The tileset sprite sheet
     private Image atlas1;
     private Image atlas2;
+    private Image treeImage;
+    private Image trunkImage;
+    private Image rockImage;
     private final int TILE_SIZE = 16; 
 
     public TileManager() {
@@ -29,6 +32,9 @@ public class TileManager {
         atlas = loadImage("grass.png"); // Load your tileset image
         atlas1 = loadImage("DirtRoad.png");
         atlas2 = loadImage("tile1.png");
+        treeImage = loadImage("Tree (1).png");
+        trunkImage = loadImage("Trunk (1).png");
+        rockImage = loadImage("Rock (2).png");
         if (atlas == null) {
             System.err.println("Failed to load tileset atlas!");
         }
@@ -38,17 +44,26 @@ public class TileManager {
         if (atlas2 == null) {
             System.err.println("Failed to load tileset atlas!");
         }
+        if (treeImage == null) {
+            System.err.println("Failed to load tile tree!");
+        }
+        if (trunkImage == null) {
+            System.err.println("Failed to load tile trunk!");
+        }
+        if (rockImage == null) {
+            System.err.println("Failed to load tile trunk!");
+        }
     }
     
-    private Image getSprite(int xCord, int yCord) {
-        if (atlas == null) return null;
+    private Image getSprite(Image source, int xCord, int yCord) {
+        if (source == null) return null;
         
         // Calculate pixel coordinates
         int x = xCord * TILE_SIZE;
         int y = yCord * TILE_SIZE;
         
         // Extract sub-image using JavaFX PixelReader
-        PixelReader reader = atlas.getPixelReader();
+        PixelReader reader = source.getPixelReader();
         WritableImage subImage = new WritableImage(reader, x, y, TILE_SIZE, TILE_SIZE);
         
         return subImage;
@@ -92,19 +107,19 @@ public class TileManager {
 
     private void createTiles() {
         
-        tiles.add(DIRT = new Tile(getSprite(17, 1), TileConstant.DIRT));
-        tiles.add(SPAWN = new Tile(getSprite(1, 0), TileConstant.SPAWN));
-        tiles.add(ROAD = new Tile(getSprite(1, 0), TileConstant.ROAD));
-        tiles.add(GRASS = new Tile(getSprite(0, 0), TileConstant.GRASS));
-        tiles.add(SAND = new Tile(getSprite(4, 0), TileConstant.SAND));
-        tiles.add(WATER = new Tile(getSprite(5, 0), TileConstant.WATER));
-        tiles.add(WOOD = new Tile(getSprite(6, 0), TileConstant.WOOD));
-        tiles.add(HOME = new Tile(getSprite(7, 0), TileConstant.HOME));
-        tiles.add(WALL = new Tile(getSprite(10, 13), TileConstant.WALL));
-        tiles.add(STONE = new Tile(getSprite(9, 0), TileConstant.STONE));
-        tiles.add(CURB = new Tile(getSprite(1,3),TileConstant.CURB));
-        tiles.add(AVAILABLEDIRT = new Tile(getSprite(14,5), TileConstant.AVAILABLEDIRT));
-    
+        tiles.add(DIRT = new Tile(getSprite(atlas,17, 1), TileConstant.DIRT));
+        tiles.add(SPAWN = new Tile(getSprite(atlas, 1, 0), TileConstant.SPAWN));
+        tiles.add(ROAD = new Tile(getSprite(atlas1,4, 1), TileConstant.ROAD));
+        tiles.add(GRASS = new Tile(getSprite(atlas2,1, 5), TileConstant.GRASS));
+        tiles.add(SAND = new Tile(getSprite(atlas,4, 0), TileConstant.SAND));
+        tiles.add(WATER = new Tile(getSprite(atlas,5, 0), TileConstant.WATER));
+        tiles.add(WOOD = new Tile(getSprite(atlas,6, 0), TileConstant.WOOD));
+        tiles.add(HOME = new Tile(getSprite(atlas,7, 0), TileConstant.HOME));
+        tiles.add(WALL = new Tile(getSprite(atlas, 10, 13), TileConstant.WALL));
+        tiles.add(STONE = new Tile(getSprite(atlas,9, 0), TileConstant.STONE));
+        tiles.add(CURB = new Tile(getSprite(atlas, 1,3),TileConstant.CURB));
+        tiles.add(AVAILABLEDIRT = new Tile(getSprite(atlas, 14,5), TileConstant.AVAILABLEDIRT));
+
         
         // **animation for WATER?**
         // BufferedImage[] waterFrames = loadWaterAnimation();
