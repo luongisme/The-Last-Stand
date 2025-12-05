@@ -119,6 +119,9 @@ public class TileManager {
         tiles.add(STONE = new Tile(getSprite(atlas,9, 0), TileConstant.STONE));
         tiles.add(CURB = new Tile(getSprite(atlas, 1,3),TileConstant.CURB));
         tiles.add(AVAILABLEDIRT = new Tile(getSprite(atlas, 14,5), TileConstant.AVAILABLEDIRT));
+        tiles.add(TREE = new Tile(treeImage, TileConstant.TREE));
+        tiles.add(TRUNK = new Tile(trunkImage, TileConstant.TRUNK));
+        tiles.add(ROCK = new Tile(rockImage, TileConstant.ROCK));
 
         
         // **animation for WATER?**
