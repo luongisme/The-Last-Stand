@@ -1,6 +1,7 @@
 package Scene;
 
 import Player.Player;
+import Sound.MusicManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -8,6 +9,7 @@ import javafx.scene.text.FontWeight;
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
+import Main.GameState;
 import Managers.TileManager;
 import Managers.TowerManager;
 import Managers.WaveManager;
@@ -57,25 +59,45 @@ public class Playing extends GameScene implements Render, SceneMethod {
         updateTick();
         towerManager.update();
         enemyManager.update(dt);
+        // CHECK LOSE
+        if (player.getHealth() <= 0) {
+            game.getGameOver().setLose();
+            GameState.SetGameState(GameState.GAME_OVER);
+            MusicManager.getInstance().stopAll();
+            return;
+        }
+
+        // CHECK WIN
+        if (!waveManager.isThereMoreWaves() && waveManager.isWaveSpawningFinished()) {
+            boolean isFinalLevel = (levelIndex == 2); 
+            game.getGameOver().setWin(isFinalLevel);
+            GameState.SetGameState(GameState.GAME_OVER);
+            MusicManager.getInstance().stopAll();
+        }
     }
     public void loadNextLevel() {
         levelIndex++;
-        if (levelIndex > 2) { // If we passed level 3 (index 2)
+        if (levelIndex > 2) { 
             System.out.println("GAME COMPLETED!");
-            levelIndex = 0; // Loop back to start or go to Menu
-        }
-        
+            levelIndex = 2; // Loop back to start or go to Menu
+        } 
         loadLevel(levelIndex);
     }
 
-private void loadLevel(int index) {
+    public void reset() {
+        levelIndex = 0;
+        player = new Player(5000, 100); 
+        waveManager.reset();
+        enemyManager.reset();
+        loadLevel(levelIndex);
+    }
+
+
+    private void loadLevel(int index) {
         System.out.println("Loading Level Index: " + index);
-        
         lvl = LevelBuild.getLevelData(index);
-        
         enemyManager.reset();
         //towerManager.reset();
-        
         waveManager.reset(); 
     }
 
@@ -126,7 +148,7 @@ private void loadLevel(int index) {
         }
     }
     
-    private void drawInfo(GraphicsContext gc) { // Demo
+    private void drawInfo(GraphicsContext gc) { 
         gc.setFill(Color.YELLOW);
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         gc.fillText("Money: " + player.getMoney(), 10, 30);

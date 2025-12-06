@@ -43,7 +43,7 @@ public class GameScreen extends Canvas {
                 renderBlack();
                 break;
             case GAME_OVER:
-                renderBlack();
+                game.getGameOver().render(gc);
                 break;
             default:
                 renderBlack();

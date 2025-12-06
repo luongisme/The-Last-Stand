@@ -15,7 +15,6 @@ import Sound.MusicManager;
 import Sound.MusicSetting;
 import javafx.scene.layout.StackPane;
 
-
 public class Game extends Application {
     private GameScreen gameScreen;
     private AnimationTimer gameLoop;
@@ -118,7 +117,7 @@ public class Game extends Application {
 
     private void updateGame() {
         // Update game logic here
-        if (playing != null) {
+        if (GameState.gameState == GameState.PLAYING && playing != null) {
             playing.update();
         }
     }
