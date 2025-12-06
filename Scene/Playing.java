@@ -1,11 +1,7 @@
 package Scene;
 
-import Player.Player;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import Constant.TileConstant;
+import Entities.Tower.Tower;
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
@@ -13,8 +9,12 @@ import Managers.TileManager;
 import Managers.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
-import Constant.TileConstant;
-import Entities.Tower.Tower;
+import Player.Player;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class Playing extends GameScene implements Render, SceneMethod {
     private final int GRID_SIZE = 16;
@@ -30,8 +30,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		baseLvl = LevelBuild.getSecondMapData();
-        objectLvl = LevelBuild.getSecondObjectMapData();
+		baseLvl = LevelBuild.getFirstMapData();
+        objectLvl = LevelBuild.getFirstObjectMapData();
 
 		towerManager = new TowerManager(this);
         player = new Player(5000, 100); // for example
@@ -148,44 +148,61 @@ public class Playing extends GameScene implements Render, SceneMethod {
         for (int y=0; y < baseLvl.length; y++){
             for (int x=0; x < baseLvl[y].length; x++){
                 int id= baseLvl[y][x];
-				Tile t = tileManager.getTile(id);
-				if (t == null) continue;
+                Tile t = tileManager.getTile(id);
+                if (t == null) continue;
 
-				if (t.hasAnimation()) {
+
+                if (t.hasAnimation()) {
                      gc.drawImage(t.getSprite(animationIndex), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
                 } else {
                      gc.drawImage(t.getSprite(), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
                 }
-			}
+            }
         }
+
 
         for (int y = 0; y < objectLvl.length; y++){
             for (int x = 0; x < objectLvl[y].length; x++){
                 int id = objectLvl[y][x]; // Lấy ID của Object Tile
-                
+               
                 // Chỉ vẽ nếu ô đó KHÔNG phải là EMPTY_TILE (-1)
                 if (id != LevelBuild.emptyTile){
                     Tile t = tileManager.getTile(id);
                     if (t == null) continue;
-                    
+                   
                     double drawX = x * GRID_SIZE;
                     double drawY = y * GRID_SIZE;
                     Image sprite = t.getSprite();
                     
+                    if (sprite == null) continue;
+                    
+                    if (id == TileConstant.BOSS.getId() || id == TileConstant.OCTOPUS.getId()) {
+                        // Tính toán tâm của ô Tile (16x16)
+                        double centerX = x * GRID_SIZE + (GRID_SIZE / 2.0);
+                        double centerY = y * GRID_SIZE + (GRID_SIZE / 2.0);
+
+                        // Tính toán vị trí vẽ để tâm Boss trùng tâm Tile
+                        double bossX = centerX - (sprite.getWidth() / 2.0);
+                        double bossY = centerY - (sprite.getHeight() / 2.0);
+
+                        // Vẽ Boss kích thước thật
+                        gc.drawImage(sprite, bossX, bossY, sprite.getWidth(), sprite.getHeight());
+                    }                     
+                   
                     // Nếu là CÂY, điều chỉnh vị trí Y để nó nằm đúng
-                    if (id == TileConstant.TREE.getId() && sprite != null && sprite.getHeight() > GRID_SIZE) {
+                    else if (id == TileConstant.TREE.getId() && sprite != null && sprite.getHeight() > GRID_SIZE) {
                         double yOffset = sprite.getHeight() - GRID_SIZE;
                         drawY -= yOffset; // Đẩy sprite lên trên
-                        
+                       
                         // Vẽ cây với kích thước thật (sẽ to hơn 16x16)
                         gc.drawImage(sprite, drawX, drawY, sprite.getWidth(), sprite.getHeight());
-                        
+                       
                     } else if (sprite != null) {
                         // Vẽ các vật thể 16x16 khác
                         gc.drawImage(sprite, drawX, drawY, GRID_SIZE, GRID_SIZE);
                     }
                 }
-            }
+            }          
         }
     }
     
