@@ -28,13 +28,13 @@ import java.util.List;
 public class Playing extends GameScene implements Render, SceneMethod {
     private static final int GRID_SIZE = 16;
 
-	private int[][] lvl;
-	private TileManager tileManager;
-    private TowerManager towerManager;
-    private Player player;
+	private final int[][] lvl;
+	private final TileManager tileManager;
+    private final TowerManager towerManager;
+    private final Player player;
     private SkillUI skillUI;
-    private EnemyManager enemyManager;
-    private List<SkillAnimation> activeSkillAnimations = new ArrayList<>();
+    private final EnemyManager enemyManager;
+    private final List<SkillAnimation> activeSkillAnimations = new ArrayList<>();
 
 
 	private int mouseX, mouseY;
@@ -59,7 +59,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private void initializeSkillUI() {
 
         skillUI = new SkillUI(
-            1360, 50, (int)(100*1.5), (int)(110*2),
+            1360, 50, (int)(100*1.5), 110*2,
             0, 0, 80, 95);
 
     }

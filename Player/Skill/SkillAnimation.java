@@ -7,14 +7,16 @@ import javafx.scene.image.Image;
 
 public class SkillAnimation {
 
-    private Image[] frames;       // toàn bộ frame animation
-    private double frameDuration; // 1 frame chạy bao lâu (giây)
+    private final Image[] frames;       // toàn bộ frame animation
+    private final double frameDuration; // 1 frame chạy bao lâu (giây)
     private double elapsed;       // thời gian tích lũy
     private int currentFrame;
     private boolean finished;
 
-    private double x, y;          // vị trí vẽ
-    private double width, height; // scale
+    private final double x;
+    private final double y;          // vị trí vẽ
+    private final double width;
+    private final double height; // scale
 
     public SkillAnimation(Image[] frames, double frameDuration,
                           double x, double y, double width, double height) {

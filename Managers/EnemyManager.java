@@ -14,13 +14,13 @@ import java.util.ArrayList;
 
 public class EnemyManager {
 
-    private Playing playing;
-    private ArrayList<Enemy> enemies = new ArrayList<>();
+    private final Playing playing;
+    private final ArrayList<Enemy> enemies = new ArrayList<>();
     private LevelBuild levelBuild;
 
     private float directionX, directionY;
 
-    private Image[][][] enemyImgs; // [type][direction][frame]
+    private final Image[][][] enemyImgs; // [type][direction][frame]
     private final int DIRECTIONS = 4;
     private final int FRAMES = 3;
     private final int enemyTypes = EntityConstant.values().length;
@@ -133,15 +133,27 @@ public class EnemyManager {
     }
 
     private int getTileTypeAt(int x, int y){
-        // currently getting firstMap as them all have the same size
-
-        int maxY= levelBuild.getRowFirst()*16;
-        int maxX= levelBuild.getColFirst()*16;
+        int maxY= LevelBuild.getRowFirst()*16;
+        int maxX= LevelBuild.getColFirst()*16;
 
         if (x<0 || x>=maxX || y<0 || y>=maxY){
             return -1;
         }
         return playing.getTileTypeAt(x,y);
+    }
+
+    /**
+     * Check if the tile at pixel position (x, y) is walkable
+     * Uses Playing.isTileWalkable() to avoid duplicate logic
+     */
+    public boolean isTileWalkableAt(int x, int y) {
+        int maxY = LevelBuild.getRowFirst() * 16;
+        int maxX = LevelBuild.getColFirst() * 16;
+
+        if (x < 0 || x >= maxX || y < 0 || y >= maxY) {
+            return false;
+        }
+        return playing.isTileWalkable(x, y);
     }
 
 

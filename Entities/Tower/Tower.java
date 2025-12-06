@@ -5,14 +5,14 @@ import Constant.TowerConstant;
 public class Tower {
     private int x, y, id, cooldownTick, damage, effectType, range, cooldown;
     private String effectDescription;
-    private TowerConstant towerType;
+    private final TowerConstant towerType;
     private int level;
     private int totalBuildCost;
 
     // active
     private int animationTick = 0;
     private int animationIndex = 0;
-    private int animationSpeed = 5;
+    private final int animationSpeed = 5;
     private int currentTotalFrames;
     private int idleFrames;
     private int attackFrames;
@@ -22,7 +22,7 @@ public class Tower {
     private boolean isUnderConstruction = true; // new tower => always build first
     private int constructionTick = 0;
     private int constructionIndex = 0;
-    private int constructionSpeed = 5;
+    private final int constructionSpeed = 5;
     private final int CONSTRUCTION_FRAMES = 6; // TowerBuild[0,1,2].length
     private int constructionLoopCount = 0;
     private final int TARGET_CONSTRUCTION_LOOPS = 3;
@@ -31,7 +31,7 @@ public class Tower {
     private boolean isPlayCompletedEffect = false;
     private int completedTick = 0;
     private int completedIndex = 0;
-    private int completedSpeed = 6;
+    private final int completedSpeed = 6;
     private final int COMPLETED_FRAMES = 6; // TowerBuild[3].length
 
     // collapse

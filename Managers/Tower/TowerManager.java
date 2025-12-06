@@ -11,14 +11,14 @@ import javafx.scene.image.Image;
 import java.util.ArrayList;
 
 public class TowerManager {
-    private Playing playing;
-    private NotificationManager notification;
-    private TowerMenuManager menu;
-    private TowerSpriteManager sprite;
+    private final Playing playing;
+    private final NotificationManager notification;
+    private final TowerMenuManager menu;
+    private final TowerSpriteManager sprite;
 
-    private ArrayList<Tower> towers = new ArrayList<>();
+    private final ArrayList<Tower> towers = new ArrayList<>();
     private int towerAmount = 0;
-    private TowerConstant[] towerTypes = TowerConstant.values();
+    private final TowerConstant[] towerTypes = TowerConstant.values();
 
     public TowerManager(Playing playing) {
         this.playing = playing;

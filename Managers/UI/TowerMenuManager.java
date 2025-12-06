@@ -12,9 +12,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class TowerMenuManager {
-    private Playing playing;
-    private TowerManager towerManager;
-    private NotificationManager notification;
+    private final Playing playing;
+    private final TowerManager towerManager;
+    private final NotificationManager notification;
 
     private boolean isBuildMenuOpen = false;
     private TowerButton[] buildButtons;
