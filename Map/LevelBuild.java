@@ -6,6 +6,7 @@ public class LevelBuild {
     private static int[][] thirdMap;
     
     //modify the code by storing the all maps data in static variables in enhance performance
+    //94x46
     public static int[][] getFirstMapData() {
         if(firstMap==null){
             firstMap = new int[][]{
