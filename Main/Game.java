@@ -40,6 +40,9 @@ public class Game extends Application {
         
         initClasses();
 
+        // Initialize KeyboardListener with game instance for F3 debug toggle
+        KeyboardListener.setGameInstance(this);
+
         musicManager = MusicManager.getInstance();
         musicManager.playMenuMusic(); // phát nhạc menu khi mở game
 

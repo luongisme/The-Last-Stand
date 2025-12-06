@@ -1,10 +1,20 @@
 package Input;
 
 import Main.GameState;
+import Main.Game;
 import javafx.scene.input.KeyEvent;
 
 public class KeyboardListener {
     
+    private static Game gameInstance;
+
+    /**
+     * Set game instance for accessing managers
+     */
+    public static void setGameInstance(Game game) {
+        gameInstance = game;
+    }
+
     /**
      * Handle key pressed events
      */
@@ -29,6 +39,19 @@ public class KeyboardListener {
             case SPACE:
                 // Can be used for pause/resume
                 System.out.println("SPACE pressed");
+                break;
+            case D:
+                // Toggle waypoint debug rendering
+                System.out.println("D key pressed!"); // Debug
+                System.out.println("gameInstance: " + gameInstance); // Debug
+                System.out.println("GameState: " + GameState.gameState); // Debug
+
+                if (gameInstance != null && GameState.gameState == GameState.PLAYING) {
+                    System.out.println("Calling toggleDebugWaypoints()..."); // Debug
+                    gameInstance.getPlaying().getEnemyManager().toggleDebugWaypoints();
+                } else {
+                    System.out.println("Cannot toggle: gameInstance=" + gameInstance + ", state=" + GameState.gameState);
+                }
                 break;
             default:
                 break;

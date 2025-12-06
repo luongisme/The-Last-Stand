@@ -6,13 +6,19 @@ public class PathGrid {
     private final int[][] grid;
     private final int rows;
     private final int cols;
-    private static final int TILE_SIZE = 16;
+    private final int tileSize;
+    private static final int DEFAULT_TILE_SIZE = 16;
 
 
     public PathGrid(int[][] mapData) {
+        this(mapData, DEFAULT_TILE_SIZE);
+    }
+
+    public PathGrid(int[][] mapData, int tileSize) {
         this.rows = mapData.length;
         this.cols = mapData[0].length;
         this.grid = new int[rows][cols];
+        this.tileSize = tileSize;
 
         // Loop through the map data to set walkable and blocked tiles
         for (int y = 0; y < rows; y++) {
@@ -54,27 +60,41 @@ public class PathGrid {
 
 
     public int toGridX(float pixelX) {
-        return (int) (pixelX / TILE_SIZE);
+        return (int) (pixelX / tileSize);
     }
 
     public int toGridY(float pixelY) {
-        return (int) (pixelY / TILE_SIZE);
+        return (int) (pixelY / tileSize);
     }
 
     public float toPixelCenterX(int gridX) {
-        return gridX * TILE_SIZE + TILE_SIZE / 2.0f;
+        return gridX * tileSize + tileSize / 2.0f;
     }
 
     public float toPixelCenterY(int gridY) {
-        return gridY * TILE_SIZE + TILE_SIZE / 2.0f;
+        return gridY * tileSize + tileSize / 2.0f;
     }
 
     public float toPixelX(int gridX) {
-        return gridX * TILE_SIZE;
+        return gridX * tileSize;
     }
 
     public float toPixelY(int gridY) {
-        return gridY * TILE_SIZE;
+        return gridY * tileSize;
+    }
+
+    /**
+     * Đặt tower tại vị trí grid (block tile)
+     */
+    public void placeTower(int gridX, int gridY) {
+        setBlocked(gridX, gridY, true);
+    }
+
+    /**
+     * Xóa tower tại vị trí grid (unblock tile)
+     */
+    public void removeTower(int gridX, int gridY) {
+        setBlocked(gridX, gridY, false);
     }
 
 
@@ -87,10 +107,10 @@ public class PathGrid {
     }
 
     public int getTileSize() {
-        return TILE_SIZE;
+        return tileSize;
     }
 
     public String getWidth() {
-        return Integer.toString(cols * TILE_SIZE);
+        return Integer.toString(cols * tileSize);
     }
 }

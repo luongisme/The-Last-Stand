@@ -4,6 +4,9 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+// Pathfinding imports
+import Helper.PathFinding.EnemyPathController;
+
 public abstract class Enemy {
 
     private float x, y;
@@ -31,6 +34,16 @@ public abstract class Enemy {
 
     private int lastDir = RIGHT;
 
+    private EnemyPathController pathController;
+    private float targetX, targetY;
+    private boolean usePathfinding = false;
+    private boolean reachedBase = false;
+
+    // Ngưỡng để xác định đã đến target node (pixels)
+    private static final float ARRIVAL_THRESHOLD = 4.0f;
+
+    // Tốc độ di chuyển (pixels per second)
+    private float moveSpeed = 500f;
 
     // JavaFX hitbox
     private Rectangle2D bounds;
@@ -158,11 +171,82 @@ public abstract class Enemy {
     }
 
     private void updateMove(float dt) {
+        // Sử dụng pathfinding nếu có
+        if (usePathfinding && pathController != null) {
+            updatePathfindingMove(dt);
+        } else {
+            // Fallback: di chuyển theo hướng hiện tại
+            updateSimpleMove(dt);
+        }
+    }
 
+    /**
+     * Di chuyển theo pathfinding
+     */
+    private void updatePathfindingMove(float dt) {
+        if (pathController == null || reachedBase) {
+            return;
+        }
 
-        float speed = 100f;
-        
-        float distance = speed * dt;
+        // Kiểm tra đã đến đích cuối cùng chưa
+        if (pathController.hasReachedDestination()) {
+            reachedBase = true;
+            onReachedBase();
+            return;
+        }
+
+        // Kiểm tra đường có bị chặn không
+        if (pathController.isPathBlocked()) {
+            return;
+        }
+
+        // Lấy target position
+        float[] nextPos = pathController.getNextTargetPosition();
+        if (nextPos == null) {
+            return;
+        }
+
+        targetX = nextPos[0];
+        targetY = nextPos[1];
+
+        // Tính center của enemy (vì targetX/Y là center của tile)
+        float enemyCenterX = this.x + 16;  // Enemy bounds là 32x32, center ở +16
+        float enemyCenterY = this.y + 16;
+
+        // Tính khoảng cách từ center enemy đến target center
+        float dx = targetX - enemyCenterX;
+        float dy = targetY - enemyCenterY;
+        float distanceToTarget = (float) Math.sqrt(dx * dx + dy * dy);
+
+        // Đã đến target node?
+        if (distanceToTarget <= ARRIVAL_THRESHOLD) {
+            // Chuyển sang node tiếp theo
+            pathController.advanceToNextNode();
+            return;
+        }
+
+        // Di chuyển về phía target
+        float moveDistance = moveSpeed * dt;
+
+        // Normalize direction
+        float dirX = dx / distanceToTarget;
+        float dirY = dy / distanceToTarget;
+
+        // Apply movement
+        this.x += dirX * moveDistance;
+        this.y += dirY * moveDistance;
+
+        // Cập nhật hướng animation
+        updateAnimationDirection(dirX, dirY);
+
+        updateBounds();
+    }
+
+    /**
+     * Di chuyển đơn giản (không dùng pathfinding)
+     */
+    private void updateSimpleMove(float dt) {
+        float distance = moveSpeed * dt;
 
         float dx = 0, dy = 0;
         switch (lastDir) {
@@ -172,11 +256,65 @@ public abstract class Enemy {
             case DOWN  -> dy = distance;
         }
         
-        // Apply movement
         this.x += dx;
         this.y += dy;
         updateBounds();
+    }
 
+    /**
+     * Cập nhật hướng nhìn cho animation
+     */
+    private void updateAnimationDirection(float dirX, float dirY) {
+        if (Math.abs(dirX) > Math.abs(dirY)) {
+            lastDir = dirX > 0 ? RIGHT : LEFT;
+        } else {
+            lastDir = dirY > 0 ? DOWN : UP;
+        }
+    }
+
+    /**
+     * Được gọi khi enemy đến base
+     */
+    protected void onReachedBase() {
+        System.out.println("Enemy reached base!");
+    }
+
+
+    public void setPathController(EnemyPathController controller) {
+        this.pathController = controller;
+        this.usePathfinding = true;
+        this.reachedBase = false;
+    }
+
+    public void onTowerPlaced(int tileSize) {
+        if (pathController != null && usePathfinding) {
+            int currentGridX = (int) (this.x / tileSize);
+            int currentGridY = (int) (this.y / tileSize);
+            pathController.recalculatePath(currentGridX, currentGridY);
+        }
+    }
+
+
+    public boolean hasReachedBase() {
+        return reachedBase;
+    }
+
+
+    public boolean isUsingPathfinding() {
+        return usePathfinding;
+    }
+
+
+    public void setMoveSpeed(float speed) {
+        this.moveSpeed = speed;
+    }
+
+    public float getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public EnemyPathController getPathController() {
+        return pathController;
     }
 
     // ==================== Attack Logic ====================

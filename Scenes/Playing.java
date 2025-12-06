@@ -294,6 +294,10 @@ public class Playing extends GameScene implements Render, SceneMethod {
         return player;
     }
     
+    public EnemyManager getEnemyManager() {
+        return enemyManager;
+    }
+
 	private boolean isTilePlaceable(int x, int y) {
         int tileX = x / GRID_SIZE;
         int tileY = y / GRID_SIZE;

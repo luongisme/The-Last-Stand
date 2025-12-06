@@ -10,9 +10,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 
+// Pathfinding imports
+import Helper.PathFinding.*;
+
+// Debug imports
+import Helper.Debug.WaypointDebugRenderer;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class EnemyManager {
+
+    // Debug mode flag - Set to false to disable debug rendering
+    private static final boolean DEBUG_MODE = true;
+    private final WaypointDebugRenderer debugRenderer = new WaypointDebugRenderer();
 
     private final Playing playing;
     private final ArrayList<Enemy> enemies = new ArrayList<>();
@@ -25,6 +36,15 @@ public class EnemyManager {
     private final int FRAMES = 3;
     private final int enemyTypes = EntityConstant.values().length;
 
+    // ═══════════════════════════════════════════
+    // PATHFINDING COMPONENTS
+    // ═══════════════════════════════════════════
+    private PathGrid pathGrid;
+    private AStarPathfinder pathfinder;
+    private RouteManager routeManager;
+    private static final int TILE_SIZE = 16;
+    private int spawnCounter = 0;
+
     public EnemyManager(Playing playing) {
         this.playing = playing;
         directionX = 0;
@@ -33,30 +53,126 @@ public class EnemyManager {
         enemyImgs = new Image[enemyTypes][DIRECTIONS][FRAMES];
         loadEnemyImgs();
 
-        // Test enemies
-        addEnemy(4 * 16, 37 * 16, EntityConstant.SKELETON);
-        addEnemy(6 * 16, 37 * 16, EntityConstant.GOBLIN);
-        addEnemy(8 * 16, 37 * 16, EntityConstant.GOBLIN_BOSS);
+        initializePathfinding();
+
+        spawnEnemyOnRoute(EntityConstant.GOBLIN_BOSS, routeManager.getRouteByName("South Lane"));
+        spawnEnemyOnRoute(EntityConstant.SKELETON,routeManager.getRouteByName("North Lane"));
+        spawnEnemyOnRoute(EntityConstant.GOBLIN,routeManager.getRouteByName("Middle Lane"));
+
+    }
+
+
+    private void initializePathfinding() {
+        // Get map data
+        int[][] mapData = LevelBuild.getFirstMapData();
+
+        // PathGrid
+        pathGrid = new PathGrid(mapData, TILE_SIZE);
+
+        //  A* pathfinder
+        pathfinder = new AStarPathfinder(pathGrid);
+
+        // RouteManager - use singleton instance
+        routeManager = RouteManager.getInstance();
+        routeManager.initializeDefaultRoutesForMap1();
+
+        // Validate routes
+        if (!routeManager.validateRouteOnGrid(pathGrid)) {
+            System.err.println("WARNING: Some routes have invalid waypoints!");
+        } else {
+            System.out.println("Pathfinding initialized successfully!");
+        }
+    }
+
+    /**
+     * Spawn enemy trên Middle Lane để test
+     */
+    public void spawnEnemyOnMiddleLane(EntityConstant type) {
+        Route middleLane = routeManager.getRouteByName("Middle Lane");
+        if (middleLane == null) {
+            System.err.println("Middle Lane route not found!");
+            return;
+        }
+
+        spawnEnemyOnRoute(type, middleLane);
+    }
+
+    /**
+     * Spawn enemy trên route cụ thể
+     */
+    public void spawnEnemyOnRoute(EntityConstant type, Route route) {
+        if (route == null) {
+            System.err.println("Cannot spawn enemy: route is null");
+            return;
+        }
+
+        WayPoint spawnPoint = route.getSpawnPoint();
+        if (spawnPoint == null) {
+            System.err.println("Cannot spawn enemy: no spawn point in route");
+            return;
+        }
+
+
+        float tileCenterX = spawnPoint.getPixelX(TILE_SIZE);
+        float tileCenterY = spawnPoint.getPixelY(TILE_SIZE);
+
+        // Enemy bounds là 32x32, nên top-left cần offset -16 để center enemy
+        float spawnX = tileCenterX - 16;
+        float spawnY = tileCenterY - 16;
+
+        Enemy enemy = type.createEnemy(spawnX, spawnY);
+
+        if (enemy != null) {
+            // Tạo path controller
+            EnemyPathController pathController = new EnemyPathController(
+                route, pathfinder, pathGrid, TILE_SIZE
+            );
+
+            // Gán path controller cho enemy
+            enemy.setPathController(pathController);
+
+            enemies.add(enemy);
+
+            System.out.println("Spawned " + type.name() + " on " + route.getRouteName() +
+                             " at [" + spawnPoint.getGridX() + "," + spawnPoint.getGridY() + "]");
+        } else {
+            System.err.println("Failed to create enemy: " + type);
+        }
+    }
+
+
+    public void spawnEnemyWithPath(EntityConstant type) {
+        Route route = routeManager.getRouteForEnemy(spawnCounter);
+        spawnCounter++;
+        spawnEnemyOnRoute(type, route);
     }
 
     public void update(float dt){
         for (Enemy e : enemies) {
+            e.update(dt);
+
             if(e.getIsAlive()){
+                // Get enemy's CENTER position for more accurate tile checking
+                int pixelX = (int)e.getX();
+                int pixelY = (int)e.getY();
+                int centerX = pixelX + 16;  // Enemy bounds 32x32, center at +16
+                int centerY = pixelY + 16;
 
-                int centerX = (int)(e.getX() + e.getFrameW() / 2f);
-                int centerY = (int)(e.getY() + e.getFrameH() / 2f);
+                // Convert CENTER to grid coordinates (more accurate)
+                int gridX = centerX / 16;
+                int gridY = centerY / 16;
 
+                // Get tile at enemy's CENTER position
                 int tileType = getTileTypeAt(centerX, centerY);
 
                 System.out.println(
                 "[EnemyManager] Enemy type=" + e.getEnemyType()
-                        + " pos=(" + centerX + "," + centerY + ")"
+                        + " pixel=(" + pixelX + "," + pixelY + ")"
+                        + " center=(" + centerX + "," + centerY + ")"
+                        + " grid=(" + gridX + "," + gridY + ")"
                         + " tileType=" + tileType
                 );
-
-
             }
-            e.update(dt);
         }
     }
 
@@ -109,6 +225,11 @@ public class EnemyManager {
 
 
     public void draw(GraphicsContext gc){
+        // Draw debug waypoints (behind enemies)
+        if (DEBUG_MODE) {
+            debugRenderer.render(gc);
+        }
+
         for (Enemy e : enemies) {
             drawEnemy(e, gc);
             e.drawHealthBar(gc);
@@ -128,7 +249,13 @@ public class EnemyManager {
         Image img = enemyImgs[type][dir][frame];
 
         if (img != null) {
-            gc.drawImage(img, e.getX(), e.getY());
+            // Center sprite on enemy position
+            // Enemy bounds are 32x32, so we need to offset the sprite to center it
+            float offsetX = (32 - e.getFrameW()) / 2f;
+            float offsetY = (32 - e.getFrameH()) / 2f;
+
+            // Draw sprite centered on enemy's actual position (no additional offset)
+            gc.drawImage(img, e.getX() + offsetX, e.getY() + offsetY);
         }
     }
 
@@ -156,6 +283,18 @@ public class EnemyManager {
         return playing.isTileWalkable(x, y);
     }
 
+    /**
+     * Toggle waypoint debug rendering (F3 key)
+     */
+    public void toggleDebugWaypoints() {
+        if (DEBUG_MODE) {
+            debugRenderer.toggle();
+        }
+    }
+
+    public boolean isDebugEnabled() {
+        return DEBUG_MODE && debugRenderer.isEnabled();
+    }
 
     public float getDirectionX() { return directionX; }
     public float getDirectionY() { return directionY; }

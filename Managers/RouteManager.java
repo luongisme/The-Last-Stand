@@ -92,12 +92,19 @@ public class RouteManager {
         for (Route route : routes) {
             for (WayPoint wp : route.getWayPoints()) {
                 if (!grid.isWalkable(wp.getGridX(), wp.getGridY())) {
-                    System.err.println("Waypoint not walkable: " + wp + " in route " + route. getRouteName());
+                    System.err.println("Waypoint not walkable: " + wp + " in route " + route.getRouteName());
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     * Alias for validateRouteOnGrid (for compatibility)
+     */
+    public boolean validateRoutesOnGrid(PathGrid grid) {
+        return validateRouteOnGrid(grid);
     }
     public void initializeDefaultRoutesForMap1() {
         clearRoutes();
@@ -106,37 +113,37 @@ public class RouteManager {
         // ROUTE 1: North Lane (Đường phía trên)
         // ═══════════════════════════════════════════
         createRoute("North Lane")
-                .addSpawn(0, 35)           // Spawn ở bên trái
-                .addCheckPoint(39, 35)
-                .addCheckPoint(33, 17)
-                .addCheckPoint(51, 12)
+                .addSpawn(1, 35)
+                .addCheckPoint(35, 35)
+                .addCheckPoint(31,27)
+                .addCheckPoint(31, 14)
+                .addCheckPoint(51,8)
                 .addCheckPoint(51, 28)
-                .addCheckPoint(74, 36)
-                .addBase(56, 45);          // Base (điều chỉnh theo vị trí base thực tế)
+                .addCheckPoint(75, 34)
+                .addBase(56, 45);
 
         // ═══════════════════════════════════════════
         // ROUTE 2: Middle Lane (Đường giữa)
         // ═══════════════════════════════════════════
         createRoute("Middle Lane")
-                .addSpawn(0, 37)           // Spawn ở giữa-trái
-                .addCheckPoint(39, 37)
+                .addSpawn(1, 37)
+                .addCheckPoint(37, 37)
                 .addCheckPoint(33, 17)
-                .addCheckPoint(51, 12)
-                .addCheckPoint(51, 28)
-                .addCheckPoint(74, 36)     // Checkpoint 2
-                .addBase(54, 45);          // Base
+                .addCheckPoint(46, 10)
+                .addCheckPoint(49, 28)
+                .addCheckPoint(70, 31)
+                .addCheckPoint(70,38)
+                .addCheckPoint(55,40)
+                .addBase(54, 45);
 
         // ═══════════════════════════════════════════
         // ROUTE 3: South Lane (Đường phía dưới)
         // ═══════════════════════════════════════════
         createRoute("South Lane")
-                .addSpawn(0, 39)           // Spawn khu vực tile 9 (đất)
-                .addCheckPoint(39, 37)
-                .addCheckPoint(33, 17)
-                .addCheckPoint(51, 12)
-                .addCheckPoint(51, 28)
-                .addCheckPoint(74, 36)     // Checkpoint 3
-                .addBase(52, 45);          // Base
+                .addSpawn(1, 39)
+                .addCheckPoint(37, 39)
+                .addCheckPoint(45,13)
+                .addBase(52, 45);
 
         System.out.println("Initialized " + routes.size() + " routes for Map 1");
         printAllRoutes();
