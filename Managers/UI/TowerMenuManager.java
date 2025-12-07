@@ -1,10 +1,10 @@
 package Managers.UI;
 
+import Button.TowerButton;
 import Constant.TowerConstant;
 import Entities.Tower.Tower;
-import Scenes.Playing;
-import Button.TowerButton;
 import Managers.Tower.TowerManager;
+import Scenes.Playing;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -12,9 +12,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class TowerMenuManager {
-    private Playing playing;
-    private TowerManager towerManager;
-    private NotificationManager notification;
+    private final Playing playing;
+    private final TowerManager towerManager;
+    private final NotificationManager notification;
 
     private boolean isBuildMenuOpen = false;
     private TowerButton[] buildButtons;

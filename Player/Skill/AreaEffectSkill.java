@@ -1,13 +1,11 @@
 package Player.Skill;
 
-import Main.GameScreen;
-
 public abstract class AreaEffectSkill {
-    private int id;
-    private String name;
-    private double cooldown; // in seconds
+    private final int id;
+    private final String name;
+    private final double cooldown; // in seconds
     private double currentCooldown; // in seconds
-    private double radius;
+    private final double radius;
 
     protected AreaEffectSkill(int id, String name, double cooldown, double radius) {
         this.id = id;

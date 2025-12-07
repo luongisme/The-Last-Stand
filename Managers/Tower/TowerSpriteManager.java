@@ -1,7 +1,7 @@
 package Managers.Tower;
 
-import javafx.scene.image.Image;
 import Helper.LoadImages.AssetLoader;
+import javafx.scene.image.Image;
 
 public class TowerSpriteManager {
     private Image[] towerIconImages, // [Cannon,Poison,Frost]

@@ -30,7 +30,7 @@ public class SkillUI {
     protected boolean mousePressed = false;
 
     private Image skillUIBackground;
-    private Image[] skillIcons;
+    private final Image[] skillIcons;
 
     // Track which skill is currently selected (-1 means none)
     private int selectedSkillIndex = -1;

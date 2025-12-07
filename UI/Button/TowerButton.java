@@ -1,12 +1,12 @@
 package Button;
 
-import javafx.scene.image.Image;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class TowerButton extends BaseButton {
-    private int id;
-    private Image[] images;
+    private final int id;
+    private final Image[] images;
 
     private int animIndex = 0;
     private int animTick = 0;

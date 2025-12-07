@@ -1,8 +1,11 @@
 package Entities.Enemies;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.geometry.Rectangle2D;
+
+// Pathfinding imports
+import Helper.PathFinding.EnemyPathController;
 
 public abstract class Enemy {
 
@@ -14,11 +17,14 @@ public abstract class Enemy {
     private float speedX, speedY;
     private int enemyType;
 
+    private boolean isHit;
+    private boolean isAlive;
+
     protected int frameW = 32;
     protected int frameH = 32;
 
     private int barWidth;
-    private final int barLength = 5;
+    private final int barLength = 4;
 
     // Directions
     public static final int DOWN = 0;
@@ -26,31 +32,35 @@ public abstract class Enemy {
     public static final int RIGHT = 2;
     public static final int UP = 3;
 
-    private int lastDir = DOWN;
+    private int lastDir = RIGHT;
 
-    // Patrol logic
-    private float patrolTimer = 0;
-    private float patrolInterval = 2000; 
-    private int patrolStep = 0;
+    private EnemyPathController pathController;
+    private float targetX, targetY;
+    private boolean usePathfinding = false;
+    private boolean reachedBase = false;
 
-    private final int[] patrolDirections = {
-        RIGHT, DOWN, LEFT, UP
-    };
+    // Ngưỡng để xác định đã đến target node (pixels)
+    private static final float ARRIVAL_THRESHOLD = 4.0f;
+
+    // Tốc độ di chuyển (pixels per second)
+    private float moveSpeed = 500f;
 
     // JavaFX hitbox
     private Rectangle2D bounds;
 
     // Animation (time-based)
     protected int animationIndex = 0;
-    protected float animationTimer = 0f; // accumulated time in ms
-    protected float animationSpeed = 100f; // ms per frame (default)
+    protected float animationTimer = 5f; // accumulated time in ms
+    protected float animationSpeed = 0.1f; // 0.1s = 100ms / frame
     protected int maxAnimationFrames = 3;
 
     public Enemy(float x, float y, int enemyType) {
         this.x = x;
         this.y = y;
         this.enemyType = enemyType;
-        this.maxHealth = 50; 
+        this.isHit=false;
+        this.isAlive=true;
+        this.maxHealth = 50;
         this.health = maxHealth;
         this.bounds = new Rectangle2D(x, y, 32, 32);
         
@@ -73,12 +83,16 @@ public abstract class Enemy {
     public int getEnemyHealth() { return health; }
     public int getMaxHealth(){return maxHealth;}
     public int getEnemyDamage() { return damage; }
+    public boolean getIsAlive() {return isAlive;}
     public float getEnemySpeedX() { return speedX; }
     public float getEnemySpeedY() { return speedY; }
     public Rectangle2D getBounds() { return bounds; }
     public int getEnemyType() { return enemyType; }
     public int getLastDir() { return lastDir; }
     public int getAnimationIndex() { return animationIndex; }
+    public boolean isHit() {return isHit;}
+
+
 
     // ==================== Setters ====================
     public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
@@ -86,6 +100,8 @@ public abstract class Enemy {
     public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
     public void setEnemyDamage(int damage) { this.damage = damage; }
     public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
+    public void setAlive(boolean alive) {isAlive = alive;}
+    public void setHit(boolean hit) {isHit = hit;}
     public void setEnemySpeedY(float speedY) { this.speedY = speedY; }
     public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
     public void setLastDir(int lastDir) { this.lastDir = lastDir; }
@@ -155,21 +171,82 @@ public abstract class Enemy {
     }
 
     private void updateMove(float dt) {
-        // Simple Patrol Logic
-        patrolTimer += dt;
-        if (patrolTimer >= patrolInterval) {
-            patrolTimer = 0;
-            patrolStep++;
-            if (patrolStep >= patrolDirections.length) patrolStep = 0;
-            lastDir = patrolDirections[patrolStep];
+        // Sử dụng pathfinding nếu có
+        if (usePathfinding && pathController != null) {
+            updatePathfindingMove(dt);
+        } else {
+            // Fallback: di chuyển theo hướng hiện tại
+            updateSimpleMove(dt);
+        }
+    }
+
+    /**
+     * Di chuyển theo pathfinding
+     */
+    private void updatePathfindingMove(float dt) {
+        if (pathController == null || reachedBase) {
+            return;
         }
 
-        // SPEED: pixels per millisecond
-        // 0.05f * 16ms ≈ 0.8 pixels per frame. 
-        // 0.1f * 16ms ≈ 1.6 pixels per frame.
-        float speed = 0.05f; 
-        
-        float distance = speed * dt;
+        // Kiểm tra đã đến đích cuối cùng chưa
+        if (pathController.hasReachedDestination()) {
+            reachedBase = true;
+            onReachedBase();
+            return;
+        }
+
+        // Kiểm tra đường có bị chặn không
+        if (pathController.isPathBlocked()) {
+            return;
+        }
+
+        // Lấy target position
+        float[] nextPos = pathController.getNextTargetPosition();
+        if (nextPos == null) {
+            return;
+        }
+
+        targetX = nextPos[0];
+        targetY = nextPos[1];
+
+        // Tính center của enemy (vì targetX/Y là center của tile)
+        float enemyCenterX = this.x + 16;  // Enemy bounds là 32x32, center ở +16
+        float enemyCenterY = this.y + 16;
+
+        // Tính khoảng cách từ center enemy đến target center
+        float dx = targetX - enemyCenterX;
+        float dy = targetY - enemyCenterY;
+        float distanceToTarget = (float) Math.sqrt(dx * dx + dy * dy);
+
+        // Đã đến target node?
+        if (distanceToTarget <= ARRIVAL_THRESHOLD) {
+            // Chuyển sang node tiếp theo
+            pathController.advanceToNextNode();
+            return;
+        }
+
+        // Di chuyển về phía target
+        float moveDistance = moveSpeed * dt;
+
+        // Normalize direction
+        float dirX = dx / distanceToTarget;
+        float dirY = dy / distanceToTarget;
+
+        // Apply movement
+        this.x += dirX * moveDistance;
+        this.y += dirY * moveDistance;
+
+        // Cập nhật hướng animation
+        updateAnimationDirection(dirX, dirY);
+
+        updateBounds();
+    }
+
+    /**
+     * Di chuyển đơn giản (không dùng pathfinding)
+     */
+    private void updateSimpleMove(float dt) {
+        float distance = moveSpeed * dt;
 
         float dx = 0, dy = 0;
         switch (lastDir) {
@@ -185,9 +262,77 @@ public abstract class Enemy {
         updateBounds();
     }
 
+    /**
+     * Cập nhật hướng nhìn cho animation
+     */
+    private void updateAnimationDirection(float dirX, float dirY) {
+        if (Math.abs(dirX) > Math.abs(dirY)) {
+            lastDir = dirX > 0 ? RIGHT : LEFT;
+        } else {
+            lastDir = dirY > 0 ? DOWN : UP;
+        }
+    }
+
+    /**
+     * Được gọi khi enemy đến base
+     */
+    protected void onReachedBase() {
+        System.out.println("Enemy reached base!");
+    }
+
+
+    public void setPathController(EnemyPathController controller) {
+        this.pathController = controller;
+        this.usePathfinding = true;
+        this.reachedBase = false;
+    }
+
+    public void onTowerPlaced(int tileSize) {
+        if (pathController != null && usePathfinding) {
+            int currentGridX = (int) (this.x / tileSize);
+            int currentGridY = (int) (this.y / tileSize);
+            pathController.recalculatePath(currentGridX, currentGridY);
+        }
+    }
+
+
+    public boolean hasReachedBase() {
+        return reachedBase;
+    }
+
+
+    public boolean isUsingPathfinding() {
+        return usePathfinding;
+    }
+
+
+    public void setMoveSpeed(float speed) {
+        this.moveSpeed = speed;
+    }
+
+    public float getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public EnemyPathController getPathController() {
+        return pathController;
+    }
+
     // ==================== Attack Logic ====================
     public boolean canAttack() {
         return true;
+    }
+
+    // ==================== Take Damage Logic ====================
+
+    //handle damage taken and death
+    public void takeDamage(int damage){
+        this.isHit=true;
+        this.health-=damage;
+        if(this.health<=0) {
+            this.isAlive = false;
+            this.health = 0;
+        }
     }
 
 

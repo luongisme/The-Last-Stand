@@ -1,31 +1,30 @@
 package Managers;
 
-import java.util.ArrayList;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
-
+import Button.TowerButton;
+import Constant.TowerConstant;
+import Entities.Tower.Tower;
+import Scenes.Playing;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import Constant.TowerConstant;
-import Entities.Tower.Tower;
-import Scenes.Playing;
-import Button.TowerButton;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 public class TowerManager {
-    private Playing playing;
+    private final Playing playing;
     private Image[] towerImagesLevel1, towerImagesLevel2, towerImagesLevel3, towerIcons;
-    private ArrayList<Tower> towers = new ArrayList<>(); // Use ArrayList to manage towers
+    private final ArrayList<Tower> towers = new ArrayList<>(); // Use ArrayList to manage towers
     private int towerAmount = 0; // Initialize tower amount
-    private TowerConstant[] towerTypes = TowerConstant.values();
+    private final TowerConstant[] towerTypes = TowerConstant.values();
 
     private boolean isBuildMenuOpen = false;
     private TowerButton[] buildButtons;
@@ -83,7 +82,7 @@ public class TowerManager {
         if (icons != null && icons.getPixelReader() != null) {
             System.out.println("✓ Icons image has valid PixelReader");
             towerIcons[0] = getSubImage(icons, 15*48+3, 5*48+3, 40, 40); // CANNON
-            towerIcons[1] = getSubImage(icons, 13*48, 0*48, 48, 48); // POISON
+            towerIcons[1] = getSubImage(icons, 13*48, 0, 48, 48); // POISON
             towerIcons[2] = getSubImage(icons, 9*48+6, 5*48+5, 40, 40); // FROST
         } else {
             if (icons == null) {

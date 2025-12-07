@@ -1,4 +1,4 @@
 package Interfaces;
 public interface Updatable {
-    public void update(float dt);
+    void update(float dt);
 }

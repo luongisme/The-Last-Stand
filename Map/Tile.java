@@ -1,7 +1,7 @@
 package Map;
-import javafx.scene.image.Image;
 
 import Constant.TileConstant;
+import javafx.scene.image.Image;
 
 public class Tile {
     private final TileConstant tileType;
@@ -44,6 +44,10 @@ public class Tile {
         return tileType.canPlaceTower();
     }
     
+    public boolean isWalkable() {
+        return tileType.isWalkable();
+    }
+
     public TileConstant getTileType() {
         return tileType;
     }

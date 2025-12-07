@@ -2,10 +2,10 @@ package Managers;
 
 import Constant.TileConstant;
 import Map.Tile;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
