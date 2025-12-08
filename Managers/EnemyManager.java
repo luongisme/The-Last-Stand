@@ -43,7 +43,6 @@ public class EnemyManager {
     private AStarPathfinder pathfinder;
     private RouteManager routeManager;
     private static final int TILE_SIZE = 16;
-    private int spawnCounter = 0;
 
     public EnemyManager(Playing playing) {
         this.playing = playing;
@@ -52,14 +51,12 @@ public class EnemyManager {
 
         enemyImgs = new Image[enemyTypes][DIRECTIONS][FRAMES];
         loadEnemyImgs();
-    }
 
         initializePathfinding();
 
         spawnEnemyOnRoute(EntityConstant.GOBLIN_BOSS, routeManager.getRouteByName("South Lane"));
         spawnEnemyOnRoute(EntityConstant.SKELETON,routeManager.getRouteByName("North Lane"));
         spawnEnemyOnRoute(EntityConstant.GOBLIN,routeManager.getRouteByName("Middle Lane"));
-
     }
 
 
@@ -142,10 +139,14 @@ public class EnemyManager {
     }
 
 
+    /**
+     * Spawn enemy với route ngẫu nhiên (random 1 trong 3 routes với tỉ lệ bằng nhau)
+     */
     public void spawnEnemyWithPath(EntityConstant type) {
-        Route route = routeManager.getRouteForEnemy(spawnCounter);
-        spawnCounter++;
+        Route route = routeManager.getRandomRoute();
         spawnEnemyOnRoute(type, route);
+    }
+
     public void reset(){
         enemies.clear();
     }
@@ -158,37 +159,12 @@ public class EnemyManager {
             spawnEnemy();
         }
 
-        for (Enemy e : enemies) {
-            e.update(dt);
-        }
 
         ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
 
         for (Enemy e : enemies) {
             e.update(dt);
 
-            if(e.getIsAlive()){
-                // Get enemy's CENTER position for more accurate tile checking
-                int pixelX = (int)e.getX();
-                int pixelY = (int)e.getY();
-                int centerX = pixelX + 16;  // Enemy bounds 32x32, center at +16
-                int centerY = pixelY + 16;
-
-                // Convert CENTER to grid coordinates (more accurate)
-                int gridX = centerX / 16;
-                int gridY = centerY / 16;
-
-                // Get tile at enemy's CENTER position
-                int tileType = getTileTypeAt(centerX, centerY);
-
-                System.out.println(
-                "[EnemyManager] Enemy type=" + e.getEnemyType()
-                        + " pixel=(" + pixelX + "," + pixelY + ")"
-                        + " center=(" + centerX + "," + centerY + ")"
-                        + " grid=(" + gridX + "," + gridY + ")"
-                        + " tileType=" + tileType
-                );
-            }
 
             if (e.getX() >= 1604) {
                 enemiesToRemove.add(e);
@@ -241,10 +217,8 @@ public class EnemyManager {
         if(enemyId < EntityConstant.values().length) {
             EntityConstant enemyType = EntityConstant.values()[enemyId];
 
-            float startX = 0;
-            float startY = 20*16; // Example: Row 10 * GridSize
-
-            addEnemy(startX, startY, enemyType);
+            // Use route-based spawning with pathfinding instead of fixed position
+            spawnEnemyWithPath(enemyType);
         }
     }
 
@@ -365,7 +339,7 @@ public class EnemyManager {
     }
 
     /**
-     * Toggle waypoint debug rendering (F3 key)
+     * Toggle waypoint debug rendering (D key)
      */
     public void toggleDebugWaypoints() {
         if (DEBUG_MODE) {

@@ -2,7 +2,7 @@ package Managers;
 
 import java.util.ArrayList;
 import java.util.Arrays; // 1. Missing Import
-import Scene.Playing;
+import Scenes.Playing;
 
 public class WaveManager {
 

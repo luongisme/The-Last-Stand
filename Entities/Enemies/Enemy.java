@@ -43,15 +43,16 @@ public abstract class Enemy {
     private static final float ARRIVAL_THRESHOLD = 4.0f;
 
     // Tốc độ di chuyển (pixels per second)
-    private float moveSpeed = 100f;
+    // 60 pixels/second = 1 pixel/frame at 60 FPS
+    private float moveSpeed = 60f;
 
     // JavaFX hitbox
     private Rectangle2D bounds;
 
     // Animation (time-based)
     protected int animationIndex = 0;
-    protected float animationTimer = 5f; // accumulated time in ms
-    protected float animationSpeed = 0.1f; // 0.1s = 100ms / frame
+    protected float animationTimer = 0f; // accumulated time in seconds
+    protected float animationSpeed = 0.2f; // 0.3s = 300ms per frame (~3 fps)
     protected int maxAnimationFrames = 3;
 
     public Enemy(float x, float y, int enemyType) {
@@ -146,11 +147,12 @@ public abstract class Enemy {
 
     // ==================== Animation System ====================
     public void update(float dt) {
-        updateAnimation(dt);
-        
-        float speed = 50.0f;
-        x += speed * (dt / 1000.0f);
-        lastDir = 2; // default is right = 2
+        // Convert dt from milliseconds to seconds for animation system
+        float dtSeconds = dt / 1000.0f;
+        updateAnimation(dtSeconds);
+
+        // Use original dt (milliseconds) for movement which expects it
+        updateMove(dt / 1000.0f);  // Also convert to seconds for consistent physics
     }
 
     private void updateAnimation(float dt) {
@@ -327,7 +329,9 @@ public abstract class Enemy {
             this.isAlive = false;
             this.health = 0;
         }
-        public void setSpriteSize(int w, int h) {
+    }
+
+    public void setSpriteSize(int w, int h) {
         this.frameW = w;
         this.frameH = h;
         updateBounds();

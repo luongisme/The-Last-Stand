@@ -6,6 +6,7 @@ import Constant.TileConstant;
 
 public class LevelBuild {
     private static int[][] map;
+    public static final int emptyTile = -1; // Empty tile constant for object layer
 
     public static int[][] getLevelData(int levelIndex) {
         switch (levelIndex) {
