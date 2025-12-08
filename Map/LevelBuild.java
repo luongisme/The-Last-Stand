@@ -167,6 +167,13 @@ public class LevelBuild {
         return map;
     }
 
+    public static int getRowFirst(){
+        return getFirstMapData().length;
+    }
+    public static  int getColFirst(){
+        return getFirstMapData()[0].length;
+    }
+
     // OBJECT MAP 1 
     public static int[][] getFirstObjectMapData() {
         int[][] baseMap = getFirstMapData();

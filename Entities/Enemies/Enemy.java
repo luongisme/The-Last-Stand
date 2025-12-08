@@ -43,7 +43,7 @@ public abstract class Enemy {
     private static final float ARRIVAL_THRESHOLD = 4.0f;
 
     // Tốc độ di chuyển (pixels per second)
-    private float moveSpeed = 500f;
+    private float moveSpeed = 100f;
 
     // JavaFX hitbox
     private Rectangle2D bounds;

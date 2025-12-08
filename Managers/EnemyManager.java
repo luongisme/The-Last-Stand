@@ -255,7 +255,7 @@ public class EnemyManager {
             float offsetY = (32 - e.getFrameH()) / 2f;
 
             // Draw sprite centered on enemy's actual position (no additional offset)
-            gc.drawImage(img, e.getX() + offsetX, e.getY() + offsetY);
+            gc.drawImage(img, e.getX() + offsetX, e.getY() + offsetY-8);
         }
     }
 

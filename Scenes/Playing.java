@@ -2,6 +2,7 @@ package Scenes;
 
 
 import Button.SkillUI;
+import Constant.TileConstant;
 import Entities.Tower.Tower;
 import Helper.LoadImages.LoadImageSkill;
 import Interfaces.Render;
@@ -28,7 +29,8 @@ import java.util.List;
 public class Playing extends GameScene implements Render, SceneMethod {
     private static final int GRID_SIZE = 16;
 
-	private final int[][] lvl;
+	private final int[][] baseLvl;
+	private final int[][] objectLvl;
 	private final TileManager tileManager;
     private final TowerManager towerManager;
     private final Player player;
@@ -46,7 +48,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
-		lvl = LevelBuild.getFirstMapData();
+		baseLvl = LevelBuild.getFirstMapData();
+        objectLvl = LevelBuild.getFirstObjectMapData();
 
         initializeSkillUI();
 
@@ -267,18 +270,64 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
 	public void drawLevel(GraphicsContext gc){
         // go through all the tile
-        for (int y=0;y<lvl.length;y++){
-            for (int x=0;x<lvl[y].length;x++){
-                int id=lvl[y][x];
-				Tile t = tileManager.getTile(id);
-				if (t == null) continue;
+        for (int y=0; y < baseLvl.length; y++){
+            for (int x=0; x < baseLvl[y].length; x++){
+                int id= baseLvl[y][x];
+                Tile t = tileManager.getTile(id);
+                if (t == null) continue;
 
-				if (t.hasAnimation()) {
+
+                if (t.hasAnimation()) {
                      gc.drawImage(t.getSprite(animationIndex), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
                 } else {
                      gc.drawImage(t.getSprite(), x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
                 }
-			}
+            }
+        }
+
+
+        for (int y = 0; y < objectLvl.length; y++){
+            for (int x = 0; x < objectLvl[y].length; x++){
+                int id = objectLvl[y][x]; // Lấy ID của Object Tile
+
+                // Chỉ vẽ nếu ô đó KHÔNG phải là EMPTY_TILE (-1)
+                if (id != LevelBuild.emptyTile){
+                    Tile t = tileManager.getTile(id);
+                    if (t == null) continue;
+
+                    double drawX = x * GRID_SIZE;
+                    double drawY = y * GRID_SIZE;
+                    Image sprite = t.getSprite();
+
+                    if (sprite == null) continue;
+
+                    if (id == TileConstant.BOSS.getId() || id == TileConstant.OCTOPUS.getId()) {
+                        // Tính toán tâm của ô Tile (16x16)
+                        double centerX = x * GRID_SIZE + (GRID_SIZE / 2.0);
+                        double centerY = y * GRID_SIZE + (GRID_SIZE / 2.0);
+
+                        // Tính toán vị trí vẽ để tâm Boss trùng tâm Tile
+                        double bossX = centerX - (sprite.getWidth() / 2.0);
+                        double bossY = centerY - (sprite.getHeight() / 2.0);
+
+                        // Vẽ Boss kích thước thật
+                        gc.drawImage(sprite, bossX, bossY, sprite.getWidth(), sprite.getHeight());
+                    }
+
+                    // Nếu là CÂY, điều chỉnh vị trí Y để nó nằm đúng
+                    else if (id == TileConstant.TREE.getId() && sprite != null && sprite.getHeight() > GRID_SIZE) {
+                        double yOffset = sprite.getHeight() - GRID_SIZE;
+                        drawY -= yOffset; // Đẩy sprite lên trên
+
+                        // Vẽ cây với kích thước thật (sẽ to hơn 16x16)
+                        gc.drawImage(sprite, drawX, drawY, sprite.getWidth(), sprite.getHeight());
+
+                    } else if (sprite != null) {
+                        // Vẽ các vật thể 16x16 khác
+                        gc.drawImage(sprite, drawX, drawY, GRID_SIZE, GRID_SIZE);
+                    }
+                }
+            }
         }
     }
     
@@ -302,12 +351,19 @@ public class Playing extends GameScene implements Render, SceneMethod {
         int tileX = x / GRID_SIZE;
         int tileY = y / GRID_SIZE;
 
-        if (tileY < 0 || tileY >= lvl.length || tileX < 0 || tileX >= lvl[0].length) {
+        if (tileY < 0 || tileY >= baseLvl.length || tileX < 0 || tileX >= baseLvl[0].length) {
             return false;
         }
 
-        int id = lvl[tileY][tileX];
-        Tile t = tileManager.getTile(id); 
+        // Kiểm tra Layer Vật thể (Object Layer)
+        int objectId = objectLvl[tileY][tileX];
+        if (objectId != LevelBuild.emptyTile && !tileManager.getTile(objectId).canPlaceTower()) {
+            return false;
+        }
+
+        // Kiểm tra Layer Nền (Base Layer)
+        int baseId = baseLvl[tileY][tileX];
+        Tile t = tileManager.getTile(baseId);
         if (t == null) return false;
         
         return t.canPlaceTower(); 
@@ -317,22 +373,22 @@ public class Playing extends GameScene implements Render, SceneMethod {
         int tileX = x / GRID_SIZE;
         int tileY = y / GRID_SIZE;
 
-        if (tileY < 0 || tileY >= lvl.length || tileX < 0 || tileX >= lvl[0].length) {
+        if (tileY < 0 || tileY >= baseLvl.length || tileX < 0 || tileX >= baseLvl[0].length) {
             return -1;
         }
 
-        return lvl[tileY][tileX];
+        return baseLvl[tileY][tileX];
     }
 
     public boolean isTileWalkable(int x, int y) {
         int tileX = x / GRID_SIZE;
         int tileY = y / GRID_SIZE;
 
-        if (tileY < 0 || tileY >= lvl.length || tileX < 0 || tileX >= lvl[0].length) {
+        if (tileY < 0 || tileY >= baseLvl.length || tileX < 0 || tileX >= baseLvl[0].length) {
             return false;
         }
 
-        int id = lvl[tileY][tileX];
+        int id = baseLvl[tileY][tileX];
         Tile t = tileManager.getTile(id);
         if (t == null) return false;
 
