@@ -12,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-
 public class Game extends Application {
     private GameScreen gameScreen;
     private GameLoop gameLoop;

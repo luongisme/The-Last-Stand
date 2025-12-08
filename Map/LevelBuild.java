@@ -6,9 +6,17 @@ import Constant.TileConstant;
 
 public class LevelBuild {
     private static int[][] map;
-    public static final int emptyTile = -1;
 
-    // MAP 1 
+    public static int[][] getLevelData(int levelIndex) {
+        switch (levelIndex) {
+            case 0: return getFirstMapData();
+            case 1: return getSecondMapData();
+            case 2: return getThirdMapData();
+            default: return getFirstMapData(); // Loop back to start or return null
+        }
+    }
+
+    // all 3 maps are demo version data, there will be further edits
     public static int[][] getFirstMapData() {
         map = new int[][] {
             {5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,3,3,3,5,5,5,5,5,5,3,3,3,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,5,5,5,5,5,5,5,5},
@@ -61,7 +69,7 @@ public class LevelBuild {
         return map;
     }
 
-    // MAP 2 DATA 
+    // MAP 2 DATA
     public static int[][] getSecondMapData() {
         map = new int[][] {
             {3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3},
@@ -174,36 +182,36 @@ public class LevelBuild {
         return getFirstMapData()[0].length;
     }
 
-    // OBJECT MAP 1 
+    // OBJECT MAP 1
     public static int[][] getFirstObjectMapData() {
         int[][] baseMap = getFirstMapData();
         int ROWS = baseMap.length;
         int COLS = baseMap[0].length;
         int[][] objectMap = new int[ROWS][COLS];
-        
+
         // Thiết lập Object Map mặc định là EMPTY_TILE
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
-                objectMap[i][j] = emptyTile; 
+                objectMap[i][j] = emptyTile;
             }
         }
 
         int bossX = 17; // tăng lên thì Boss dịch sang Phải, giảm đi thì dịch sang Trái.
         int bossY = 24; // tăng lên thì Boss dịch xuống Dưới, giảm đi thì dịch lên Trên.
-        
+
         // Kiểm tra an toàn biên trước khi đặt
         if (bossY < ROWS && bossX < COLS) {
-            // Dùng Enum để lấy ID của BOSS TILE 
-             objectMap[bossY][bossX] = TileConstant.BOSS.getId();        
+            // Dùng Enum để lấy ID của BOSS TILE
+             objectMap[bossY][bossX] = TileConstant.BOSS.getId();
         }
 
-        int octoX = 10;  
-        int octoY = 10; 
-    
+        int octoX = 10;
+        int octoY = 10;
+
         if (octoY < ROWS && octoX < COLS) {
             objectMap[octoY][octoX] = TileConstant.OCTOPUS.getId();
         }
-       
+
 
         // Các hàm này sẽ tự động đặt random cây khắp bản đồ NHƯNG CHỈ TRÊN Ô CỎ và tránh đường đi.
         placeRandomTrees(objectMap, baseMap, 3, 80, 0, 0, COLS-1, ROWS-1);
@@ -213,23 +221,23 @@ public class LevelBuild {
         return objectMap;
     }
 
-    // OBJECT MAP 2 
+    // OBJECT MAP 2
     public static int[][] getSecondObjectMapData() {
         int[][] baseMap = getSecondMapData();
         int ROWS = baseMap.length;
         int COLS = baseMap[0].length;
         int[][] objectMap = new int[ROWS][COLS];
-        
+
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
-                objectMap[i][j] = emptyTile; 
+                objectMap[i][j] = emptyTile;
             }
         }
 
-        placeRandomTrees(objectMap, baseMap, 3, 100, 0, 0, 30, 12); 
+        placeRandomTrees(objectMap, baseMap, 3, 100, 0, 0, 30, 12);
         placeRandomTrees(objectMap, baseMap, 3, 15, 30, 0, 35, 10);
         placeRandomTrees(objectMap, baseMap, 3, 35, 0, 12, 4, 45);
-        
+
         placeRandomTrees(objectMap, baseMap, 3, 80, 43, 40, 45, 92);
         placeRandomTrunk(objectMap, baseMap, 3, 30, 0, 0, 30, 15);
         placeRandomRock(objectMap, baseMap, 3, 5, 31, 40, 36, 70);
@@ -237,7 +245,7 @@ public class LevelBuild {
         return objectMap;
     }
 
-    // HELPER FUNCTIONS 
+    // HELPER FUNCTIONS
 
     public static void placeRandomTrees(int[][] objectMap, int[][] baseMap, int safeTileId, int count, int startX, int startY, int endX, int endY) {
         Random rand = new Random();
@@ -249,7 +257,7 @@ public class LevelBuild {
             attempts++;
             int x = rand.nextInt(endX - startX + 1) + startX; // Cột
             int y = rand.nextInt(endY - startY + 1) + startY; // Dòng
-            
+
             // Check biên an toàn
             if (y >= objectMap.length || x >= objectMap[0].length) continue;
 
@@ -270,7 +278,7 @@ public class LevelBuild {
             attempts++;
             int x = rand.nextInt(endX - startX + 1) + startX;
             int y = rand.nextInt(endY - startY + 1) + startY;
-            
+
             if (y >= objectMap.length || x >= objectMap[0].length) continue;
 
             if (objectMap[y][x] != trunkId && baseMap[y][x] == safeTileId) {
@@ -290,7 +298,7 @@ public class LevelBuild {
             attempts++;
             int x = rand.nextInt(endX - startX + 1) + startX;
             int y = rand.nextInt(endY - startY + 1) + startY;
-            
+
             if (y >= objectMap.length || x >= objectMap[0].length) continue;
 
             if (objectMap[y][x] != rockId && baseMap[y][x] == safeTileId) {

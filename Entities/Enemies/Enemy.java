@@ -63,13 +63,7 @@ public abstract class Enemy {
         this.maxHealth = 50;
         this.health = maxHealth;
         this.bounds = new Rectangle2D(x, y, 32, 32);
-        
-        updateBounds();
-    }
-    
-    public void setSpriteSize(int w, int h) {
-        this.frameW = w;
-        this.frameH = h;
+
         updateBounds();
     }
 
@@ -113,8 +107,8 @@ public abstract class Enemy {
 
     // ==================== Health Bar Drawing ====================
     public void drawHealthBar(GraphicsContext gc) {
-        float maxHealth = getMaxHealth();   // Add getter or store in class
-        float currentHealth = this.health;  // your existing variable
+        float maxHealth = getMaxHealth();
+        float currentHealth = this.health;
 
         if (currentHealth <= 0) return;
 
@@ -142,27 +136,27 @@ public abstract class Enemy {
             gc.setFill(Color.RED);
         }
 
-        // Draw outline (optional)
+        // hp bar outline
         gc.setStroke(Color.BLACK);
         gc.strokeRect(barX - 5, barY, fullWidth, 5);
 
-        // Draw filled HP bar
+        // hp bar
         gc.fillRect(barX - 5, barY, hpWidth, 5);
     }
 
     // ==================== Animation System ====================
     public void update(float dt) {
-        // 1. Update Animation
         updateAnimation(dt);
         
-        // 2. Update Movement Logic
-        updateMove(dt);
+        float speed = 50.0f;
+        x += speed * (dt / 1000.0f);
+        lastDir = 2; // default is right = 2
     }
 
     private void updateAnimation(float dt) {
         animationTimer += dt;
         if (animationTimer >= animationSpeed) {
-            animationTimer = 0; // or -= animationSpeed
+            animationTimer = 0;
             animationIndex++;
             if (animationIndex >= maxAnimationFrames) {
                 animationIndex = 0;
@@ -333,6 +327,10 @@ public abstract class Enemy {
             this.isAlive = false;
             this.health = 0;
         }
+        public void setSpriteSize(int w, int h) {
+        this.frameW = w;
+        this.frameH = h;
+        updateBounds();
     }
 
 

@@ -52,6 +52,7 @@ public class EnemyManager {
 
         enemyImgs = new Image[enemyTypes][DIRECTIONS][FRAMES];
         loadEnemyImgs();
+    }
 
         initializePathfinding();
 
@@ -145,9 +146,24 @@ public class EnemyManager {
         Route route = routeManager.getRouteForEnemy(spawnCounter);
         spawnCounter++;
         spawnEnemyOnRoute(type, route);
+    public void reset(){
+        enemies.clear();
     }
 
     public void update(float dt){
+
+        playing.getWaveManager().update(dt);
+
+        if(isTimeForNewEnemy()){
+            spawnEnemy();
+        }
+
+        for (Enemy e : enemies) {
+            e.update(dt);
+        }
+
+        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
+
         for (Enemy e : enemies) {
             e.update(dt);
 
@@ -173,7 +189,72 @@ public class EnemyManager {
                         + " tileType=" + tileType
                 );
             }
+
+            if (e.getX() >= 1604) {
+                enemiesToRemove.add(e);
+            }
         }
+
+        // REMOVE THEM SAFELY
+        for (Enemy e : enemiesToRemove) {
+            enemies.remove(e);
+
+        }
+        if (enemies.isEmpty()) {
+
+            //Are there more enemies to spawn in CURRENT wave?
+            if (!playing.getWaveManager().isThereMoreEnemiesInWave()) {
+
+                //Are there MORE WAVES in this level?
+                if (playing.getWaveManager().isThereMoreWaves()) {
+                    // Start the 5 second timer (if not already started)
+                    playing.getWaveManager().startWaveTimer();
+                }
+                //No more waves? Then the LEVEL IS DONE.
+                else {
+                    //Make sure we don't trigger this if the wave timer is currently ticking down
+                    if (!playing.getWaveManager().isWaveTimerStarted()) {
+                        playing.loadNextLevel();
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isWaveFinished() {
+        if (!enemies.isEmpty()) {
+            return false;
+        }
+
+        if (playing.getWaveManager().isThereMoreEnemiesInWave()) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private void spawnEnemy(){
+        int enemyId = playing.getWaveManager().getNextEnemy();
+
+        // Check bounds to prevent crash
+        if(enemyId < EntityConstant.values().length) {
+            EntityConstant enemyType = EntityConstant.values()[enemyId];
+
+            float startX = 0;
+            float startY = 20*16; // Example: Row 10 * GridSize
+
+            addEnemy(startX, startY, enemyType);
+        }
+    }
+
+    public boolean isTimeForNewEnemy(){
+        if(playing.getWaveManager().isTimeForNewEnemy()){
+            if(playing.getWaveManager().isThereMoreEnemiesInWave()){
+                return true;
+            }
+        }
+        return false;
     }
 
     /** ───────────────────────────────────────────────
