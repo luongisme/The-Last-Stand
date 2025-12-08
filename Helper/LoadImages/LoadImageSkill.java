@@ -111,11 +111,11 @@ public class LoadImageSkill {
 
     public static Image[] loadDarkGhostAnim() {
         return loadSkillAnimationGrid(
-                "DarkGhost.png", // tên file trong thư mục Skill
-                10,              // frameCount
-                10,              // framesPerRow
-                40,              // frameWidth
-                64               // frameHeight
+                "Water Splash.png", // tên file trong thư mục Skill
+                25,              // frameCount
+                5,              // framesPerRow
+                64,              // frameWidth
+                80               // frameHeight
         );
     }
 
@@ -140,9 +140,9 @@ public class LoadImageSkill {
     public static Image[] loadWaterStrikeAnim() {
         return loadSkillAnimationGrid(
                 "WaterStrike.png",
-                16,     // 4x4
-                4,      // framesPerRow
-                80, 80  // frameWidth, frameHeight
+                25,     // 4x4
+                5,      // framesPerRow
+                64, 80  // frameWidth, frameHeight
         );
     }
 

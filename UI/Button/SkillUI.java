@@ -14,12 +14,12 @@ public class SkillUI {
     private static final int SELECTION_BORDER_WIDTH = 3;
 
     private static final String[] SKILL_NAMES = {
-        "DarkGhost", "SandStone", "ThunderBolt", "WaterStrike"
+        "WaterSplash", "SandStone", "ThunderBolt", "WaterStrike"
     };
 
     // Icon positions (relative to skill UI position)
     private static final int[][] ICON_POSITIONS = {
-        {29, 82},   // DarkGhost (top-left)
+        {29, 82},   // WaterSplash (top-left)
         {29, 140},  // SandStone (bottom-left)
         {75, 140},  // ThunderBolt (bottom-right)
         {75, 82}    // WaterStrike (top-right)

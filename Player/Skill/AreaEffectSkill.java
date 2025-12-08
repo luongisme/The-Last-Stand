@@ -6,12 +6,14 @@ public abstract class AreaEffectSkill {
     private final double cooldown; // in seconds
     private double currentCooldown; // in seconds
     private final double radius;
+    private final int damage; // damage dealt to enemies
 
-    protected AreaEffectSkill(int id, String name, double cooldown, double radius) {
+    protected AreaEffectSkill(int id, String name, double cooldown, double radius, int damage) {
         this.id = id;
         this.name = name;
         this.cooldown = cooldown;
         this.radius = radius;
+        this.damage = damage;
         this.currentCooldown = 0;
     }
 
@@ -40,6 +42,10 @@ public abstract class AreaEffectSkill {
         return radius;
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
     public void updateCoolDown(double dt) {
         if (currentCooldown > 0) {
             currentCooldown -= dt;
@@ -49,5 +55,13 @@ public abstract class AreaEffectSkill {
         }
 
     }
+
+    public void useSkill() {
+        if (isOffCooldown()) {
+            currentCooldown = cooldown;
+        }
+    }
+
+
 }
 

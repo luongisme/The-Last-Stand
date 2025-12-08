@@ -1,5 +1,6 @@
 package Entities.Enemies;
 
+import Player.Player;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -14,6 +15,7 @@ public abstract class Enemy {
     private int maxHealth;
     private int health;
     private int damage;
+    private int rewardGold; // Gold reward when killed
     private float speedX, speedY;
     private int enemyType;
 
@@ -35,6 +37,7 @@ public abstract class Enemy {
     private int lastDir = RIGHT;
 
     private EnemyPathController pathController;
+    private Player player;
     private float targetX, targetY;
     private boolean usePathfinding = false;
     private boolean reachedBase = false;
@@ -42,27 +45,25 @@ public abstract class Enemy {
     // Ngưỡng để xác định đã đến target node (pixels)
     private static final float ARRIVAL_THRESHOLD = 4.0f;
 
-    // Tốc độ di chuyển (pixels per second)
-    // 60 pixels/second = 1 pixel/frame at 60 FPS
-    private float moveSpeed = 60f;
+    private float moveSpeed = 50f;
 
-    // JavaFX hitbox
     private Rectangle2D bounds;
 
     // Animation (time-based)
     protected int animationIndex = 0;
-    protected float animationTimer = 0f; // accumulated time in seconds
-    protected float animationSpeed = 0.2f; // 0.3s = 300ms per frame (~3 fps)
+    protected float animationTimer = 0f;
+    protected float animationSpeed = 0.2f;
     protected int maxAnimationFrames = 3;
 
-    public Enemy(float x, float y, int enemyType) {
+    public Enemy(float x, float y, int enemyType, int maxHealth) {
         this.x = x;
         this.y = y;
         this.enemyType = enemyType;
-        this.isHit=false;
-        this.isAlive=true;
-        this.maxHealth = 50;
+        this.isHit = false;
+        this.isAlive = true;
+        this.maxHealth = maxHealth;
         this.health = maxHealth;
+        this.rewardGold = 10;
         this.bounds = new Rectangle2D(x, y, 32, 32);
 
         updateBounds();
@@ -86,6 +87,7 @@ public abstract class Enemy {
     public int getLastDir() { return lastDir; }
     public int getAnimationIndex() { return animationIndex; }
     public boolean isHit() {return isHit;}
+    public int getRewardGold() { return rewardGold; }
 
 
 
@@ -94,6 +96,7 @@ public abstract class Enemy {
     public void setEnemyHealth(int health) { this.health = health; }
     public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
     public void setEnemyDamage(int damage) { this.damage = damage; }
+    public void setRewardGold(int rewardGold) { this.rewardGold = rewardGold; }
     public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
     public void setAlive(boolean alive) {isAlive = alive;}
     public void setHit(boolean hit) {isHit = hit;}
@@ -108,51 +111,46 @@ public abstract class Enemy {
 
     // ==================== Health Bar Drawing ====================
     public void drawHealthBar(GraphicsContext gc) {
-        float maxHealth = getMaxHealth();
-        float currentHealth = this.health;
+        if (health <= 0 || !isAlive) return;
 
-        if (currentHealth <= 0) return;
+        double barX = x;
+        double barY = y - 6;
 
-        int barX = (int) x;
-        int barY = (int) y - 6;
+        final double HEALTH_BAR_WIDTH = 30.0;
+        final double HEALTH_BAR_HEIGHT = 4.0;
+        final double CENTER_OFFSET = 5.0;
 
-        // Full health bar width
-        int fullWidth = 50;
+        double healthPercent = Math.max(0.0, Math.min(1.0, (double) health / (double) maxHealth));
 
-        // Scale width according to HP
-        double hpRatio = currentHealth / maxHealth;
-        double hpWidth = fullWidth * hpRatio;
+        double fillWidth = HEALTH_BAR_WIDTH * healthPercent;
 
-        // Pick color
-        if (hpRatio > 0.6) {
-            gc.setFill(Color.GREEN);
-        } 
-        else if (hpRatio > 0.3) {
+        gc.setFill(Color.DARKRED);
+        gc.fillRect(barX - CENTER_OFFSET, barY, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
+
+        if (healthPercent > 0.6) {
+            gc.setFill(Color.LIMEGREEN);
+        }
+        else if (healthPercent > 0.3) {
             gc.setFill(Color.YELLOW);
-        } 
-        else if (hpRatio > 0.15) {
+        }
+        else if (healthPercent > 0.15) {
             gc.setFill(Color.ORANGE);
-        } 
+        }
         else {
             gc.setFill(Color.RED);
         }
+        gc.fillRect(barX - CENTER_OFFSET, barY, fillWidth, HEALTH_BAR_HEIGHT);
 
-        // hp bar outline
         gc.setStroke(Color.BLACK);
-        gc.strokeRect(barX - 5, barY, fullWidth, 5);
-
-        // hp bar
-        gc.fillRect(barX - 5, barY, hpWidth, 5);
+        gc.setLineWidth(1);
+        gc.strokeRect(barX - CENTER_OFFSET, barY, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
     }
 
     // ==================== Animation System ====================
     public void update(float dt) {
-        // Convert dt from milliseconds to seconds for animation system
         float dtSeconds = dt / 1000.0f;
         updateAnimation(dtSeconds);
-
-        // Use original dt (milliseconds) for movement which expects it
-        updateMove(dt / 1000.0f);  // Also convert to seconds for consistent physics
+        updateMove(dtSeconds);
     }
 
     private void updateAnimation(float dt) {
@@ -176,9 +174,7 @@ public abstract class Enemy {
         }
     }
 
-    /**
-     * Di chuyển theo pathfinding
-     */
+
     private void updatePathfindingMove(float dt) {
         if (pathController == null || reachedBase) {
             return;
@@ -206,7 +202,7 @@ public abstract class Enemy {
         targetY = nextPos[1];
 
         // Tính center của enemy (vì targetX/Y là center của tile)
-        float enemyCenterX = this.x + 16;  // Enemy bounds là 32x32, center ở +16
+        float enemyCenterX = this.x + 16;
         float enemyCenterY = this.y + 16;
 
         // Tính khoảng cách từ center enemy đến target center
@@ -214,7 +210,7 @@ public abstract class Enemy {
         float dy = targetY - enemyCenterY;
         float distanceToTarget = (float) Math.sqrt(dx * dx + dy * dy);
 
-        // Đã đến target node?
+        // Đã đến target
         if (distanceToTarget <= ARRIVAL_THRESHOLD) {
             // Chuyển sang node tiếp theo
             pathController.advanceToNextNode();
@@ -238,9 +234,7 @@ public abstract class Enemy {
         updateBounds();
     }
 
-    /**
-     * Di chuyển đơn giản (không dùng pathfinding)
-     */
+
     private void updateSimpleMove(float dt) {
         float distance = moveSpeed * dt;
 
@@ -258,9 +252,11 @@ public abstract class Enemy {
         updateBounds();
     }
 
-    /**
-     * Cập nhật hướng nhìn cho animation
-     */
+    public void onReachedBase(){
+        player.takeDamage(1);
+    }
+
+
     private void updateAnimationDirection(float dirX, float dirY) {
         if (Math.abs(dirX) > Math.abs(dirY)) {
             lastDir = dirX > 0 ? RIGHT : LEFT;
@@ -269,26 +265,10 @@ public abstract class Enemy {
         }
     }
 
-    /**
-     * Được gọi khi enemy đến base
-     */
-    protected void onReachedBase() {
-        System.out.println("Enemy reached base!");
-    }
-
-
     public void setPathController(EnemyPathController controller) {
         this.pathController = controller;
         this.usePathfinding = true;
         this.reachedBase = false;
-    }
-
-    public void onTowerPlaced(int tileSize) {
-        if (pathController != null && usePathfinding) {
-            int currentGridX = (int) (this.x / tileSize);
-            int currentGridY = (int) (this.y / tileSize);
-            pathController.recalculatePath(currentGridX, currentGridY);
-        }
     }
 
 

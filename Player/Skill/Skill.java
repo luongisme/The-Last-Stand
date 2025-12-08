@@ -5,7 +5,7 @@ package Player.Skill;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public class SkillAnimation {
+public class Skill {
 
     private final Image[] frames;       // toàn bộ frame animation
     private final double frameDuration; // 1 frame chạy bao lâu (giây)
@@ -18,24 +18,37 @@ public class SkillAnimation {
     private final double width;
     private final double height; // scale
 
-    public SkillAnimation(Image[] frames, double frameDuration,
-                          double x, double y, double width, double height) {
+    // For damage calculation
+    private final double centerX;
+    private final double centerY;
+    private final double radius;
+    private final int damage;
+    private boolean hasDealtDamage; // Flag to ensure damage is dealt only once
+
+    public Skill(Image[] frames, double frameDuration,
+                 double x, double y, double width, double height,
+                 double radius, int damage) {
 
         if (frames == null || frames.length == 0) {
-            System.err.println("❌ SkillAnimation: frames is null or empty!");
             this.frames = new Image[0];
             this.finished = true;
         } else {
-            System.out.println("🎬 SkillAnimation created with " + frames.length + " frames");
             this.frames = frames;
             this.finished = false;
         }
 
         this.frameDuration = frameDuration;
         this.x = x;
-        this.y = y;
+        this.y = y-50;
         this.width = width;
         this.height = height;
+
+        // Calculate center position for collision detection
+        this.centerX = x + width / 2.0;
+        this.centerY = y - 50 + height / 2.0;
+        this.radius = radius;
+        this.damage = damage;
+        this.hasDealtDamage = false;
 
         this.elapsed = 0;
         this.currentFrame = 0;
@@ -51,13 +64,9 @@ public class SkillAnimation {
         if (elapsed >= frameDuration) {
             elapsed -= frameDuration;
             currentFrame++;
-
-            System.out.println("🎬 Frame changed: " + currentFrame + "/" + frames.length + " (elapsed: " + elapsed + "s)");
-
             if (currentFrame >= frames.length) {
                 finished = true;
                 currentFrame = frames.length - 1;
-                System.out.println("🎬 Animation finished!");
             }
         }
     }
@@ -67,7 +76,6 @@ public class SkillAnimation {
         // Draw current frame
         Image frame = frames[currentFrame];
         if (frame == null) {
-            System.err.println("❌ Frame " + currentFrame + " is NULL!");
             return;
         }
 
@@ -76,6 +84,30 @@ public class SkillAnimation {
 
     public boolean isFinished() {
         return finished;
+    }
+
+    public double getCenterX() {
+        return centerX;
+    }
+
+    public double getCenterY() {
+        return centerY;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public boolean hasDealtDamage() {
+        return hasDealtDamage;
+    }
+
+    public void setHasDealtDamage(boolean hasDealtDamage) {
+        this.hasDealtDamage = hasDealtDamage;
     }
 }
 

@@ -355,7 +355,9 @@ public void update(float dt){
         return waveStartTimerActive;
     }
 
-    public float getTimeLeft() { return (waveTimerLimit - timeSinceLastWave) / 1000f;}
+    public float getTimeLeft() {
+        return (waveTimerLimit - timeSinceLastWave) / 1000f;
+    }
 
     public int getWaveIndex() {
         return waveIndex + 1;

@@ -19,7 +19,7 @@ public class Player {
         return health;
     }
     public void setHealth(int newHealth){ // set health of player
-        this.health = Math.max(0, newHealth); // // make sure the health not negative
+        this.health = Math.max(0, newHealth);
     }
 
     public void addMoney(int amount){
@@ -31,7 +31,7 @@ public class Player {
             money -= amount; 
         }
         else{
-            System.out.println("You are not enough money"); // update UI for this notification
+            System.out.println("You are not enough money");
         }
     }
     public void takeDamage(int dmg){

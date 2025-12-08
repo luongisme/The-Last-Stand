@@ -4,6 +4,7 @@ import Constant.EntityConstant;
 
 public class Skeleton extends Enemy {
     public Skeleton(float x, float y) {
-        super(x, y, EntityConstant.SKELETON.getId());
+        super(x, y, EntityConstant.SKELETON.getId(),300);
+        setRewardGold(20);
     }
 }

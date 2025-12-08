@@ -145,24 +145,7 @@ public class RouteManager {
                 .addCheckPoint(45,13)
                 .addBase(52, 45);
 
-        System.out.println("Initialized " + routes.size() + " routes for Map 1");
-        printAllRoutes();
     }
 
-    public void printAllRoutes() {
 
-        for (Route route : routes) {
-            System.out.println("\n" + route.getRouteName() + ":");
-            System.out.println("  Valid: " + route. isValid());
-            System.out.println("  Total distance: " + route.getTotalDistance());
-            System.out.println("  Waypoints:");
-
-            for (int i = 0; i < route.getWayPoints().size(); i++) {
-                WayPoint wp = route.getWayPointAt(i);
-                System.out.println("    " + i + ". " + wp);
-            }
-        }
-
-        System.out. println("\n═══════════════════════════════════════════\n");
-    }
 }

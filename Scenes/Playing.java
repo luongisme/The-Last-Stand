@@ -16,7 +16,12 @@ import Managers.WaveManager;
 import Map.LevelBuild;
 import Map.Tile;
 import Player.Player;
-import Player.Skill.SkillAnimation;
+import Player.Skill.Skill;
+import Player.Skill.AreaEffectSkill;
+import Player.Skill.WaterSplash;
+import Player.Skill.SandStone;
+import Player.Skill.ThunderBolt;
+import Player.Skill.WaterStrike;
 import Sound.MusicManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -32,6 +37,9 @@ import java.util.List;
 public class Playing extends GameScene implements Render, SceneMethod {
     private static final int GRID_SIZE = 16;
 
+    private static final double SKILL_ANIMATION_WIDTH = 128;
+    private static final double SKILL_ANIMATION_HEIGHT = 128;
+
 	private final int[][] baseLvl;
 	private final int[][] objectLvl;
 	private int[][] lvl;
@@ -41,7 +49,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private final Player player;
     private SkillUI skillUI;
     private final EnemyManager enemyManager;
-    private final List<SkillAnimation> activeSkillAnimations = new ArrayList<>();
+    private final List<Skill> activeSkills = new ArrayList<>();
     private long lastUpdateTime = System.nanoTime();
     private int levelIndex = 0;
 
@@ -56,6 +64,14 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private int tick = 0;
     private int animationIndex = 0;
 
+    // Skill instances for damage and radius info
+    private final AreaEffectSkill[] skills = {
+        new WaterSplash(),   // DarkGhost - index 0
+        new SandStone(),     // index 1
+        new ThunderBolt(),   // index 2
+        new WaterStrike()    // index 3
+    };
+
     public Playing(Game game){
         super(game);
 		tileManager = new TileManager();
@@ -68,7 +84,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         enemyManager= new EnemyManager(this);
 		towerManager = new TowerManager(this);
         waveManager = new WaveManager(this);
-        player = new Player(5000, 100); // for example
+        player = new Player(5000, 3); // for example
         loadLevel(levelIndex);
     }
 
@@ -107,12 +123,12 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     public void update() {
         long now = System.nanoTime();
-        float dt = (now - lastUpdateTime) / 1_000_000f;
+        double dt = (now - lastUpdateTime) / 1_000_000_000.0; // Convert nanoseconds to seconds
         lastUpdateTime = now;
 
         updateTick();
         towerManager.update();
-        enemyManager.update(dt);
+        enemyManager.update((float)(dt * 1000)); // Convert to milliseconds for enemyManager
 
         // CHECK LOSE
         if (player.getHealth() <= 0) {
@@ -131,17 +147,58 @@ public class Playing extends GameScene implements Render, SceneMethod {
         }
 
         // Update skill animations
-        if (!activeSkillAnimations.isEmpty()) {
-            System.out.println("Updating " + activeSkillAnimations.size() + " active animations (dt=" + dt + ")");
+        if (!activeSkills.isEmpty()) {
+            System.out.println("Updating " + activeSkills.size() + " active animations (dt=" + dt + "s)");
         }
 
-        Iterator<SkillAnimation> it = activeSkillAnimations.iterator();
+        Iterator<Skill> it = activeSkills.iterator();
         while (it.hasNext()) {
-            SkillAnimation anim = it.next();
-            anim.update(dt / 1000.0); // Convert to seconds
+            Skill anim = it.next();
+            anim.update(dt); // dt is already in seconds
+
+            // Deal damage to enemies if not already dealt
+            if (!anim.hasDealtDamage()) {
+                dealSkillDamageToEnemies(anim);
+                anim.setHasDealtDamage(true);
+            }
+
             if (anim.isFinished()) {
                 it.remove();
                 System.out.println("Animation finished and removed");
+            }
+        }
+    }
+
+    private void dealSkillDamageToEnemies(Skill skill) {
+        double skillCenterX = skill.getCenterX();
+        double skillCenterY = skill.getCenterY();
+        double skillRadius = skill.getRadius();
+        int skillDamage = skill.getDamage();
+
+
+        for (Entities.Enemies.Enemy enemy : enemyManager.getEnemies()) {
+            if (!enemy.getIsAlive()) continue;
+
+            // Calculate distance between skill center and enemy center
+            double enemyCenterX = enemy.getX() + enemy.getFrameW() / 2.0;
+            double enemyCenterY = enemy.getY() + enemy.getFrameH() / 2.0;
+
+            double distance = Math.sqrt(
+                Math.pow(skillCenterX - enemyCenterX, 2) +
+                Math.pow(skillCenterY - enemyCenterY, 2)
+            );
+
+            // If enemy is within skill radius, deal damage
+            if (distance <= skillRadius) {
+                int currentHealth = enemy.getEnemyHealth();
+                int newHealth = currentHealth - skillDamage;
+                enemy.setEnemyHealth(newHealth);
+                enemy.setHit(true);
+
+                if (newHealth <= 0) {
+                    enemy.setAlive(false);
+                    player.addMoney(enemy.getRewardGold());
+                }
             }
         }
     }
@@ -156,7 +213,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         enemyManager.draw(gc);
         drawSkipButton(gc);
 
-        for (SkillAnimation anim : activeSkillAnimations) {
+        for (Skill anim : activeSkills) {
             anim.render(gc);
         }
 
@@ -187,23 +244,43 @@ public class Playing extends GameScene implements Render, SceneMethod {
     }
 
 
-    private void drawPlayerStats(GraphicsContext gc) { // Demo
-        gc.setFill(Color.YELLOW);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        gc.fillText("Money: " + player.getMoney(), 10, 30);
-        
-        gc.setFill(Color.RED);
-        gc.fillText("Health: " + player.getHealth(), 10, 60);
+    private void drawPlayerStats(GraphicsContext gc) {
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 22));
+        gc.setLineWidth(3);
+
+        // Money display
+        String moneyText = "Money: $" + player.getMoney();
+        gc.setStroke(Color.BLACK);
+        gc.strokeText(moneyText, 10, 30);
+        gc.setFill(Color.GOLD);
+        gc.fillText(moneyText, 10, 30);
+
+        // Health display
+        String healthText = "Health: " + player.getHealth();
+        gc.setStroke(Color.BLACK);
+        gc.strokeText(healthText, 10, 60);
+        gc.setFill(Color.LIMEGREEN);
+        gc.fillText(healthText, 10, 60);
     }
 
     private void drawWaveInfo(GraphicsContext gc) {
-        gc.setFill(Color.BLACK);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        gc.fillText("Wave: " + waveManager.getWaveIndex() + " / " + waveManager.getTotalWaves(), 10, 90);
+        // Draw wave number
+        gc.setFill(Color.WHITE);
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(3);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 22));
+
+        String waveText = "Wave: " + waveManager.getWaveIndex() + " / " + waveManager.getTotalWaves();
+        gc.strokeText(waveText, 10, 90);
+        gc.fillText(waveText, 10, 90);
 
         if (waveManager.isWaveTimerStarted()) {
             float timeLeft = waveManager.getTimeLeft();
-            gc.fillText("Next Wave in: " + String.format("%.1f", timeLeft), 10, 120);
+            String timerText = "Next Wave in: " + String.format("%.1f", timeLeft) + "s";
+
+            gc.setFill(Color.YELLOW);
+            gc.strokeText(timerText, 10, 120);
+            gc.fillText(timerText, 10, 120);
         }
     }
 
@@ -304,21 +381,29 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
         System.out.println(" Skill " + skillIndex + " loaded with " + frames.length + " frames");
 
-        double w = 96;
-        double h = 96;
-        double frameDuration = 0.05; // 100ms per frame
+        double w = SKILL_ANIMATION_WIDTH;
+        double h = SKILL_ANIMATION_HEIGHT;
+        double frameDuration = 0.08; // 100ms per frame
 
-        SkillAnimation anim = new SkillAnimation(
+        // Get skill info for damage and radius
+        AreaEffectSkill skillInfo = skills[skillIndex];
+        double radius = skillInfo.getRadius();
+        int damage = skillInfo.getDamage();
+
+        Skill anim = new Skill(
                 frames,
                 frameDuration,
                 x - w/2.0,
                 y - h/2.0,
-                w, h
+                w, h,
+                radius,
+                damage
         );
 
-        activeSkillAnimations.add(anim);
+        activeSkills.add(anim);
         System.out.println("✅ Animation added at (" + x + ", " + y + ")");
-        System.out.println("✅ Total active animations: " + activeSkillAnimations.size());
+        System.out.println("✅ Skill damage: " + damage + ", radius: " + radius);
+        System.out.println("✅ Total active animations: " + activeSkills.size());
     }
 
 

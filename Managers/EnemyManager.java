@@ -10,14 +10,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 
-// Pathfinding imports
 import Helper.PathFinding.*;
 
-// Debug imports
 import Helper.Debug.WaypointDebugRenderer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class EnemyManager {
 
@@ -54,9 +51,6 @@ public class EnemyManager {
 
         initializePathfinding();
 
-        spawnEnemyOnRoute(EntityConstant.GOBLIN_BOSS, routeManager.getRouteByName("South Lane"));
-        spawnEnemyOnRoute(EntityConstant.SKELETON,routeManager.getRouteByName("North Lane"));
-        spawnEnemyOnRoute(EntityConstant.GOBLIN,routeManager.getRouteByName("Middle Lane"));
     }
 
 
@@ -355,4 +349,8 @@ public class EnemyManager {
     public float getDirectionY() { return directionY; }
     public void setDirectionX(float directionX) { this.directionX = directionX; }
     public void setDirectionY(float directionY) { this.directionY = directionY; }
+
+    public ArrayList<Enemy> getEnemies() {
+        return enemies;
+    }
 }
