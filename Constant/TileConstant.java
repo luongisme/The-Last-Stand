@@ -13,8 +13,12 @@ public enum TileConstant {
     WALL(8, "wall.png", false, false),
     STONE(9, "stone.png", false, false),
     CURB(10,"curb.png",false, false),
-    AVAILABLEDIRT(11,"Adirt.png",false, true);
-
+    AVAILABLEDIRT(11,"Adirt.png",false, true),
+TREE (12,"Tree.png",false,false),
+    TRUNK ( 13, "Trunk.png", false,false),
+    ROCK( 14, "Decostone.png", false,false),
+    BOSS(15, "skeleton_boss.png", false,false),
+    OCTOPUS(16, "octopus.png", false,false);
 
     private final int id;
     private final String spriteName;
