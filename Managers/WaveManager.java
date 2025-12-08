@@ -177,7 +177,7 @@ public void update(float dt){
             w6.addEnemyGroup(0, 6, 0.75f);
             w6.addEnemyGroup(1, 6, 1f);
             w6.addEnemyGroup(2, 7, 1.25f);
-            waves.add(w6);
+            waves.add(w6); 
         }
         
         // ─── LEVEL 2 ─────────────────────────────────────────

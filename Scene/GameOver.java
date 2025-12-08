@@ -9,6 +9,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+
 
 public class GameOver extends GameScene implements Render, SceneMethod {
 
@@ -21,6 +25,7 @@ public class GameOver extends GameScene implements Render, SceneMethod {
     private double nextX, nextY;
     private double menuX, menuY;
 
+    private Image gameOverBg;
     private boolean isWin = true; 
 
     public GameOver(Game game){
@@ -31,21 +36,21 @@ public class GameOver extends GameScene implements Render, SceneMethod {
 
         menuX = WIDTH / 2 - btnWidth / 2;
         menuY = HEIGHT / 2 + 50;
+        gameOverBg = new Image(getClass().getResource("/sounds/background.jpg").toString());
     }
 
     public void setWin(boolean isFinalLevel) {
-        this.isWin = false;
+        this.isWin = true;
     }
 
     public void setLose() {
-        this.isWin = true;
+        this.isWin = false;
     }
 
     @Override
 	public void render(GraphicsContext gc) {
 
-    	gc.setFill(Color.BLACK);
-    	gc.fillRect(0, 0, WIDTH, HEIGHT);
+        gc.drawImage(gameOverBg, 0, 0, WIDTH, HEIGHT);
 
     	String text = isWin ? "YOU WIN" : "YOU LOSE";
 
@@ -56,10 +61,11 @@ public class GameOver extends GameScene implements Render, SceneMethod {
     	Text temp = new Text(text);
     	temp.setFont(font);
     	double textWidth = temp.getLayoutBounds().getWidth();
-
     	double textX = (WIDTH - textWidth) / 2;
     	double textY = HEIGHT / 3;
-
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(6);   
+        gc.strokeText(text, textX, textY);
     	gc.fillText(text, textX, textY);
 
     	if (isWin) {
