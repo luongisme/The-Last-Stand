@@ -193,21 +193,16 @@ public class LevelBuild {
 
         objectMap[0][0] = TileConstant.WALLLAST1.getId();
         objectMap[0][93]= TileConstant.WALLLAST2.getId();
-        objectMap[0][42] = TileConstant.DOOR.getId();
-        objectMap[0][43]= TileConstant.WALL1.getId();
-        objectMap[0][44]= TileConstant.WALL1.getId();
-        objectMap[0][45] = TileConstant.DOOR.getId();
-        objectMap[0][51] = TileConstant.DOOR.getId();
-        objectMap[0][50]= TileConstant.WALL1.getId();
-        objectMap[0][49]= TileConstant.WALL1.getId();
-        objectMap[0][48] = TileConstant.DOOR.getId();
-        objectMap[0][47]= TileConstant.WALL1.getId();
-        objectMap[0][46]= TileConstant.WALL1.getId();
+        objectMap[0][41] = TileConstant.DOOR.getId();
+        objectMap[0][44] = TileConstant.DOOR.getId();
+        objectMap[0][50] = TileConstant.DOOR.getId();
+        objectMap[0][47] = TileConstant.DOOR.getId();
 
-        for (int t = 1; t < 42; t++){
+
+        for (int t = 1; t < 41; t++){
             objectMap[0][t] = TileConstant.WALL1.getId();
         }
-        for (int t = 52; t < 93; t++){
+        for (int t = 53; t < 93; t++){
             objectMap[0][t] = TileConstant.WALL1.getId();
         }
         return objectMap;

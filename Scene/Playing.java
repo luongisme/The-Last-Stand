@@ -180,14 +180,24 @@ public class Playing extends GameScene implements Render, SceneMethod {
                         gc.drawImage(sprite, drawX, drawY, sprite.getWidth(), sprite.getHeight());
                         
                     } else if (sprite != null) {
-                        // Vẽ các vật thể 16x16 khác
-                        gc.drawImage(sprite, drawX, drawY, GRID_SIZE, GRID_SIZE);
+                        if (id == TileConstant.DOOR.getId()){
+                        gc.drawImage(sprite, drawX, drawY, GRID_SIZE * 3, GRID_SIZE * 3);
+
+                        } else if (id == TileConstant.WALL.getId()
+                            || id == TileConstant.WALL1.getId()
+                            || id == TileConstant.WALLLAST1.getId()
+                            || id == TileConstant.WALLLAST2.getId()) {
+
+                            gc.drawImage(sprite, drawX, drawY, GRID_SIZE, GRID_SIZE * 3);
+
+                        } else {
+                            gc.drawImage(sprite, drawX, drawY, GRID_SIZE, GRID_SIZE);
+                        }
                     }
                 }
-            }
+            }   
         }
-    }
-    
+    }    
     private boolean checkAnimation(int spriteID){
         return tileManager != null && tileManager.checkSpriteAnimation(spriteID);
     }
@@ -224,6 +234,5 @@ public class Playing extends GameScene implements Render, SceneMethod {
         
         return t.canPlaceTower(); 
     }
-
 }
 
