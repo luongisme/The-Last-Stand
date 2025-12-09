@@ -1,31 +1,20 @@
 package Scenes;
 
-
 import Button.SkillUI;
 import Constant.TileConstant;
-import Entities.Tower.Tower;
+import Entities.Towers.Tower;
 import Helper.LoadImages.LoadImageSkill;
-import Managers.EnemyManager;
-import Managers.ProjectileManager;
-import Player.Skill.SkillAnimation;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-
-
 import Interfaces.Render;
 import Main.Game;
 import Main.GameScene;
 import Main.GameState;
 import Managers.EnemyManager;
+import Managers.ProjectileManager;
 import Managers.TileManager;
 import Managers.Tower.TowerManager;
 import Managers.WaveManager;
 import Map.LevelBuild;
 import Map.Tile;
-import Entities.Towers.Tower;
 import Player.Player;
 import Player.Skill.Skill;
 import Player.Skill.AreaEffectSkill;
@@ -64,7 +53,6 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private long lastUpdateTime = System.nanoTime();
     private int levelIndex = 0;
     private ProjectileManager projectileManager;
-    private List<SkillAnimation> activeSkillAnimations = new ArrayList<>();
 
 	private int mouseX, mouseY;
 
@@ -98,9 +86,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
         enemyManager= new EnemyManager(this);
 		towerManager = new TowerManager(this);
         projectileManager = new ProjectileManager(this);
-        player = new Player(5000, 100); // for example
+        player = new Player(5000, 3);
         waveManager = new WaveManager(this);
-        player = new Player(5000, 3); // for example
         loadLevel(levelIndex);
     }
 
@@ -161,7 +148,6 @@ public class Playing extends GameScene implements Render, SceneMethod {
             GameState.SetGameState(GameState.GAME_OVER);
             MusicManager.getInstance().stopAll();
         }
-        double dt = 0.016; // ~60 FPS (16ms per frame)
 
         // Update skill animations
         if (!activeSkills.isEmpty()) {
@@ -342,7 +328,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         boolean canSkip = waveManager.isThereMoreWaves() && waveManager.isWaveSpawningFinished();
         if (canSkip && x >= bX && x <= bX + bW && y >= bY && y <= bY + bH) {
             waveManager.skipWave();
-            return;
+            return true;
         }
 
         // Check if clicking on skill icon to select/deselect
@@ -563,10 +549,6 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
 	public Player getPlayer() {
         return player;
-    }
-    
-    public EnemyManager getEnemyManager() {
-        return enemyManager;
     }
 
     public WaveManager getWaveManager() {

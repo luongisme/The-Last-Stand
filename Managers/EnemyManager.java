@@ -171,6 +171,15 @@ public class EnemyManager {
                 continue;
             }
 
+            e.update(dt);
+            registerToGrid(e);
+
+            // Remove enemies that reached the end
+            if (e.hasReachedBase()) {
+                enemies.remove(i);
+                i--;
+            }
+        }
 
         playing.getWaveManager().update(dt);
 
@@ -178,40 +187,23 @@ public class EnemyManager {
             spawnEnemy();
         }
 
+        if (enemies.isEmpty()) {
+            //Are there more enemies to spawn in CURRENT wave?
+            if (!playing.getWaveManager().isThereMoreEnemiesInWave()) {
 
-        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
-
-        for (Enemy e : enemies) {
-            e.update(dt);
-            registerToGrid(e);
-            if (e.getX() >= 1604) {
-                enemiesToRemove.add(e);
-            }
-        }
-
-            // REMOVE THEM SAFELY
-            for (Enemy e : enemiesToRemove) {
-                enemies.remove(e);
-
-            }
-            if (enemies.isEmpty()) {
-
-                //Are there more enemies to spawn in CURRENT wave?
-                if (!playing.getWaveManager().isThereMoreEnemiesInWave()) {
-
-                    //Are there MORE WAVES in this level?
-                    if (playing.getWaveManager().isThereMoreWaves()) {
-                        // Start the 5 second timer (if not already started)
-                        playing.getWaveManager().startWaveTimer();
-                    }
-                    //No more waves? Then the LEVEL IS DONE.
-                    else {
-                        //Make sure we don't trigger this if the wave timer is currently ticking down
-                        if (!playing.getWaveManager().isWaveTimerStarted()) {
-                            playing.loadNextLevel();
-                        }
+                //Are there MORE WAVES in this level?
+                if (playing.getWaveManager().isThereMoreWaves()) {
+                    // Start the 5 second timer (if not already started)
+                    playing.getWaveManager().startWaveTimer();
+                }
+                //No more waves? Then the LEVEL IS DONE.
+                else {
+                    //Make sure we don't trigger this if the wave timer is currently ticking down
+                    if (!playing.getWaveManager().isWaveTimerStarted()) {
+                        playing.loadNextLevel();
                     }
                 }
+            }
         }
     }
 
@@ -370,7 +362,7 @@ public class EnemyManager {
 
         for (Enemy e : enemies) {
             drawEnemy(e, gc);
-            drawHealthBar(e, gc);
+            e.drawHealthBar(gc);
         }
     }
 

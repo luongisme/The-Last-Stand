@@ -7,7 +7,6 @@ import javafx.scene.paint.Color;
 
 // Pathfinding imports
 import Helper.PathFinding.EnemyPathController;
-import javafx.geometry.Rectangle2D;
 import Logic.Effects.StatusEffect;
 
 import java.util.List;
@@ -74,48 +73,17 @@ public abstract class Enemy {
         this.isHit = false;
         this.isAlive = true;
         this.maxHealth = maxHealth;
-        this.tenacity = tenacity;
+        this.tenacity = 0.0f;
         this.health = maxHealth;
         this.rewardGold = 10;
         this.bounds = new Rectangle2D(x, y, 32, 32);
+        this.speed = moveSpeed;
 
         updateBounds();
     }
 
     public int getFrameW() { return frameW; }
     public int getFrameH() { return frameH; }
-
-    // ==================== Getters ====================
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public int getEnemyId() { return enemyID; }
-    public int getEnemyHealth() { return health; }
-    public int getMaxHealth(){return maxHealth;}
-    public int getEnemyDamage() { return damage; }
-    public boolean getIsAlive() {return isAlive;}
-    public float getEnemySpeedX() { return speedX; }
-    public float getEnemySpeedY() { return speedY; }
-    public Rectangle2D getBounds() { return bounds; }
-    public int getEnemyType() { return enemyType; }
-    public int getLastDir() { return lastDir; }
-    public int getAnimationIndex() { return animationIndex; }
-    public boolean isHit() {return isHit;}
-    public int getRewardGold() { return rewardGold; }
-
-
-
-    // ==================== Setters ====================
-    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
-    public void setEnemyHealth(int health) { this.health = health; }
-    public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
-    public void setEnemyDamage(int damage) { this.damage = damage; }
-    public void setRewardGold(int rewardGold) { this.rewardGold = rewardGold; }
-    public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
-    public void setAlive(boolean alive) {isAlive = alive;}
-    public void setHit(boolean hit) {isHit = hit;}
-    public void setEnemySpeedY(float speedY) { this.speedY = speedY; }
-    public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
-    public void setLastDir(int lastDir) { this.lastDir = lastDir; }
 
     // Update the JavaFX hitbox
     public void updateBounds() {
@@ -309,30 +277,9 @@ public abstract class Enemy {
         if (this.health < 0) this.health = 0;
     }
 
-        // SPEED: pixels per millisecond
-        // 0.05f * 16ms ≈ 0.8 pixels per frame. 
-        // 0.1f * 16ms ≈ 1.6 pixels per frame.
-        float speed = 0.05f; 
-        
-        float distance = speed * dt;
-
-        float dx = 0, dy = 0;
-        switch (lastDir) {
-            case RIGHT -> dx = distance;
-            case LEFT  -> dx = -distance;
-            case UP    -> dy = -distance;
-            case DOWN  -> dy = distance;
-        }
-        
-        // Apply movement
-        this.x += dx;
-        this.y += dy;
-        updateBounds();
-    }
-
     // Hàm nội bộ để cập nhật speed thực tế
     private void recalculateSpeed() {
-        this.speed = this.baseSpeed * (1.0f - this.slowFactor);
+        this.speed = this.moveSpeed * (1.0f - this.slowFactor);
         if (this.speed < 0) this.speed = 0;
     }
 
@@ -344,6 +291,7 @@ public abstract class Enemy {
     public float getY() { return y; }
     public float getCenterX() { return x + frameW / 2.0f; }
     public float getCenterY() { return y + frameH / 2.0f; }
+    public int getEnemyId() { return enemyID; }
     public int getEnemyHealth() { return health; }
     public int getMaxHealth(){return maxHealth;}
     public float getSpeed() { return speed; }
@@ -352,11 +300,12 @@ public abstract class Enemy {
     public Rectangle2D getBounds() { return bounds; }
     public int getEnemyDamage() { return damage; }
     public int getLastDir() { return lastDir; }
-
+    public boolean getIsAlive() {return isAlive;}
+    public boolean isHit() {return isHit;}
+    public int getRewardGold() { return rewardGold; }
+    public float getEnemySpeedX() { return speedX; }
+    public float getEnemySpeedY() { return speedY; }
     public List<StatusEffect> getStatusEffects() { return statusEffects;}
-//    public int getFrameW() { return frameW; }
-//    public int getFrameH() { return frameH; }
-//    public int getEnemyId() { return enemyID; }
 
     // ==================== Setters ====================
     public void setX(float x) { this.x = x; }
@@ -364,7 +313,16 @@ public abstract class Enemy {
     public void setSpeed(float speed) { this.speed = speed; }
     public void setStunned(boolean stunned) { this.isStunned = stunned; }
     public void setLastDir(int lastDir) { this.lastDir = lastDir; }
-//    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
+    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
+    public void setEnemyHealth(int health) { this.health = health; }
+    public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
+    public void setEnemyDamage(int damage) { this.damage = damage; }
+    public void setRewardGold(int rewardGold) { this.rewardGold = rewardGold; }
+    public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
+    public void setAlive(boolean alive) {isAlive = alive;}
+    public void setHit(boolean hit) {isHit = hit;}
+    public void setEnemySpeedY(float speedY) { this.speedY = speedY; }
+    public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
 
     public void onReachedBase(){
         player.takeDamage(1);
