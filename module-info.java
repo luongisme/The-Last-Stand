@@ -6,9 +6,7 @@ module com.thelaststand {
     requires javafx.media;
     requires java.logging;
 
-
     exports Main;
-
 
     exports Scenes;
     exports Button;
@@ -18,14 +16,18 @@ module com.thelaststand {
     exports Player;
     exports Constant;
     exports Entities.Enemies;
-    exports Entities.Tower;
+    exports Entities.Towers;
     exports Input;
     exports Sound;
-
+    exports Logic.Effects;
+    exports Logic.Strategies;
 
     opens Main to javafx.graphics;
-    exports Managers.Tower;
-    exports Managers.UI;
     opens Scenes to javafx.graphics;
     exports Player.Skill;
+    exports Managers.Tower;
+    exports Helper;
+    exports Helper.LoadImages;
+    exports Entities.Projectiles;
+    exports Entities.AnimationEffects;
 }

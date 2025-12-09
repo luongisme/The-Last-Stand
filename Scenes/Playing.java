@@ -2,9 +2,9 @@ package Scenes;
 
 
 import Button.SkillUI;
-import Entities.Enemies.Enemy;
 import Helper.LoadImages.LoadImageSkill;
 import Managers.EnemyManager;
+import Managers.ProjectileManager;
 import Player.Skill.SkillAnimation;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -20,7 +20,7 @@ import Managers.TileManager;
 import Managers.Tower.TowerManager;
 import Map.LevelBuild;
 import Map.Tile;
-import Entities.Tower.Tower;
+import Entities.Towers.Tower;
 import Player.Player;
 
 import java.util.ArrayList;
@@ -37,11 +37,11 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private Player player;
     private SkillUI skillUI;
     private EnemyManager enemyManager;
+    private ProjectileManager projectileManager;
     private List<SkillAnimation> activeSkillAnimations = new ArrayList<>();
 
-
 	private int mouseX, mouseY;
-
+    private int rawMouseX, rawMouseY;
 
     private int tick = 0;
     private int animationIndex = 0;
@@ -55,12 +55,12 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
         enemyManager= new EnemyManager(this);
 		towerManager = new TowerManager(this);
+        projectileManager = new ProjectileManager(this);
         player = new Player(5000, 100); // for example
     }
 
 
     private void initializeSkillUI() {
-
         skillUI = new SkillUI(
             1360, 50, (int)(100*1.5), (int)(110*2),
             0, 0, 80, 95);
@@ -69,8 +69,11 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     public void update() {
         updateTick();
-        towerManager.update();
         double dt = 0.016; // ~60 FPS (16ms per frame)
+
+        enemyManager.update((float)dt);
+        towerManager.update();
+        projectileManager.update();
 
         if (!activeSkillAnimations.isEmpty()) {
             System.out.println("🔄 Updating " + activeSkillAnimations.size() + " active animations (dt=" + dt + ")");
@@ -90,11 +93,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
     @Override
     public void render(GraphicsContext gc) {
         drawLevel(gc);
-        renderSkillUI(gc);
         towerManager.draw(gc);
-        drawPlayerStats(gc);
-        enemyManager.draw(gc);
 
+        enemyManager.draw(gc);
+        projectileManager.draw(gc);
+
+        drawPlayerStats(gc);
+        renderSkillUI(gc);
 
         for (SkillAnimation anim : activeSkillAnimations) {
             anim.render(gc);
@@ -105,12 +110,15 @@ public class Playing extends GameScene implements Render, SceneMethod {
         }
     }
 
-
     private void renderSkillUI(GraphicsContext gc) {
         skillUI.render(gc);
     }
 
     private void drawHighlight(GraphicsContext gc) {
+        if (towerManager.getTowerAtPixel(rawMouseX, rawMouseY) != null) {
+            return;
+        }
+
         if (isTilePlaceable(mouseX, mouseY) && towerManager.getTowerAt(mouseX, mouseY) == null) {
             gc.setStroke(Color.WHITE);
         } else {
@@ -138,6 +146,18 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     @Override
 	public void mouseClicked(int x, int y) {
+        if (handleSkillUIClick(x, y)) return; // Don't process map clicks when clicking skill UI
+
+        // Check if a skill is selected and we're clicking on the map to cast it
+        if (handleSkillCasting(x, y)) return;
+
+        // Normal tower placement logic
+        if (handleTowerMenuClick(x, y)) return;
+
+		handleMapClick(x, y);
+	}
+
+    private boolean handleSkillUIClick(int x, int y) {
         // Check if clicking on skill icon to select/deselect
         int clickedSkill = skillUI.handleClick(x, y);
         if (clickedSkill != -1) {
@@ -149,10 +169,12 @@ public class Playing extends GameScene implements Render, SceneMethod {
             } else {
                 System.out.println("Skill deselected");
             }
-            return; // Don't process map clicks when clicking skill UI
+            return true;
         }
+        return false;
+    }
 
-        // Check if a skill is selected and we're clicking on the map to cast it
+    private boolean handleSkillCasting(int x, int y) {
         int selectedSkill = skillUI.getSelectedSkillIndex();
         if (selectedSkill != -1) {
             // A skill is selected, cast it at the clicked position
@@ -162,35 +184,40 @@ public class Playing extends GameScene implements Render, SceneMethod {
             // Deselect the skill after casting
             skillUI.deselectSkill();
             System.out.println("Skill cast complete, deselected");
-            return;
+            return true;
         }
+        return false;
+    }
 
-        // Normal tower placement logic
+    private boolean handleTowerMenuClick(int x, int y) {
         if (towerManager.getMenu().isUpgradeMenuOpen()) {
             towerManager.getMenu().handleUpgradeMenuClick(x, y);
-            return;
+            return true;
         }
 
         if (towerManager.getMenu().isBuildMenuOpen()) {
             towerManager.getMenu().handleBuildMenuClick(x, y);
-            return;
+            return true;
         }
+        return false;
+    }
 
-		int tileX = x / GRID_SIZE;
-        int tileY = y / GRID_SIZE;
-        int clickedPixelX = tileX * GRID_SIZE;
-        int clickedPixelY = tileY * GRID_SIZE;
-
-        Tower clickedTower = towerManager.getTowerAt(clickedPixelX, clickedPixelY);
+    private void handleMapClick(int x, int y) {
+        Tower clickedTower = towerManager.getTowerAtPixel(x, y);
         if (clickedTower != null) {
             towerManager.getMenu().openUpgradeMenu(clickedTower);
             return;
         }
 
+        int tileX = x / GRID_SIZE;
+        int tileY = y / GRID_SIZE;
+        int clickedPixelX = tileX * GRID_SIZE;
+        int clickedPixelY = tileY * GRID_SIZE;
+
         if (isTilePlaceable(x, y) && !towerManager.isOccupied(clickedPixelX, clickedPixelY)) {
             towerManager.getMenu().openBuildMenu(clickedPixelX, clickedPixelY);
         }
-	}
+    }
 
     private void castSkill(int skillIndex, int x, int y) {
         Image[] frames = null;
@@ -229,12 +256,14 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     @Override
 	public void mouseMoved(int x, int y) {
+        this.rawMouseX = x;
+        this.rawMouseY = y;
+
 		mouseX = (x / GRID_SIZE) * GRID_SIZE;
         mouseY = (y / GRID_SIZE) * GRID_SIZE;
 
         // Update hover state for skill UI
         skillUI.updateHover(x, y);
-
         towerManager.getMenu().handleMouseMoved(x, y);
 	}
 
@@ -309,4 +338,21 @@ public class Playing extends GameScene implements Render, SceneMethod {
         
         return t.canPlaceTower(); 
     }
+
+    public int[][] getLvlData() { return lvl;}
+
+    public ProjectileManager getProjectileManager() {
+        return projectileManager;
+    }
+
+    public EnemyManager getEnemyManager() {
+        return  enemyManager;
+    }
+
+    // Trong Playing.java
+    public int getMouseX() { return mouseX; }
+    public int getMouseY() { return mouseY; }
+
+    public int getRawMouseX() { return rawMouseX; }
+    public int getRawMouseY() { return rawMouseY; }
 }

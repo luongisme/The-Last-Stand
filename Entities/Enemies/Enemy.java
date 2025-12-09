@@ -1,24 +1,39 @@
 package Entities.Enemies;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.geometry.Rectangle2D;
+import Logic.Effects.StatusEffect;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList; // To avoid ConcurrentModification error when looping
 
 public abstract class Enemy {
+    // CORE STATS
+    protected float x, y;
+    protected int enemyType;
+    protected int maxHealth;
+    protected int health;
+    protected int damage;
+    protected float speed; // speedX, speedY;
+    protected float tenacity; // 0.0 -> 1.0 (Effect resistance)
+    protected float baseSpeed; // Tốc độ gốc (không đổi)
+    protected int stunCount = 0; // Đếm số lượng effect làm choáng đang tác dụng
+    protected float slowFactor = 0f;
 
-    private float x, y;
-    private int enemyID;
-    private int maxHealth;
-    private int health;
-    private int damage;
-    private float speedX, speedY;
-    private int enemyType;
+    // VISUAL / HITBOX
+    protected int frameW = 32, frameH = 32;
+    protected Rectangle2D bounds;
+    protected int lastDir = 0;
 
-    protected int frameW = 32;
-    protected int frameH = 32;
+    // STATES
+    protected boolean isStunned = false;
+    protected List<StatusEffect> statusEffects = new CopyOnWriteArrayList<>();
 
-    private int barWidth;
-    private final int barLength = 5;
+    // ANIMATION
+    protected int animationIndex = 0;
+    protected float animationTimer = 0f; // accumulated time in ms
+    protected float animationSpeed = 0.1f; // ms per frame (default)
+    protected int maxAnimationFrames = 3;
 
     // Directions
     public static final int DOWN = 0;
@@ -26,121 +41,58 @@ public abstract class Enemy {
     public static final int RIGHT = 2;
     public static final int UP = 3;
 
-    private int lastDir = DOWN;
-
     // Patrol logic
     private float patrolTimer = 0;
-    private float patrolInterval = 2000; 
+    private float patrolInterval = 2000;
     private int patrolStep = 0;
 
     private final int[] patrolDirections = {
         RIGHT, DOWN, LEFT, UP
     };
 
-    // JavaFX hitbox
-    private Rectangle2D bounds;
-
-    // Animation (time-based)
-    protected int animationIndex = 0;
-    protected float animationTimer = 0f; // accumulated time in ms
-    protected float animationSpeed = 100f; // ms per frame (default)
-    protected int maxAnimationFrames = 3;
-
-    public Enemy(float x, float y, int enemyType) {
+    public Enemy(float x, float y, int enemyType, int maxHealth, float speed, float tenacity) {
         this.x = x;
         this.y = y;
         this.enemyType = enemyType;
-        this.maxHealth = 50; 
+        this.maxHealth = maxHealth;
         this.health = maxHealth;
+        this.baseSpeed = speed;
+        this.speed = speed;
+        this.tenacity = tenacity;
         this.bounds = new Rectangle2D(x, y, 32, 32);
-        
-        updateBounds();
+
+//        updateBounds();
     }
     
     public void setSpriteSize(int w, int h) {
         this.frameW = w;
         this.frameH = h;
-        updateBounds();
+//        updateBounds();
     }
 
-    public int getFrameW() { return frameW; }
-    public int getFrameH() { return frameH; }
-
-    // ==================== Getters ====================
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public int getEnemyId() { return enemyID; }
-    public int getEnemyHealth() { return health; }
-    public int getMaxHealth(){return maxHealth;}
-    public int getEnemyDamage() { return damage; }
-    public float getEnemySpeedX() { return speedX; }
-    public float getEnemySpeedY() { return speedY; }
-    public Rectangle2D getBounds() { return bounds; }
-    public int getEnemyType() { return enemyType; }
-    public int getLastDir() { return lastDir; }
-    public int getAnimationIndex() { return animationIndex; }
-
-    // ==================== Setters ====================
-    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
-    public void setEnemyHealth(int health) { this.health = health; }
-    public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
-    public void setEnemyDamage(int damage) { this.damage = damage; }
-    public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
-    public void setEnemySpeedY(float speedY) { this.speedY = speedY; }
-    public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
-    public void setLastDir(int lastDir) { this.lastDir = lastDir; }
-
-    // Update the JavaFX hitbox
-    public void updateBounds() {
-        this.bounds = new Rectangle2D(x, y, 32, 32);
-    }
-
-    // ==================== Health Bar Drawing ====================
-    public void drawHealthBar(GraphicsContext gc) {
-        float maxHealth = getMaxHealth();   // Add getter or store in class
-        float currentHealth = this.health;  // your existing variable
-
-        if (currentHealth <= 0) return;
-
-        int barX = (int) x;
-        int barY = (int) y - 6;
-
-        // Full health bar width
-        int fullWidth = 50;
-
-        // Scale width according to HP
-        double hpRatio = currentHealth / maxHealth;
-        double hpWidth = fullWidth * hpRatio;
-
-        // Pick color
-        if (hpRatio > 0.6) {
-            gc.setFill(Color.GREEN);
-        } 
-        else if (hpRatio > 0.3) {
-            gc.setFill(Color.YELLOW);
-        } 
-        else if (hpRatio > 0.15) {
-            gc.setFill(Color.ORANGE);
-        } 
-        else {
-            gc.setFill(Color.RED);
-        }
-
-        // Draw outline (optional)
-        gc.setStroke(Color.BLACK);
-        gc.strokeRect(barX - 5, barY, fullWidth, 5);
-
-        // Draw filled HP bar
-        gc.fillRect(barX - 5, barY, hpWidth, 5);
-    }
+//    // Update the JavaFX hitbox
+//    public void updateBounds() { this.bounds = new Rectangle2D(x, y, 32, 32); }
 
     // ==================== Animation System ====================
     public void update(float dt) {
-        // 1. Update Animation
-        updateAnimation(dt);
-        
-        // 2. Update Movement Logic
-        updateMove(dt);
+        // 1. Xử lý hiệu ứng (Độc vẫn rút máu kể cả khi choáng)
+        updateStatusEffects(dt);
+
+        // 2. Logic di chuyển (Chỉ chạy khi không choáng và còn sống)
+        if (stunCount <= 0 && health > 0) {
+            move(dt);
+            this.bounds = new Rectangle2D(x, y, frameW, frameH);
+        }
+
+        if (stunCount <= 0 && health > 0) {
+            move(dt);
+            this.bounds = new Rectangle2D(x, y, frameW, frameH);
+        }
+
+        // 3. Animation
+        if (stunCount <= 0) {
+            updateAnimation(dt);
+        }
     }
 
     private void updateAnimation(float dt) {
@@ -154,44 +106,100 @@ public abstract class Enemy {
         }
     }
 
-    private void updateMove(float dt) {
-        // Simple Patrol Logic
-        patrolTimer += dt;
-        if (patrolTimer >= patrolInterval) {
-            patrolTimer = 0;
-            patrolStep++;
-            if (patrolStep >= patrolDirections.length) patrolStep = 0;
-            lastDir = patrolDirections[patrolStep];
+    private void updateStatusEffects(float dt) {
+        for (StatusEffect effect : statusEffects) {
+            effect.update(dt, this);
+            if (!effect.isActive()) {
+                statusEffects.remove(effect);
+            }
         }
-
-        // SPEED: pixels per millisecond
-        // 0.05f * 16ms ≈ 0.8 pixels per frame. 
-        // 0.1f * 16ms ≈ 1.6 pixels per frame.
-        float speed = 0.05f; 
-        
-        float distance = speed * dt;
-
-        float dx = 0, dy = 0;
-        switch (lastDir) {
-            case RIGHT -> dx = distance;
-            case LEFT  -> dx = -distance;
-            case UP    -> dy = -distance;
-            case DOWN  -> dy = distance;
-        }
-        
-        // Apply movement
-        this.x += dx;
-        this.y += dy;
-        updateBounds();
     }
+
+    public abstract void move(float dt);
+
+    public void applyStatus(StatusEffect newEffect) {
+        // Kiểm tra trùng lặp ID (ví dụ không cho stack 2 effect stun cùng lúc)
+        for (StatusEffect e : statusEffects) {
+            if (e.getId().equals(newEffect.getId())) {
+                // Reset thời gian hiệu ứng cũ hoặc bỏ qua
+                return;
+            }
+        }
+
+        // Tính toán kháng hiệu ứng
+        newEffect.applyResistance(this.tenacity);
+        newEffect.onStart(this);
+        statusEffects.add(newEffect);
+    }
+
+    public void hurt(int dmg) {
+        this.health -= dmg;
+        if (this.health < 0) this.health = 0;
+    }
+
+    public void addStun() {
+        this.stunCount++;
+    }
+
+    // Gọi khi kết thúc Stun
+    public void removeStun() {
+        this.stunCount--;
+        if (this.stunCount < 0) this.stunCount = 0; // Safety check
+    }
+
+    // Gọi khi bắt đầu Slow
+    public void addSlow(float factor) {
+        this.slowFactor += factor;
+        // Giới hạn slow tối đa (ví dụ không quá 90%)
+        if (this.slowFactor > 0.9f) this.slowFactor = 0.9f;
+        recalculateSpeed();
+    }
+
+    // Gọi khi kết thúc Slow
+    public void removeSlow(float factor) {
+        this.slowFactor -= factor;
+        if (this.slowFactor < 0) this.slowFactor = 0;
+        recalculateSpeed();
+    }
+
+    // Hàm nội bộ để cập nhật speed thực tế
+    private void recalculateSpeed() {
+        this.speed = this.baseSpeed * (1.0f - this.slowFactor);
+        if (this.speed < 0) this.speed = 0;
+    }
+
+    // Getter cho EnemyManager dùng để vẽ
+    public boolean isStunned() { return stunCount > 0; }
+
+    // ==================== Getters ====================
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public float getCenterX() { return x + frameW / 2.0f; }
+    public float getCenterY() { return y + frameH / 2.0f; }
+    public int getEnemyHealth() { return health; }
+    public int getMaxHealth(){return maxHealth;}
+    public float getSpeed() { return speed; }
+    public int getEnemyType() { return enemyType; }
+    public int getAnimationIndex() { return animationIndex; }
+    public Rectangle2D getBounds() { return bounds; }
+    public int getEnemyDamage() { return damage; }
+    public int getLastDir() { return lastDir; }
+
+    public List<StatusEffect> getStatusEffects() { return statusEffects;}
+//    public int getFrameW() { return frameW; }
+//    public int getFrameH() { return frameH; }
+//    public int getEnemyId() { return enemyID; }
+
+    // ==================== Setters ====================
+    public void setX(float x) { this.x = x; }
+    public void setY(float y) { this.y = y; }
+    public void setSpeed(float speed) { this.speed = speed; }
+    public void setStunned(boolean stunned) { this.isStunned = stunned; }
+    public void setLastDir(int lastDir) { this.lastDir = lastDir; }
+//    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
 
     // ==================== Attack Logic ====================
     public boolean canAttack() {
         return true;
-    }
-
-    // ==================== Render Stub (unused in JavaFX) ====================
-    public void render(GraphicsContext gc) {
-        // Rendering handled by EnemyManager, so this is empty
     }
 }
