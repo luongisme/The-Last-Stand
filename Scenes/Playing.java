@@ -40,8 +40,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private static final double SKILL_ANIMATION_WIDTH = 128;
     private static final double SKILL_ANIMATION_HEIGHT = 128;
 
-	private final int[][] baseLvl;
-	private final int[][] objectLvl;
+	private int[][] baseLvl;      // Removed final to allow level changes
+	private int[][] objectLvl;    // Removed final to allow level changes
 	private int[][] lvl;
 	private final TileManager tileManager;
     private final TowerManager towerManager;
@@ -92,12 +92,16 @@ public class Playing extends GameScene implements Render, SceneMethod {
     }
 
     public void loadNextLevel() {
+        System.out.println("=== loadNextLevel() called ===");
+        System.out.println("Current levelIndex: " + levelIndex);
         levelIndex++;
+        System.out.println("After increment levelIndex: " + levelIndex);
         if (levelIndex > 2) {
             System.out.println("GAME COMPLETED!");
             levelIndex = 2; // Loop back to start or go to Menu
         }
         loadLevel(levelIndex);
+        System.out.println("=== loadNextLevel() finished ===");
     }
 
     public void reset() {
@@ -110,10 +114,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
     }
 
     private void loadLevel(int index) {
-        System.out.println("Loading Level Index: " + index);
         lvl = LevelBuild.getLevelData(index);
+        baseLvl = LevelBuild.getLevelData(index);
+        objectLvl = LevelBuild.getObjectMapData(index);
         enemyManager.reset();
         waveManager.reset();
+        towerManager.reset();
+        projectileManager.reset();
     }
 
     private void initializeSkillUI() {
@@ -141,8 +148,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
             return;
         }
 
-        // CHECK WIN
-        if (!waveManager.isThereMoreWaves() && waveManager.isWaveSpawningFinished()) {
+        // CHECK WIN - Show GAME_OVER screen when level is complete
+        if (!waveManager.isThereMoreWaves() && waveManager.isWaveSpawningFinished() && enemyManager.getEnemies().isEmpty()) {
             boolean isFinalLevel = (levelIndex == 2);
             game.getGameOver().setWin(isFinalLevel);
             GameState.SetGameState(GameState.GAME_OVER);
@@ -213,7 +220,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
         enemyManager.draw(gc);
         projectileManager.draw(gc);
-
+        renderSkillUI(gc);
         drawPlayerStats(gc);
         drawWaveInfo(gc);
         enemyManager.draw(gc);
@@ -256,6 +263,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private void drawPlayerStats(GraphicsContext gc) {
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 22));
         gc.setLineWidth(3);
+
+        // Level display - ADDED
+        String levelText = "Level: " + (levelIndex + 1);
+        gc.setStroke(Color.BLACK);
+        gc.strokeText(levelText, 10, 90);
+        gc.setFill(Color.CYAN);
+        gc.fillText(levelText, 10, 90);
 
         // Money display
         String moneyText = "Money: $" + player.getMoney();

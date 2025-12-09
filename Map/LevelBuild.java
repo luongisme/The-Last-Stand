@@ -9,11 +9,21 @@ public class LevelBuild {
     public static final int emptyTile = -1; // Empty tile constant for object layer
 
     public static int[][] getLevelData(int levelIndex) {
+        System.out.println("=== LevelBuild.getLevelData() ===");
+        System.out.println("Requested levelIndex: " + levelIndex);
         switch (levelIndex) {
-            case 0: return getFirstMapData();
-            case 1: return getSecondMapData();
-            case 2: return getThirdMapData();
-            default: return getFirstMapData(); // Loop back to start or return null
+            case 0:
+                System.out.println("✅ Returning LEVEL 1 map data");
+                return getFirstMapData();
+            case 1:
+                System.out.println("✅ Returning LEVEL 2 map data");
+                return getSecondMapData();
+            case 2:
+                System.out.println("✅ Returning LEVEL 3 map data");
+                return getThirdMapData();
+            default:
+                System.out.println("❌ Invalid level index, defaulting to LEVEL 1");
+                return getFirstMapData(); // Loop back to start or return null
         }
     }
 
@@ -242,6 +252,45 @@ public class LevelBuild {
         placeRandomTrees(objectMap, baseMap, 3, 80, 43, 40, 45, 92);
         placeRandomTrunk(objectMap, baseMap, 3, 30, 0, 0, 30, 15);
         placeRandomRock(objectMap, baseMap, 3, 5, 31, 40, 36, 70);
+
+        return objectMap;
+    }
+
+    // ═══════════════════════════════════════════
+    // OBJECT MAP BY INDEX
+    // ═══════════════════════════════════════════
+    public static int[][] getObjectMapData(int levelIndex) {
+        switch (levelIndex) {
+            case 0:
+                return getFirstObjectMapData();
+            case 1:
+                return getSecondObjectMapData();
+            case 2:
+                return getThirdObjectMapData();
+            default:
+                return getFirstObjectMapData();
+        }
+    }
+
+    // OBJECT MAP 3
+    public static int[][] getThirdObjectMapData() {
+        int[][] baseMap = getThirdMapData();
+        int ROWS = baseMap.length;
+        int COLS = baseMap[0].length;
+        int[][] objectMap = new int[ROWS][COLS];
+
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                objectMap[i][j] = emptyTile;
+            }
+        }
+
+        // Different decoration for level 3
+        placeRandomTrees(objectMap, baseMap, 3, 120, 0, 0, 30, 15);
+        placeRandomTrees(objectMap, baseMap, 3, 20, 30, 0, 40, 12);
+        placeRandomRock(objectMap, baseMap, 3, 40, 0, 15, 25, 45);
+        placeRandomTrees(objectMap, baseMap, 3, 90, 40, 35, 50, 92);
+        placeRandomTrunk(objectMap, baseMap, 3, 40, 0, 0, 35, 20);
 
         return objectMap;
     }

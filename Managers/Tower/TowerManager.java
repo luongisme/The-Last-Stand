@@ -1,4 +1,4 @@
-package Managers.Tower;
+ package Managers.Tower;
 
 import java.util.ArrayList;
 
@@ -294,4 +294,17 @@ public class TowerManager {
     }
 
     public TowerMenuManager getMenu() { return menu; }
+
+    public void reset() {
+        towers.clear();
+        towerAmount = 0;
+        // Clear towerMap
+        for (int y = 0; y < towerMap.length; y++) {
+            for (int x = 0; x < towerMap[y].length; x++) {
+                towerMap[y][x] = null;
+            }
+        }
+        // Close any open menus
+        menu.closeAllMenus();
+    }
 }

@@ -87,4 +87,10 @@ public class ProjectileManager {
     public int getMaxFrames(int towerType, int level) {
         return spriteLoader.getProjectileFrameCount(towerType, level);
     }
+
+    public void reset() {
+        projectiles.clear();
+        effects.clear();
+        projId = 0;
+    }
 }

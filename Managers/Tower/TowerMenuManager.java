@@ -289,5 +289,9 @@ public class TowerMenuManager {
 
     public void closeUpgradeMenu() { isUpgradeMenuOpen = false; }
 
+    public void closeAllMenus() {
+        isBuildMenuOpen = false;
+        isUpgradeMenuOpen = false;
+    }
 
 }

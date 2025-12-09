@@ -196,13 +196,7 @@ public class EnemyManager {
                     // Start the 5 second timer (if not already started)
                     playing.getWaveManager().startWaveTimer();
                 }
-                //No more waves? Then the LEVEL IS DONE.
-                else {
-                    //Make sure we don't trigger this if the wave timer is currently ticking down
-                    if (!playing.getWaveManager().isWaveTimerStarted()) {
-                        playing.loadNextLevel();
-                    }
-                }
+                // No more waves - Playing.update() will handle showing GameOver screen
             }
         }
     }

@@ -100,9 +100,12 @@ public void update(float dt){
 
     public void createWaves(){
         int currentLevel = playing.getLevelIndex();
-        
+        System.out.println("=== WaveManager.createWaves() ===");
+        System.out.println("Creating waves for level: " + currentLevel);
+
         // ─── LEVEL 1 ─────────────────────────────────────────
         if (currentLevel == 0) {
+            System.out.println("✅ Loading LEVEL 1 waves (index 0)");
             Wave w1 = new Wave();
             Wave w2 = new Wave();
             Wave w3 = new Wave();
@@ -182,6 +185,7 @@ public void update(float dt){
         
         // ─── LEVEL 2 ─────────────────────────────────────────
         else if (currentLevel == 1) {
+            System.out.println("✅ Loading LEVEL 2 waves (index 1)");
             Wave w1 = new Wave();
             Wave w2 = new Wave();
             Wave w3 = new Wave();

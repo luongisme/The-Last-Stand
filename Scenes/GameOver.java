@@ -27,6 +27,7 @@ public class GameOver extends GameScene implements Render, SceneMethod {
 
     private Image gameOverBg;
     private boolean isWin = true; 
+    private boolean isFinalLevel = false; // Track if this is the final level
 
     public GameOver(Game game){
         super(game);
@@ -41,10 +42,12 @@ public class GameOver extends GameScene implements Render, SceneMethod {
 
     public void setWin(boolean isFinalLevel) {
         this.isWin = true;
+        this.isFinalLevel = isFinalLevel;
     }
 
     public void setLose() {
         this.isWin = false;
+        this.isFinalLevel = false;
     }
 
     @Override
@@ -52,7 +55,12 @@ public class GameOver extends GameScene implements Render, SceneMethod {
 
         gc.drawImage(gameOverBg, 0, 0, WIDTH, HEIGHT);
 
-    	String text = isWin ? "YOU WIN" : "YOU LOSE";
+    	String text;
+    	if (isWin) {
+    	    text = isFinalLevel ? "YOU WIN!" : "LEVEL COMPLETE!";
+    	} else {
+    	    text = "YOU LOSE";
+    	}
 
     	Font font = Font.font("Arial", FontWeight.BOLD, 72);
     	gc.setFont(font);
@@ -68,7 +76,8 @@ public class GameOver extends GameScene implements Render, SceneMethod {
         gc.strokeText(text, textX, textY);
     	gc.fillText(text, textX, textY);
 
-    	if (isWin) {
+    	if (isWin && !isFinalLevel) {
+    	    // Show NEXT LEVEL button for non-final levels
         	drawButton(gc, "NEXT LEVEL", nextX, nextY);
     	}
 
@@ -99,9 +108,8 @@ public class GameOver extends GameScene implements Render, SceneMethod {
 
     @Override
     public void mouseClicked(int x, int y) {
-
-        // NEXT LEVEL
-        if (isWin &&
+        // NEXT LEVEL (only for non-final levels)
+        if (isWin && !isFinalLevel &&
             x >= nextX && x <= nextX + btnWidth &&
             y >= nextY && y <= nextY + btnHeight) {
 			game.onEnterPlaying();
@@ -113,7 +121,6 @@ public class GameOver extends GameScene implements Render, SceneMethod {
         // MAIN MENU
         if (x >= menuX && x <= menuX + btnWidth &&
             y >= menuY && y <= menuY + btnHeight) {
-
             GameState.SetGameState(GameState.MENU);
 			game.onEnterMenu();      
         	game.getPlaying().reset(); 
