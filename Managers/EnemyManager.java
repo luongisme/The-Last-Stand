@@ -5,16 +5,26 @@ import Entities.Enemies.Enemy;
 import Helper.LoadImages.loadImg;
 import Map.LevelBuild;
 import Scenes.Playing;
+
+import Constant.EntityConstant;
+import Entities.Enemies.Enemy;
+import Helper.LoadImages.loadImg;
+import Helper.MathUtil;
+import Logic.Effects.StatusEffect;
+import Scenes.Playing;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 
 import Helper.PathFinding.*;
 
 import Helper.Debug.WaypointDebugRenderer;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class EnemyManager {
 
@@ -41,14 +51,17 @@ public class EnemyManager {
     private RouteManager routeManager;
     private static final int TILE_SIZE = 16;
 
+    private ArrayList<Enemy>[][] enemyGrid;
+    private final int GRID_CELL_SIZE = 64;
+    private int gridRows, gridCols;
+
     public EnemyManager(Playing playing) {
         this.playing = playing;
-        directionX = 0;
-        directionY = 0;
 
         enemyImgs = new Image[enemyTypes][DIRECTIONS][FRAMES];
         loadEnemyImgs();
 
+        initEnemyGrid();
         initializePathfinding();
 
     }
@@ -146,6 +159,18 @@ public class EnemyManager {
     }
 
     public void update(float dt){
+        clearGrid();
+
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy e = enemies.get(i);
+
+            // Xóa quái đã chết
+            if (e.getEnemyHealth() <= 0) {
+                enemies.remove(i);
+                i--;
+                continue;
+            }
+
 
         playing.getWaveManager().update(dt);
 
@@ -158,35 +183,66 @@ public class EnemyManager {
 
         for (Enemy e : enemies) {
             e.update(dt);
-
-
+            registerToGrid(e);
             if (e.getX() >= 1604) {
                 enemiesToRemove.add(e);
             }
         }
 
-        // REMOVE THEM SAFELY
-        for (Enemy e : enemiesToRemove) {
-            enemies.remove(e);
+            // REMOVE THEM SAFELY
+            for (Enemy e : enemiesToRemove) {
+                enemies.remove(e);
 
-        }
-        if (enemies.isEmpty()) {
+            }
+            if (enemies.isEmpty()) {
 
-            //Are there more enemies to spawn in CURRENT wave?
-            if (!playing.getWaveManager().isThereMoreEnemiesInWave()) {
+                //Are there more enemies to spawn in CURRENT wave?
+                if (!playing.getWaveManager().isThereMoreEnemiesInWave()) {
 
-                //Are there MORE WAVES in this level?
-                if (playing.getWaveManager().isThereMoreWaves()) {
-                    // Start the 5 second timer (if not already started)
-                    playing.getWaveManager().startWaveTimer();
-                }
-                //No more waves? Then the LEVEL IS DONE.
-                else {
-                    //Make sure we don't trigger this if the wave timer is currently ticking down
-                    if (!playing.getWaveManager().isWaveTimerStarted()) {
-                        playing.loadNextLevel();
+                    //Are there MORE WAVES in this level?
+                    if (playing.getWaveManager().isThereMoreWaves()) {
+                        // Start the 5 second timer (if not already started)
+                        playing.getWaveManager().startWaveTimer();
+                    }
+                    //No more waves? Then the LEVEL IS DONE.
+                    else {
+                        //Make sure we don't trigger this if the wave timer is currently ticking down
+                        if (!playing.getWaveManager().isWaveTimerStarted()) {
+                            playing.loadNextLevel();
+                        }
                     }
                 }
+        }
+    }
+
+    private void clearGrid() {
+        for (int y = 0; y < gridRows; y++) {
+            for (int x = 0; x < gridCols; x++) {
+                enemyGrid[y][x].clear();
+            }
+        }
+    }
+
+    private void registerToGrid(Enemy e) {
+        int col = (int) (e.getX() / GRID_CELL_SIZE);
+        int row = (int) (e.getY() / GRID_CELL_SIZE);
+
+        if (col >= 0 && col < gridCols && row >= 0 && row < gridRows) {
+            enemyGrid[row][col].add(e);
+        }
+    }
+
+    private void initEnemyGrid() {
+        int lvlH = playing.getLvlData().length * 16;
+        int lvlW = playing.getLvlData()[0].length * 16;
+
+        gridRows = (lvlH / GRID_CELL_SIZE) + 1;
+        gridCols = (lvlW / GRID_CELL_SIZE) + 1;
+
+        enemyGrid = new ArrayList[gridRows][gridCols];
+        for (int y = 0; y < gridRows; y++) {
+            for (int x = 0; x < gridCols; x++) {
+                enemyGrid[y][x] = new ArrayList<>();
             }
         }
     }
@@ -263,6 +319,39 @@ public class EnemyManager {
         }
     }
 
+    public List<Enemy> getEnemiesInRange(float x, float y, float radius) {
+        List<Enemy> result = new ArrayList<>();
+
+        // Chỉ quét các ô Grid nằm trong phạm vi bán kính
+        int startCol = (int) ((x - radius) / GRID_CELL_SIZE);
+        int endCol = (int) ((x + radius) / GRID_CELL_SIZE);
+        int startRow = (int) ((y - radius) / GRID_CELL_SIZE);
+        int endRow = (int) ((y + radius) / GRID_CELL_SIZE);
+
+        // Kẹp biên để không lỗi ArrayOutOfBounds
+        startCol = Math.max(0, startCol);
+        endCol = Math.min(gridCols - 1, endCol);
+        startRow = Math.max(0, startRow);
+        endRow = Math.min(gridRows - 1, endRow);
+
+        // Duyệt các ô lưới tiềm năng
+        for (int row = startRow; row <= endRow; row++) {
+            for (int col = startCol; col <= endCol; col++) {
+                for (Enemy e : enemyGrid[row][col]) {
+                    // Kiểm tra khoảng cách chính xác (Pythagoras)
+                    if (MathUtil.getDistance(x, y, e.getCenterX(), e.getCenterY()) <= radius) {
+                        result.add(e);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<Enemy> getAllEnemies() {
+        return enemies;
+    }
+
     public void addEnemy(float x, float y, EntityConstant type) {
         Enemy enemy = type.createEnemy(x, y);
         if (enemy != null) {
@@ -281,7 +370,7 @@ public class EnemyManager {
 
         for (Enemy e : enemies) {
             drawEnemy(e, gc);
-            e.drawHealthBar(gc);
+            drawHealthBar(e, gc);
         }
     }
 
@@ -305,6 +394,8 @@ public class EnemyManager {
 
             // Draw sprite centered on enemy's actual position (no additional offset)
             gc.drawImage(img, e.getX() + offsetX, e.getY() + offsetY-8);
+
+            drawStatusEffects(e, gc, img.getWidth(), img.getHeight());
         }
     }
 
@@ -352,5 +443,10 @@ public class EnemyManager {
 
     public ArrayList<Enemy> getEnemies() {
         return enemies;
+    }
+    private void drawStatusEffects(Enemy e, GraphicsContext gc, double w, double h) {
+        for (StatusEffect effect : e.getStatusEffects()) {
+            effect.draw(gc, e.getX(), e.getY(), (float)w, (float)h);
+        }
     }
 }

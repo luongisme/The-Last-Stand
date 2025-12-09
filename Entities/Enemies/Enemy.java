@@ -7,8 +7,17 @@ import javafx.scene.paint.Color;
 
 // Pathfinding imports
 import Helper.PathFinding.EnemyPathController;
+import javafx.geometry.Rectangle2D;
+import Logic.Effects.StatusEffect;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList; // To avoid ConcurrentModification error when looping
 
 public abstract class Enemy {
+    protected float speed; // speedX, speedY;
+    protected float tenacity; // 0.0 -> 1.0 (Effect resistance)
+    protected int stunCount = 0; // Đếm số lượng effect làm choáng đang tác dụng
+    protected float slowFactor = 0f;
 
     private float x, y;
     private int enemyID;
@@ -19,6 +28,9 @@ public abstract class Enemy {
     private float speedX, speedY;
     private int enemyType;
 
+    // STATES
+    protected boolean isStunned = false;
+    protected List<StatusEffect> statusEffects = new CopyOnWriteArrayList<>();
     private boolean isHit;
     private boolean isAlive;
 
@@ -62,6 +74,7 @@ public abstract class Enemy {
         this.isHit = false;
         this.isAlive = true;
         this.maxHealth = maxHealth;
+        this.tenacity = tenacity;
         this.health = maxHealth;
         this.rewardGold = 10;
         this.bounds = new Rectangle2D(x, y, 32, 32);
@@ -149,8 +162,21 @@ public abstract class Enemy {
     // ==================== Animation System ====================
     public void update(float dt) {
         float dtSeconds = dt / 1000.0f;
-        updateAnimation(dtSeconds);
-        updateMove(dtSeconds);
+        // 1. Xử lý hiệu ứng (Độc vẫn rút máu kể cả khi choáng)
+        updateStatusEffects(dtSeconds);
+
+        // 2. Logic di chuyển (Chỉ chạy khi không choáng và còn sống)
+        if (stunCount <= 0 && health > 0) {
+            updateMove(dtSeconds);
+            this.bounds = new Rectangle2D(x, y, frameW, frameH);
+        }
+
+        // 3. Animation
+        if (stunCount <= 0) {
+            updateAnimation(dtSeconds);
+        }
+
+
     }
 
     private void updateAnimation(float dt) {
@@ -245,12 +271,100 @@ public abstract class Enemy {
             case UP    -> dy = -distance;
             case DOWN  -> dy = distance;
         }
+
+        // Apply movement
+        this.x += dx;
+        this.y += dy;
+        updateBounds();
+    }
+
+
+    private void updateStatusEffects(float dt) {
+        for (StatusEffect effect : statusEffects) {
+            effect.update(dt, this);
+            if (!effect.isActive()) {
+                statusEffects.remove(effect);
+            }
+        }
+    }
+
+
+    public void applyStatus(StatusEffect newEffect) {
+        // Kiểm tra trùng lặp ID (ví dụ không cho stack 2 effect stun cùng lúc)
+        for (StatusEffect e : statusEffects) {
+            if (e.getId().equals(newEffect.getId())) {
+                // Reset thời gian hiệu ứng cũ hoặc bỏ qua
+                return;
+            }
+        }
+
+        // Tính toán kháng hiệu ứng
+        newEffect.applyResistance(this.tenacity);
+        newEffect.onStart(this);
+        statusEffects.add(newEffect);
+    }
+
+    public void hurt(int dmg) {
+        this.health -= dmg;
+        if (this.health < 0) this.health = 0;
+    }
+
+        // SPEED: pixels per millisecond
+        // 0.05f * 16ms ≈ 0.8 pixels per frame. 
+        // 0.1f * 16ms ≈ 1.6 pixels per frame.
+        float speed = 0.05f; 
+        
+        float distance = speed * dt;
+
+        float dx = 0, dy = 0;
+        switch (lastDir) {
+            case RIGHT -> dx = distance;
+            case LEFT  -> dx = -distance;
+            case UP    -> dy = -distance;
+            case DOWN  -> dy = distance;
+        }
         
         // Apply movement
         this.x += dx;
         this.y += dy;
         updateBounds();
     }
+
+    // Hàm nội bộ để cập nhật speed thực tế
+    private void recalculateSpeed() {
+        this.speed = this.baseSpeed * (1.0f - this.slowFactor);
+        if (this.speed < 0) this.speed = 0;
+    }
+
+    // Getter cho EnemyManager dùng để vẽ
+    public boolean isStunned() { return stunCount > 0; }
+
+    // ==================== Getters ====================
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public float getCenterX() { return x + frameW / 2.0f; }
+    public float getCenterY() { return y + frameH / 2.0f; }
+    public int getEnemyHealth() { return health; }
+    public int getMaxHealth(){return maxHealth;}
+    public float getSpeed() { return speed; }
+    public int getEnemyType() { return enemyType; }
+    public int getAnimationIndex() { return animationIndex; }
+    public Rectangle2D getBounds() { return bounds; }
+    public int getEnemyDamage() { return damage; }
+    public int getLastDir() { return lastDir; }
+
+    public List<StatusEffect> getStatusEffects() { return statusEffects;}
+//    public int getFrameW() { return frameW; }
+//    public int getFrameH() { return frameH; }
+//    public int getEnemyId() { return enemyID; }
+
+    // ==================== Setters ====================
+    public void setX(float x) { this.x = x; }
+    public void setY(float y) { this.y = y; }
+    public void setSpeed(float speed) { this.speed = speed; }
+    public void setStunned(boolean stunned) { this.isStunned = stunned; }
+    public void setLastDir(int lastDir) { this.lastDir = lastDir; }
+//    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
 
     public void onReachedBase(){
         player.takeDamage(1);
@@ -316,6 +430,31 @@ public abstract class Enemy {
         this.frameH = h;
         updateBounds();
     }
+    public void addStun() {
+        this.stunCount++;
+    }
+
+    // Gọi khi kết thúc Stun
+    public void removeStun() {
+        this.stunCount--;
+        if (this.stunCount < 0) this.stunCount = 0; // Safety check
+    }
+
+    // Gọi khi bắt đầu Slow
+    public void addSlow(float factor) {
+        this.slowFactor += factor;
+        // Giới hạn slow tối đa (ví dụ không quá 90%)
+        if (this.slowFactor > 0.9f) this.slowFactor = 0.9f;
+        recalculateSpeed();
+    }
+
+    // Gọi khi kết thúc Slow
+    public void removeSlow(float factor) {
+        this.slowFactor -= factor;
+        if (this.slowFactor < 0) this.slowFactor = 0;
+        recalculateSpeed();
+    }
+
 
 
 }

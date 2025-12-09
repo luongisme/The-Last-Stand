@@ -1,4 +1,4 @@
-package Managers.UI;
+package Helper;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -6,7 +6,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class NotificationManager {
+public class Notification {
     private String notification = null;
     private long notificationEndTime = 0;
 
