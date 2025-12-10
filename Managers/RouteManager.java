@@ -204,25 +204,30 @@ public class RouteManager {
         clearRoutes();
 
         // ═══════════════════════════════════════════
-        // ROUTE 1: North Lane (Đường phía trên)
+        // ROUTE 1: Left Lane (Đường Trái)
         // ═══════════════════════════════════════════
-        createRoute("North Lane")
-                .addSpawn(1, 35)
-                .addBase(56, 45);
+        createRoute("Left Lane")
+                .addSpawn(1, 32)
+                .addCheckPoint(33,32)
+                .addBase(45, 3);
 
         // ═══════════════════════════════════════════
         // ROUTE 2: Middle Lane (Đường giữa)
         // ═══════════════════════════════════════════
         createRoute("Middle Lane")
-                .addSpawn(1, 37)
-                .addBase(54, 45);
+                .addSpawn(45, 46)
+                .addBase(47, 3);
+        createRoute("Middle Lane 2")
+                .addSpawn(47, 46)
+                .addBase(45, 3);
 
         // ═══════════════════════════════════════════
-        // ROUTE 3: South Lane (Đường phía dưới)
+        // ROUTE 3: Right Lane (Đường phải)
         // ═══════════════════════════════════════════
-        createRoute("South Lane")
-                .addSpawn(1, 39)
-                .addBase(52, 45);
+        createRoute("Right Lane")
+                .addSpawn(92, 32)
+                .addCheckPoint(59,32)
+                .addBase(49, 3);
 
     }
 

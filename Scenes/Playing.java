@@ -51,7 +51,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private final EnemyManager enemyManager;
     private final List<Skill> activeSkills = new ArrayList<>();
     private long lastUpdateTime = System.nanoTime();
-    private int levelIndex = 1;
+    private int levelIndex = 0;
     private ProjectileManager projectileManager;
 
 	private int mouseX, mouseY;
