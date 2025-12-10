@@ -12,7 +12,7 @@
         "Managers",
         "Map",
         "Player",
-        "Scene",
+        "Scenes",
         "Sound",
         "UI",
         "Input"

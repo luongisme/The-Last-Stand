@@ -6,8 +6,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class GameScreen extends Canvas {
-    private Game game;
-    private GraphicsContext gc;
+    private final Game game;
+    private final GraphicsContext gc;
     private static final int sizeWidth = 1504;
     private static final int sizeHeight = 736;
 
@@ -43,7 +43,7 @@ public class GameScreen extends Canvas {
                 renderBlack();
                 break;
             case GAME_OVER:
-                renderBlack();
+                game.getGameOver().render(gc);
                 break;
             default:
                 renderBlack();

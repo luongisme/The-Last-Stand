@@ -1,4 +1,6 @@
+############################
 # Maven
+############################
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -10,25 +12,33 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
-# Eclipse
-.classpath
-.project
-.settings/
-
+############################
 # IntelliJ IDEA
+############################
 .idea/
 *.iml
 *.iws
 *.ipr
-out/
+out/          # IntelliJ build output
 
+############################
+# Eclipse (nếu trước đây dùng)
+############################
+.classpath
+.project
+.settings/
+
+############################
 # VS Code
-.vscode/settings.json
-.vscode/launch.json
+############################
+.vscode/
 *.code-workspace
-# Keep .vscode/settings.json.example for team reference
+# (Nếu muốn giữ file settings mẫu thì thêm dòng dưới)
+# !.vscode/settings.json.example
 
-# Java
+############################
+# Java / Build artifacts
+############################
 *.class
 *.log
 *.jar
@@ -41,20 +51,24 @@ out/
 hs_err_pid*
 replay_pid*
 
-# OS
+# Build folders (tự tạo)
+build/
+dist/
+bin/        # <-- giữ lại, để ignore mấy file .bin & output khác
+
+############################
+# OS-specific
+############################
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
 *~
 
-# Backup files
+############################
+# Backup / Temp files
+############################
 *.bak
 *.backup
 *.tmp
 *.old
-
-# Build artifacts
-build/
-dist/
-bin/
