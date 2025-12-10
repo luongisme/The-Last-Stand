@@ -73,7 +73,7 @@ public class TileManager {
             System.err.println("Failed to load octopus.png!");
         }
     }
-    
+
     private Image mergeImages(Image background, Image overlay) {
         if (background == null || overlay == null) return background;
 
@@ -156,9 +156,9 @@ public class TileManager {
         tiles.add(GRASS = new Tile(getSprite(atlas2, 1, 5), TileConstant.GRASS));
         tiles.add(SAND = new Tile(getSprite(atlas, 1, 1), TileConstant.SAND));
         tiles.add(WATER = new Tile(getSprite(atlas3,3, 15), TileConstant.WATER));
-        tiles.add(WOOD = new Tile(getSprite(atlas, 5, 8), TileConstant.WOOD));
-        tiles.add(HOME = new Tile(getSprite(atlas, 17, 8), TileConstant.HOME));
-        tiles.add(WALL = new Tile(getSprite(atlas, 8, 0), TileConstant.WALL));
+        tiles.add(WOOD = new Tile(getSprite(atlas, 0, 3), TileConstant.WOOD));
+        tiles.add(HOME = new Tile(getSprite(atlas, 7, 0), TileConstant.HOME));
+        tiles.add(WALL = new Tile(getSprite(atlas, 5, 8), TileConstant.WALL));
         tiles.add(STONE = new Tile(getSprite(atlas2, 1, 5), TileConstant.STONE));
         tiles.add(CURB = new Tile(getSprite(atlas, 20,1),TileConstant.CURB));
         tiles.add(AVAILABLEDIRT = new Tile(getSprite(atlas, 14,5), TileConstant.AVAILABLEDIRT));
