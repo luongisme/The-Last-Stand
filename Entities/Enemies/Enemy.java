@@ -28,12 +28,12 @@ public abstract class Enemy {
 
     private int lastDir = RIGHT;
 
-    // Patrol logic
-    private float patrolTimer = 0;
-    private float patrolInterval = 2000; 
-    private int patrolStep = 0;
+    //  logic
+    private float Timer = 0;
+    private float Interval = 2000; 
+    private int Step = 0;
 
-    private final int[] patrolDirections = {
+    private final int[] Directions = {
         RIGHT, DOWN, LEFT, UP
     };
 
@@ -122,13 +122,13 @@ public abstract class Enemy {
     }
 
     private void updateMove(float dt) {
-        // Simple Patrol Logic
-        patrolTimer += dt;
-        if (patrolTimer >= patrolInterval) {
-            patrolTimer = 0;
-            patrolStep++;
-            if (patrolStep >= patrolDirections.length) patrolStep = 0;
-            lastDir = patrolDirections[patrolStep];
+        // Simple  Logic
+        Timer += dt;
+        if (Timer >= Interval) {
+            Timer = 0;
+            Step++;
+            if (Step >= Directions.length) Step = 0;
+            lastDir = Directions[Step];
         }
 
         // SPEED: pixels per millisecond

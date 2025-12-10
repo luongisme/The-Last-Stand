@@ -6,7 +6,8 @@ public enum EntityConstant {
 
     GOBLIN(0, "goblin.png", 32, 32),
     SKELETON(1, "skeleton.png", 32, 32),
-    GOBLIN_BOSS(2, "goblin_boss.png", 32, 32);
+    GHOUL(2, "ghoul.png", 32, 32),
+    GOBLIN_BOSS(3, "goblin_boss.png", 32, 32);
 
     private final int id;
     private final String spriteName;
@@ -30,6 +31,7 @@ public enum EntityConstant {
             case GOBLIN -> new Goblin(x, y);
             case SKELETON -> new Skeleton(x, y);
             case GOBLIN_BOSS -> new GoblinBoss(x, y);
+            case GHOUL -> new Ghoul(x, y);
         };
     }
 }
