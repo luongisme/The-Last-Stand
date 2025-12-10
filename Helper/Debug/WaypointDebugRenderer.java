@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class WaypointDebugRenderer {
-    private boolean enabled = true;
+    private boolean enabled = false;
     private boolean showCoordinates = true;
     private boolean showConnections = true;
 
@@ -45,7 +45,6 @@ public class WaypointDebugRenderer {
         // Vẽ tile highlights cho tất cả routes
         for (int i = 0; i < routes.size(); i++) {
             Route route = routes.get(i);
-            System.out.println("[WaypointDebugRenderer] Rendering route " + i + ": " + route.getRouteName() + " with " + route.getWayPoints().size() + " waypoints"); // DEBUG
             Color routeColor = ROUTE_COLORS[i % ROUTE_COLORS.length];
             renderRouteOnTiles(gc, route, routeColor, i);
         }

@@ -92,16 +92,11 @@ public class Playing extends GameScene implements Render, SceneMethod {
     }
 
     public void loadNextLevel() {
-        System.out.println("=== loadNextLevel() called ===");
-        System.out.println("Current levelIndex: " + levelIndex);
         levelIndex++;
-        System.out.println("After increment levelIndex: " + levelIndex);
         if (levelIndex > 2) {
-            System.out.println("GAME COMPLETED!");
             levelIndex = 2; // Loop back to start or go to Menu
         }
         loadLevel(levelIndex);
-        System.out.println("=== loadNextLevel() finished ===");
     }
 
     public void reset() {
@@ -128,6 +123,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
             1360, 50, (int)(100*1.5), 110*2,
             0, 0, 80, 95);
 
+        // Set skills reference so UI can display cooldown and cost
+        skillUI.setSkills(skills);
     }
 
     public void update() {
@@ -139,6 +136,11 @@ public class Playing extends GameScene implements Render, SceneMethod {
         projectileManager.update();
         towerManager.update();
         enemyManager.update((float)(dt * 1000)); // Convert to milliseconds for enemyManager
+
+        // Update skill cooldowns
+        for (AreaEffectSkill skill : skills) {
+            skill.updateCoolDown(dt);
+        }
 
         // CHECK LOSE
         if (player.getHealth() <= 0) {
@@ -166,8 +168,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
             Skill anim = it.next();
             anim.update(dt); // dt is already in seconds
 
-            // Deal damage to enemies if not already dealt
-            if (!anim.hasDealtDamage()) {
+            // Deal damage to enemies if not already dealt AND delay has passed
+            if (!anim.hasDealtDamage() && anim.isReadyToDealDamage()) {
                 dealSkillDamageToEnemies(anim);
                 anim.setHasDealtDamage(true);
             }
@@ -184,6 +186,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         double skillCenterY = skill.getCenterY();
         double skillRadius = skill.getRadius();
         int skillDamage = skill.getDamage();
+        int skillType = skill.getSkillType();
 
 
         for (Entities.Enemies.Enemy enemy : enemyManager.getEnemies()) {
@@ -204,6 +207,13 @@ public class Playing extends GameScene implements Render, SceneMethod {
                 int newHealth = currentHealth - skillDamage;
                 enemy.setEnemyHealth(newHealth);
                 enemy.setHit(true);
+
+                // Apply stun effect if ThunderBolt (skillType = 2)
+                if (skillType == 2) {
+                    Logic.Effects.StunEffect stunEffect = new Logic.Effects.StunEffect(2.0f); // 2 seconds stun
+                    enemy.applyStatus(stunEffect);
+                    System.out.println("Applied stun effect to enemy!");
+                }
 
                 if (newHealth <= 0) {
                     enemy.setAlive(false);
@@ -407,6 +417,23 @@ public class Playing extends GameScene implements Render, SceneMethod {
     }
 
     private void castSkill(int skillIndex, int x, int y) {
+        // Get skill info for damage and radius
+        AreaEffectSkill skillInfo = skills[skillIndex];
+
+        // Check if skill is on cooldown
+        if (!skillInfo.isOffCooldown()) {
+            System.out.println("Skill " + skillInfo.getName() + " is on cooldown! " +
+                String.format("%.1f", skillInfo.getCurrentCooldown()) + "s remaining");
+            return;
+        }
+
+        // Check if player has enough money
+        int skillCost = skillInfo.getCost();
+        if (player.getMoney() < skillCost) {
+            System.out.println("Not enough money! Need " + skillCost + " but have " + player.getMoney());
+            return;
+        }
+
         Image[] frames = null;
 
         switch (skillIndex) {
@@ -427,8 +454,6 @@ public class Playing extends GameScene implements Render, SceneMethod {
         double h = SKILL_ANIMATION_HEIGHT;
         double frameDuration = 0.08; // 100ms per frame
 
-        // Get skill info for damage and radius
-        AreaEffectSkill skillInfo = skills[skillIndex];
         double radius = skillInfo.getRadius();
         int damage = skillInfo.getDamage();
 
@@ -439,13 +464,17 @@ public class Playing extends GameScene implements Render, SceneMethod {
                 y - h/2.0,
                 w, h,
                 radius,
-                damage
+                damage,
+                skillIndex  // Pass skill type so we know which skill was cast
         );
 
         activeSkills.add(anim);
-        System.out.println("✅ Animation added at (" + x + ", " + y + ")");
-        System.out.println("✅ Skill damage: " + damage + ", radius: " + radius);
-        System.out.println("✅ Total active animations: " + activeSkills.size());
+
+        // Deduct money and start cooldown
+        player.spendMoney(skillCost);
+        skillInfo.useSkill();
+
+
     }
 
 
@@ -544,6 +573,17 @@ public class Playing extends GameScene implements Render, SceneMethod {
                         // Vẽ cây với kích thước thật (sẽ to hơn 16x16)
                         gc.drawImage(sprite, drawX, drawY, sprite.getWidth(), sprite.getHeight());
 
+                    } else if (id == TileConstant.DOOR.getId()) {
+                        // Vẽ cửa với kích thước 3x3 tiles
+                        gc.drawImage(sprite, drawX, drawY, GRID_SIZE * 3, GRID_SIZE * 3);
+
+                    } else if (id == TileConstant.WALL.getId()
+                            || id == TileConstant.WALL1.getId()
+                            || id == TileConstant.WALLLAST1.getId()
+                            || id == TileConstant.WALLLAST2.getId()) {
+                        // Vẽ tường với chiều cao 3 tiles
+                        gc.drawImage(sprite, drawX, drawY, GRID_SIZE, GRID_SIZE * 3);
+
                     } else if (sprite != null) {
                         // Vẽ các vật thể 16x16 khác
                         gc.drawImage(sprite, drawX, drawY, GRID_SIZE, GRID_SIZE);
@@ -622,6 +662,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
     }
 
     public int[][] getLvlData() { return lvl;}
+
+    public AreaEffectSkill[] getSkills() { return skills; }
 
     public ProjectileManager getProjectileManager() {
         return projectileManager;

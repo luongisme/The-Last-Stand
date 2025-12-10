@@ -7,13 +7,15 @@ public abstract class AreaEffectSkill {
     private double currentCooldown; // in seconds
     private final double radius;
     private final int damage; // damage dealt to enemies
+    private final int cost; // money cost to cast skill
 
-    protected AreaEffectSkill(int id, String name, double cooldown, double radius, int damage) {
+    protected AreaEffectSkill(int id, String name, double cooldown, double radius, int damage, int cost) {
         this.id = id;
         this.name = name;
         this.cooldown = cooldown;
         this.radius = radius;
         this.damage = damage;
+        this.cost = cost;
         this.currentCooldown = 0;
     }
 
@@ -44,6 +46,10 @@ public abstract class AreaEffectSkill {
 
     public int getDamage() {
         return damage;
+    }
+
+    public int getCost() {
+        return cost;
     }
 
     public void updateCoolDown(double dt) {

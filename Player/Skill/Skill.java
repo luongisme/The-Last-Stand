@@ -24,10 +24,15 @@ public class Skill {
     private final double radius;
     private final int damage;
     private boolean hasDealtDamage; // Flag to ensure damage is dealt only once
+    private final int skillType; // 0=WaterSplash, 1=SandStone, 2=ThunderBolt, 3=WaterStrike
+
+    // Delay before dealing damage (for ThunderBolt)
+    private final double damageDelay; // Delay in seconds before damage is dealt
+    private double totalElapsed; // Total time elapsed since skill was cast
 
     public Skill(Image[] frames, double frameDuration,
                  double x, double y, double width, double height,
-                 double radius, int damage) {
+                 double radius, int damage, int skillType) {
 
         if (frames == null || frames.length == 0) {
             this.frames = new Image[0];
@@ -48,7 +53,12 @@ public class Skill {
         this.centerY = y - 50 + height / 2.0;
         this.radius = radius;
         this.damage = damage;
+        this.skillType = skillType;
         this.hasDealtDamage = false;
+
+        // ThunderBolt (skillType 2) has 1 second delay, others deal damage immediately
+        this.damageDelay = (skillType == 2) ? 0.5 : 0.0;
+        this.totalElapsed = 0.0;
 
         this.elapsed = 0;
         this.currentFrame = 0;
@@ -59,6 +69,7 @@ public class Skill {
     public void update(double dt) {
         if (finished) return;
 
+        totalElapsed += dt;
         elapsed += dt;
 
         if (elapsed >= frameDuration) {
@@ -102,12 +113,21 @@ public class Skill {
         return damage;
     }
 
+    public int getSkillType() {
+        return skillType;
+    }
+
     public boolean hasDealtDamage() {
         return hasDealtDamage;
     }
 
     public void setHasDealtDamage(boolean hasDealtDamage) {
         this.hasDealtDamage = hasDealtDamage;
+    }
+
+    // Check if enough time has passed to deal damage
+    public boolean isReadyToDealDamage() {
+        return totalElapsed >= damageDelay;
     }
 }
 

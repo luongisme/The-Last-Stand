@@ -1,9 +1,12 @@
 package Button;
 
 import Helper.LoadImages.LoadImageSkill;
+import Player.Skill.AreaEffectSkill;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class SkillUI {
     private static final int ICON_SIZE = 42;
@@ -31,6 +34,7 @@ public class SkillUI {
 
     private Image skillUIBackground;
     private final Image[] skillIcons;
+    private AreaEffectSkill[] skills; // Reference to skills for cooldown/cost info
 
     // Track which skill is currently selected (-1 means none)
     private int selectedSkillIndex = -1;
@@ -53,6 +57,10 @@ public class SkillUI {
         this.skillIcons = new Image[SKILL_NAMES.length];
 
         loadImages();
+    }
+
+    public void setSkills(AreaEffectSkill[] skills) {
+        this.skills = skills;
     }
 
     private void loadImages() {
@@ -84,6 +92,32 @@ public class SkillUI {
 
                 // Draw the skill icon
                 gc.drawImage(skillIcons[i], iconX, iconY, ICON_SIZE, ICON_SIZE);
+
+                // Draw cooldown overlay if skill is on cooldown
+                if (skills != null && i < skills.length) {
+                    AreaEffectSkill skill = skills[i];
+
+                    if (!skill.isOffCooldown()) {
+                        // Semi-transparent dark overlay
+                        gc.setFill(Color.rgb(0, 0, 0, 0.6));
+                        gc.fillRect(iconX, iconY, ICON_SIZE, ICON_SIZE);
+
+                        // Cooldown timer text
+                        gc.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+                        gc.setFill(Color.WHITE);
+                        String cooldownText = String.format("%.1f", skill.getCurrentCooldown());
+                        gc.fillText(cooldownText, iconX + 8, iconY + 25);
+                    }
+
+                    // Draw cost at bottom of icon
+                    gc.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+                    gc.setFill(Color.GOLD);
+                    gc.setStroke(Color.BLACK);
+                    gc.setLineWidth(2);
+                    String costText = "$" + skill.getCost();
+                    gc.strokeText(costText, iconX + 4, iconY + ICON_SIZE - 2);
+                    gc.fillText(costText, iconX + 4, iconY + ICON_SIZE - 2);
+                }
 
                 // Draw dark overlay if this icon is selected
                 if (i == selectedSkillIndex) {

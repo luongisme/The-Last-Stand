@@ -4,7 +4,7 @@ public class WaterSplash extends AreaEffectSkill {
 
 
     public  WaterSplash() {
-        super(1, "Water Splash", 20.0, 100.0, 80); // 80 damage
+        super(1, "Water Splash", 20.0, 100.0, 80, 50); // 80 damage, 50 gold cost
     }
 
 }

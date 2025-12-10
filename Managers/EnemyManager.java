@@ -137,6 +137,9 @@ public class EnemyManager {
             // Gán path controller cho enemy
             enemy.setPathController(pathController);
 
+            // Set player reference so enemy can damage player when reaching base
+            enemy.setPlayer(playing.getPlayer());
+
             enemies.add(enemy);
 
             System.out.println("Spawned " + type.name() + " on " + route.getRouteName() +
@@ -344,6 +347,7 @@ public class EnemyManager {
     public void addEnemy(float x, float y, EntityConstant type) {
         Enemy enemy = type.createEnemy(x, y);
         if (enemy != null) {
+            enemy.setPlayer(playing.getPlayer());
             enemies.add(enemy);
         } else {
             System.err.println("Failed to create enemy type: " + type);

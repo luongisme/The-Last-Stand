@@ -325,7 +325,10 @@ public abstract class Enemy {
     public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
 
     public void onReachedBase(){
-        player.takeDamage(1);
+        if (player != null) {
+            player.takeDamage(1);
+            System.out.println("Enemy reached base! Player health: " + player.getHealth());
+        }
     }
 
 
@@ -341,6 +344,10 @@ public abstract class Enemy {
         this.pathController = controller;
         this.usePathfinding = true;
         this.reachedBase = false;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
 

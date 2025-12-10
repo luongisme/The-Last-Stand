@@ -11,11 +11,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.PrimitiveIterator;
 
 import javafx.scene.paint.Color;
 public class TileManager {
@@ -25,6 +20,7 @@ public class TileManager {
     private Image atlas; // The tileset sprite sheet
     private Image atlas1;
     private Image atlas2;
+    private Image atlas3;
     private Image treeImage;
     private Image trunkImage;
     private Image rockImage;
@@ -173,18 +169,18 @@ public class TileManager {
     }
 
     private void createTiles() {
-        
-        tiles.add(DIRT = new Tile(getSprite(atlas,17, 1), TileConstant.DIRT));
-        tiles.add(SPAWN = new Tile(getSprite(atlas, 1, 0), TileConstant.SPAWN));
-        tiles.add(ROAD = new Tile(getSprite(atlas1,4, 1), TileConstant.ROAD));
-        tiles.add(GRASS = new Tile(getSprite(atlas2,1, 5), TileConstant.GRASS));
-        tiles.add(SAND = new Tile(getSprite(atlas,4, 0), TileConstant.SAND));
-        tiles.add(WATER = new Tile(getSprite(atlas,5, 0), TileConstant.WATER));
-        tiles.add(WOOD = new Tile(getSprite(atlas,6, 0), TileConstant.WOOD));
-        tiles.add(HOME = new Tile(getSprite(atlas,7, 0), TileConstant.HOME));
-        tiles.add(WALL = new Tile(getSprite(atlas2,1, 5), TileConstant.WALL));
-        tiles.add(STONE = new Tile(getSprite(atlas,9, 0), TileConstant.STONE));
-        tiles.add(CURB = new Tile(getSprite(atlas, 1,3),TileConstant.CURB));
+
+        tiles.add(DIRT = new Tile(getSprite(atlas2, 0, 8), TileConstant.DIRT));
+        tiles.add(SPAWN = new Tile(getSprite(atlas, 2, 1), TileConstant.SPAWN));
+        tiles.add(ROAD = new Tile(getSprite(atlas1, 4, 1), TileConstant.ROAD));
+        tiles.add(GRASS = new Tile(getSprite(atlas2, 1, 5), TileConstant.GRASS));
+        tiles.add(SAND = new Tile(getSprite(atlas, 1, 1), TileConstant.SAND));
+        tiles.add(WATER = new Tile(getSprite(atlas3,3, 15), TileConstant.WATER));
+        tiles.add(WOOD = new Tile(getSprite(atlas, 0, 3), TileConstant.WOOD));
+        tiles.add(HOME = new Tile(getSprite(atlas, 7, 0), TileConstant.HOME));
+        tiles.add(WALL = new Tile(getSprite(atlas, 5, 8), TileConstant.WALL));
+        tiles.add(STONE = new Tile(getSprite(atlas2, 1, 5), TileConstant.STONE));
+        tiles.add(CURB = new Tile(getSprite(atlas, 20,1),TileConstant.CURB));
         tiles.add(AVAILABLEDIRT = new Tile(getSprite(atlas, 14,5), TileConstant.AVAILABLEDIRT));
         tiles.add(TREE = new Tile(treeImage, TileConstant.TREE));
         tiles.add(TRUNK = new Tile(trunkImage, TileConstant.TRUNK));
