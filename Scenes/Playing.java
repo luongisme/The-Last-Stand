@@ -51,7 +51,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
     private final EnemyManager enemyManager;
     private final List<Skill> activeSkills = new ArrayList<>();
     private long lastUpdateTime = System.nanoTime();
-    private int levelIndex = 0;
+    private int levelIndex = 1;
     private ProjectileManager projectileManager;
 
 	private int mouseX, mouseY;
@@ -86,7 +86,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         enemyManager= new EnemyManager(this);
 		towerManager = new TowerManager(this);
         projectileManager = new ProjectileManager(this);
-        player = new Player(5000, 3);
+        player = new Player(120, 3);
         waveManager = new WaveManager(this);
         loadLevel(levelIndex);
     }

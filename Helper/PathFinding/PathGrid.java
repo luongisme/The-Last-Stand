@@ -22,7 +22,9 @@ public class PathGrid {
 
         // Loop through the map data to set walkable and blocked tiles
         for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
+            // Check if current row has enough columns
+            int currentRowCols = mapData[y].length;
+            for (int x = 0; x < cols && x < currentRowCols; x++) {
                 int tileId = mapData[y][x];
                 TileConstant tileType = getTileConstantById(tileId);
                 if (tileType != null && tileType.isWalkable()) {
@@ -30,6 +32,10 @@ public class PathGrid {
                 } else {
                     grid[y][x] = 1; // blocked
                 }
+            }
+            // Fill remaining columns with blocked if current row is shorter
+            for (int x = currentRowCols; x < cols; x++) {
+                grid[y][x] = 1; // blocked
             }
         }
 

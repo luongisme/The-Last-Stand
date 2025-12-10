@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class WaypointDebugRenderer {
-    private boolean enabled = false;
+    private boolean enabled = true;
     private boolean showCoordinates = true;
     private boolean showConnections = true;
 

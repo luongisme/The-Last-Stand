@@ -68,39 +68,40 @@ public class EnemyManager {
 
 
     private void initializePathfinding() {
-        // Get map data
-        int[][] mapData = LevelBuild.getFirstMapData();
+        // Get current map data from Playing instance
+        int[][] currentMapData = playing.getLvlData();
 
-        // PathGrid
-        pathGrid = new PathGrid(mapData, TILE_SIZE);
+        // Determine which level we're on by checking the map size or using Playing's level index
+        int levelIndex = playing.getLevelIndex();
 
-        //  A* pathfinder
+        // Initialize PathGrid with current map
+        pathGrid = new PathGrid(currentMapData, TILE_SIZE);
         pathfinder = new AStarPathfinder(pathGrid);
-
-        // RouteManager - use singleton instance
         routeManager = RouteManager.getInstance();
-        routeManager.initializeDefaultRoutesForMap1();
+
+        // Initialize routes based on current level
+        switch(levelIndex) {
+            case 0:
+                routeManager.initializeDefaultRoutesForMap1();
+                break;
+            case 1:
+                routeManager.initializeDefaultRoutesForMap2();
+                break;
+            case 2:
+                routeManager.initializeDefaultRoutesForMap3();
+                break;
+            default:
+                routeManager.initializeDefaultRoutesForMap1();
+        }
 
         // Validate routes
         if (!routeManager.validateRouteOnGrid(pathGrid)) {
             System.err.println("WARNING: Some routes have invalid waypoints!");
         } else {
-            System.out.println("Pathfinding initialized successfully!");
+            System.out.println("Pathfinding initialized successfully for level " + levelIndex + "!");
         }
     }
 
-    /**
-     * Spawn enemy trên Middle Lane để test
-     */
-    public void spawnEnemyOnMiddleLane(EntityConstant type) {
-        Route middleLane = routeManager.getRouteByName("Middle Lane");
-        if (middleLane == null) {
-            System.err.println("Middle Lane route not found!");
-            return;
-        }
-
-        spawnEnemyOnRoute(type, middleLane);
-    }
 
     /**
      * Spawn enemy trên route cụ thể
@@ -156,6 +157,8 @@ public class EnemyManager {
 
     public void reset(){
         enemies.clear();
+        // Reinitialize pathfinding for the current level
+        initializePathfinding();
     }
 
     public void update(float dt){

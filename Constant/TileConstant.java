@@ -8,7 +8,7 @@ public enum TileConstant {
     GRASS(3, "grass.png", false, false),
     SAND(4, "sand.png", false, false),
     WATER(5, "water.png", false, false),
-    WOOD(6, "wood.png", false, false),
+    WOOD(6, "wood.png", true, false),
     HOME(7, "home.png", true, false),
     WALL(8, "wall.png", false, false),
     STONE(9, "stone.png", false, false),
