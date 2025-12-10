@@ -114,64 +114,57 @@ public void update(float dt){
             Wave w6 = new Wave();
 
             //wave 1
-            w1.addEnemyGroup(0, 4, 1f);
+            w1.addEnemyGroup(0, 2, 1f);
             w1.addGap(3.0f);
-            w1.addEnemyGroup(1, 3, 0.5f);
+            w1.addEnemyGroup(1, 2, 0.5f);
             waves.add(w1);
 
             //wave 2
-            w2.addEnemyGroup(0, 4, 0.5f);
-            w2.addEnemyGroup(0, 2, 0.75f);
+            w2.addEnemyGroup(0, 2, 0.5f);
+            w2.addEnemyGroup(1, 2, 0.75f);
             w2.addGap(2.0f);
-            w2.addEnemyGroup(1, 3, 1f);
-            w2.addEnemyGroup(0, 3, 1f);
-            w2.addGap(3.0f);
-            w2.addEnemyGroup(0, 4, 0.75f);
-            w2.addEnemyGroup(2, 2, 1.2f);
+            w2.addEnemyGroup(1, 3, 0.75f);
+            w2.addEnemyGroup(2, 1, 1.2f);
             waves.add(w2);
             // wave 3
             w3.addEnemyGroup(0, 3, 0.75f);
             w3.addEnemyGroup(1, 2, 1.25f);
             w3.addGap(3.0f);
-            w3.addEnemyGroup(0, 5, 0.5f);
-            w3.addEnemyGroup(1, 5, 1f);
+            w3.addEnemyGroup(1, 3, 0.5f);
+            w3.addEnemyGroup(2, 2, 1f);
             w3.addGap(3.0f);
-            w3.addEnemyGroup(0, 2, 0.5f);
-            w3.addEnemyGroup(1, 3, 1f);
-            w3.addEnemyGroup(2, 3, 1.2f);
+            w3.addEnemyGroup(3, 1, 0.5f);
             waves.add(w3);
             //wave 4
             w4.addEnemyGroup(0, 4, 0.75f);
             w4.addEnemyGroup(1, 3, 0.75f);
-            w4.addEnemyGroup(2, 3, 1f);
+            w4.addEnemyGroup(2, 1, 1f);
             w4.addGap(3.0f);
-            w4.addEnemyGroup(1, 5, 0.5f);
-            w4.addEnemyGroup(0, 5, 0.75f);
-            w4.addEnemyGroup(2, 4, 0.85f);
+            w4.addEnemyGroup(1, 4, 0.5f);
+            w4.addEnemyGroup(0, 4, 0.75f);
+            w4.addEnemyGroup(2, 2, 0.85f);
             w4.addGap(5.0f);
-            w4.addEnemyGroup(1, 3, 0.5f);
-            w4.addEnemyGroup(2, 3, 0.75f);
-            w4.addEnemyGroup(1, 2, 0.5f);
+            w4.addEnemyGroup(0, 4, 0.5f);
             w4.addEnemyGroup(2, 2, 0.75f);
             waves.add(w4);
             //wave 5
             w5.addEnemyGroup(0, 3, 0.5f);
             w5.addEnemyGroup(1, 2, 0.5f);
             w5.addEnemyGroup(0, 1, 0.5f);
-            w5.addEnemyGroup(1, 3, 0.5f);
-            w5.addGap(2f);
-            w5.addEnemyGroup(1, 5, 0.5f);
-            w5.addEnemyGroup(0, 3, 0.5f);
             w5.addEnemyGroup(2, 3, 0.5f);
             w5.addGap(2f);
-            w5.addEnemyGroup(1, 3, 1f);
+            w5.addEnemyGroup(1, 4, 0.5f);
+            w5.addEnemyGroup(0, 3, 0.5f);
+            w5.addEnemyGroup(2, 1, 0.5f);
+            w5.addGap(2f);
+            w5.addEnemyGroup(0, 3, 1f);
             w5.addEnemyGroup(2, 1, 0.75f);
             w5.addEnemyGroup(1, 2, 1f);
-            w5.addEnemyGroup(2, 3, 0.75f);
+            w5.addEnemyGroup(3, 2, 0.75f);
             waves.add(w5);
             //wave 6
             w6.addEnemyGroup(0, 5, 0.75f);
-            w6.addEnemyGroup(1, 6, 1f);
+            w6.addEnemyGroup(1, 2, 1f);
             w6.addEnemyGroup(2, 3, 1.5f);
             w6.addGap(2.5f);
             w6.addEnemyGroup(1, 5, 1f);
@@ -179,7 +172,7 @@ public void update(float dt){
             w6.addGap(5.0f);
             w6.addEnemyGroup(0, 6, 0.75f);
             w6.addEnemyGroup(1, 6, 1f);
-            w6.addEnemyGroup(2, 7, 1.25f);
+            w6.addEnemyGroup(3, 4, 1.25f);
             waves.add(w6); 
         }
         
@@ -194,64 +187,57 @@ public void update(float dt){
             Wave w6 = new Wave();
 
             //wave 1
-            w1.addEnemyGroup(0, 4, 1f);
+            w1.addEnemyGroup(0, 2, 1f);
             w1.addGap(3.0f);
-            w1.addEnemyGroup(1, 3, 0.5f);
+            w1.addEnemyGroup(1, 2, 0.5f);
             waves.add(w1);
 
             //wave 2
-            w2.addEnemyGroup(0, 4, 0.5f);
-            w2.addEnemyGroup(0, 2, 0.75f);
+            w2.addEnemyGroup(0, 2, 0.5f);
+            w2.addEnemyGroup(1, 2, 0.75f);
             w2.addGap(2.0f);
-            w2.addEnemyGroup(1, 3, 1f);
-            w2.addEnemyGroup(0, 3, 1f);
-            w2.addGap(3.0f);
-            w2.addEnemyGroup(0, 4, 0.75f);
-            w2.addEnemyGroup(2, 2, 1.2f);
+            w2.addEnemyGroup(1, 3, 0.75f);
+            w2.addEnemyGroup(2, 1, 1.2f);
             waves.add(w2);
             // wave 3
             w3.addEnemyGroup(0, 3, 0.75f);
             w3.addEnemyGroup(1, 2, 1.25f);
             w3.addGap(3.0f);
-            w3.addEnemyGroup(0, 5, 0.5f);
-            w3.addEnemyGroup(1, 5, 1f);
+            w3.addEnemyGroup(1, 3, 0.5f);
+            w3.addEnemyGroup(2, 2, 1f);
             w3.addGap(3.0f);
-            w3.addEnemyGroup(0, 2, 0.5f);
-            w3.addEnemyGroup(1, 3, 1f);
-            w3.addEnemyGroup(2, 3, 1.2f);
+            w3.addEnemyGroup(3, 1, 0.5f);
             waves.add(w3);
             //wave 4
             w4.addEnemyGroup(0, 4, 0.75f);
             w4.addEnemyGroup(1, 3, 0.75f);
-            w4.addEnemyGroup(2, 3, 1f);
+            w4.addEnemyGroup(2, 1, 1f);
             w4.addGap(3.0f);
-            w4.addEnemyGroup(1, 5, 0.5f);
-            w4.addEnemyGroup(0, 5, 0.75f);
-            w4.addEnemyGroup(2, 4, 0.85f);
+            w4.addEnemyGroup(1, 4, 0.5f);
+            w4.addEnemyGroup(0, 4, 0.75f);
+            w4.addEnemyGroup(2, 2, 0.85f);
             w4.addGap(5.0f);
-            w4.addEnemyGroup(1, 3, 0.5f);
-            w4.addEnemyGroup(2, 3, 0.75f);
-            w4.addEnemyGroup(1, 2, 0.5f);
+            w4.addEnemyGroup(0, 4, 0.5f);
             w4.addEnemyGroup(2, 2, 0.75f);
             waves.add(w4);
             //wave 5
             w5.addEnemyGroup(0, 3, 0.5f);
             w5.addEnemyGroup(1, 2, 0.5f);
             w5.addEnemyGroup(0, 1, 0.5f);
-            w5.addEnemyGroup(1, 3, 0.5f);
-            w5.addGap(2f);
-            w5.addEnemyGroup(1, 5, 0.5f);
-            w5.addEnemyGroup(0, 3, 0.5f);
             w5.addEnemyGroup(2, 3, 0.5f);
             w5.addGap(2f);
-            w5.addEnemyGroup(1, 3, 1f);
+            w5.addEnemyGroup(1, 4, 0.5f);
+            w5.addEnemyGroup(0, 3, 0.5f);
+            w5.addEnemyGroup(2, 1, 0.5f);
+            w5.addGap(2f);
+            w5.addEnemyGroup(0, 3, 1f);
             w5.addEnemyGroup(2, 1, 0.75f);
             w5.addEnemyGroup(1, 2, 1f);
-            w5.addEnemyGroup(2, 3, 0.75f);
+            w5.addEnemyGroup(3, 2, 0.75f);
             waves.add(w5);
             //wave 6
             w6.addEnemyGroup(0, 5, 0.75f);
-            w6.addEnemyGroup(1, 6, 1f);
+            w6.addEnemyGroup(1, 2, 1f);
             w6.addEnemyGroup(2, 3, 1.5f);
             w6.addGap(2.5f);
             w6.addEnemyGroup(1, 5, 1f);
@@ -259,8 +245,8 @@ public void update(float dt){
             w6.addGap(5.0f);
             w6.addEnemyGroup(0, 6, 0.75f);
             w6.addEnemyGroup(1, 6, 1f);
-            w6.addEnemyGroup(2, 7, 1.25f);
-            waves.add(w6);
+            w6.addEnemyGroup(3, 4, 1.25f);
+            waves.add(w6); 
         }
 
         // ─── LEVEL 3 ─────────────────────────────────────────
@@ -273,64 +259,57 @@ public void update(float dt){
             Wave w6 = new Wave();
 
             //wave 1
-            w1.addEnemyGroup(0, 4, 1f);
+            w1.addEnemyGroup(0, 2, 1f);
             w1.addGap(3.0f);
-            w1.addEnemyGroup(1, 3, 0.5f);
+            w1.addEnemyGroup(1, 2, 0.5f);
             waves.add(w1);
 
             //wave 2
-            w2.addEnemyGroup(0, 4, 0.5f);
-            w2.addEnemyGroup(0, 2, 0.75f);
+            w2.addEnemyGroup(0, 2, 0.5f);
+            w2.addEnemyGroup(1, 2, 0.75f);
             w2.addGap(2.0f);
-            w2.addEnemyGroup(1, 3, 1f);
-            w2.addEnemyGroup(0, 3, 1f);
-            w2.addGap(3.0f);
-            w2.addEnemyGroup(0, 4, 0.75f);
-            w2.addEnemyGroup(2, 2, 1.2f);
+            w2.addEnemyGroup(1, 3, 0.75f);
+            w2.addEnemyGroup(2, 1, 1.2f);
             waves.add(w2);
             // wave 3
             w3.addEnemyGroup(0, 3, 0.75f);
             w3.addEnemyGroup(1, 2, 1.25f);
             w3.addGap(3.0f);
-            w3.addEnemyGroup(0, 5, 0.5f);
-            w3.addEnemyGroup(1, 5, 1f);
+            w3.addEnemyGroup(1, 3, 0.5f);
+            w3.addEnemyGroup(2, 2, 1f);
             w3.addGap(3.0f);
-            w3.addEnemyGroup(0, 2, 0.5f);
-            w3.addEnemyGroup(1, 3, 1f);
-            w3.addEnemyGroup(2, 3, 1.2f);
+            w3.addEnemyGroup(3, 1, 0.5f);
             waves.add(w3);
             //wave 4
             w4.addEnemyGroup(0, 4, 0.75f);
             w4.addEnemyGroup(1, 3, 0.75f);
-            w4.addEnemyGroup(2, 3, 1f);
+            w4.addEnemyGroup(2, 1, 1f);
             w4.addGap(3.0f);
-            w4.addEnemyGroup(1, 5, 0.5f);
-            w4.addEnemyGroup(0, 5, 0.75f);
-            w4.addEnemyGroup(2, 4, 0.85f);
+            w4.addEnemyGroup(1, 4, 0.5f);
+            w4.addEnemyGroup(0, 4, 0.75f);
+            w4.addEnemyGroup(2, 2, 0.85f);
             w4.addGap(5.0f);
-            w4.addEnemyGroup(1, 3, 0.5f);
-            w4.addEnemyGroup(2, 3, 0.75f);
-            w4.addEnemyGroup(1, 2, 0.5f);
+            w4.addEnemyGroup(0, 4, 0.5f);
             w4.addEnemyGroup(2, 2, 0.75f);
             waves.add(w4);
             //wave 5
             w5.addEnemyGroup(0, 3, 0.5f);
             w5.addEnemyGroup(1, 2, 0.5f);
             w5.addEnemyGroup(0, 1, 0.5f);
-            w5.addEnemyGroup(1, 3, 0.5f);
-            w5.addGap(2f);
-            w5.addEnemyGroup(1, 5, 0.5f);
-            w5.addEnemyGroup(0, 3, 0.5f);
             w5.addEnemyGroup(2, 3, 0.5f);
             w5.addGap(2f);
-            w5.addEnemyGroup(1, 3, 1f);
+            w5.addEnemyGroup(1, 4, 0.5f);
+            w5.addEnemyGroup(0, 3, 0.5f);
+            w5.addEnemyGroup(2, 1, 0.5f);
+            w5.addGap(2f);
+            w5.addEnemyGroup(0, 3, 1f);
             w5.addEnemyGroup(2, 1, 0.75f);
             w5.addEnemyGroup(1, 2, 1f);
-            w5.addEnemyGroup(2, 3, 0.75f);
+            w5.addEnemyGroup(3, 2, 0.75f);
             waves.add(w5);
             //wave 6
             w6.addEnemyGroup(0, 5, 0.75f);
-            w6.addEnemyGroup(1, 6, 1f);
+            w6.addEnemyGroup(1, 2, 1f);
             w6.addEnemyGroup(2, 3, 1.5f);
             w6.addGap(2.5f);
             w6.addEnemyGroup(1, 5, 1f);
@@ -338,8 +317,8 @@ public void update(float dt){
             w6.addGap(5.0f);
             w6.addEnemyGroup(0, 6, 0.75f);
             w6.addEnemyGroup(1, 6, 1f);
-            w6.addEnemyGroup(2, 7, 1.25f);
-            waves.add(w6);
+            w6.addEnemyGroup(3, 4, 1.25f);
+            waves.add(w6); 
         }
     }
 

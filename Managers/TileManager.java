@@ -53,11 +53,6 @@ public class TileManager {
             System.err.println("Failed to load main tileset atlas!");
         }
         
-        // load water atlas riêng (image.png)
-        waterAtlas = loadImage("image.png"); 
-        if (waterAtlas == null) {
-            System.err.println("Failed to load water tileset atlas!");
-        }
         if (atlas1 == null) {
             System.err.println("Failed to load tileset atlas!");
         }
@@ -138,20 +133,6 @@ public class TileManager {
         return subImage;
     }
 
-    // cho phép chỉ định dùng atlas nào
-    private Image getSprite(Image sourceAtlas, int xCord, int yCord) {
-        if (sourceAtlas == null) return null;
-        
-        // Calculate pixel coordinates
-        int x = xCord * TILE_SIZE;
-        int y = yCord * TILE_SIZE;
-        
-        // Extract sub-image using JavaFX PixelReader
-        PixelReader reader = sourceAtlas.getPixelReader();
-        WritableImage subImage = new WritableImage(reader, x, y, TILE_SIZE, TILE_SIZE);
-        
-        return subImage;
-    }
 
     private Image loadImage(String fileName) {
         // Try classpath first (preferred when resource folder is on classpath)

@@ -4,12 +4,14 @@ import Entities.Enemies.Enemy;
 import Entities.Enemies.Goblin;
 import Entities.Enemies.GoblinBoss;
 import Entities.Enemies.Skeleton;
+import Entities.Enemies.Ghoul;
 
 public enum EntityConstant {
 
     GOBLIN(0, "goblin.png", 32, 32, 50, 0.5f, 5, 0.0f),
     SKELETON(1, "skeleton.png", 32, 32, 80, 0.7f, 1, 0.3f),
-    GOBLIN_BOSS(2, "goblin_boss.png", 32, 32, 500, 0.3f, 50, 0.7f);
+    GHOUL(2, "ghoul.png", 32, 32, 120, 0.6f, 10, 0.2f),
+    GOBLIN_BOSS(3, "goblin_boss.png", 32, 32, 500, 0.3f, 50, 0.7f);
 
     private final int id;
     private final String spriteName;
@@ -48,6 +50,7 @@ public enum EntityConstant {
         return switch (this) {
             case GOBLIN -> new Goblin(x, y);
             case SKELETON -> new Skeleton(x, y);
+            case GHOUL -> new Ghoul(x, y);
             case GOBLIN_BOSS -> new GoblinBoss(x, y);
         };
     }
