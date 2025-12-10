@@ -121,7 +121,7 @@ public class LevelBuild {
             {3,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3},
             {3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3},
             {3,3,3,3,3,3,3,3,3,5,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3},
-            {3,3,3,3,3,3,3,3,3,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3},
+            {3,3,3,3,3,3,3,3,3,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3},
             {3,3,3,3,3,3,3,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3},
             {3,3,3,3,3,3,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3},
             {3,3,3,3,3,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3},
@@ -245,13 +245,26 @@ public class LevelBuild {
             }
         }
 
-        placeRandomTrees(objectMap, baseMap, 3, 100, 0, 0, 30, 12);
-        placeRandomTrees(objectMap, baseMap, 3, 15, 30, 0, 35, 10);
-        placeRandomTrees(objectMap, baseMap, 3, 35, 0, 12, 4, 45);
+        placeRandomTrees(objectMap,baseMap,3,100, 0, 0, 30, 12 );  // rừng lớn hơn
+        placeRandomTrees(objectMap,baseMap,3,15, 30, 0, 35, 10 );
+        placeRandomTrees(objectMap,baseMap,3,35, 0, 12, 4, 45 );
+        placeRandomTrees(objectMap,baseMap,3,10, 4, 12, 8, 20 );
+        placeRandomTrees(objectMap,baseMap,3,15, 0, 58,3, 76 );
+        placeRandomTrees(objectMap,baseMap,3, 20, 0, 76,5, 85 );
+        placeRandomTrees(objectMap,baseMap,3,5, 37, 22,40, 25 );
+        placeRandomTrees(objectMap,baseMap,3,30, 40, 18,45, 30 );
+        placeRandomTrees(objectMap,baseMap,3,80, 43, 40,45, 92 );
+        placeRandomTrees(objectMap,baseMap,3,50, 12, 88,43, 92 );
+        placeRandomTrees(objectMap,baseMap,3,10, 36, 84,43, 88 );
 
-        placeRandomTrees(objectMap, baseMap, 3, 80, 43, 40, 45, 92);
-        placeRandomTrunk(objectMap, baseMap, 3, 30, 0, 0, 30, 15);
-        placeRandomRock(objectMap, baseMap, 3, 5, 31, 40, 36, 70);
+        placeRandomTrunk(objectMap,baseMap,3,30, 0, 0, 30, 15 );
+        placeRandomTrunk(objectMap,baseMap,3,20, 43, 40,45, 92 );
+        placeRandomTrunk(objectMap,baseMap,3,10, 12, 88,43, 92 );
+
+        placeRandomRock(objectMap,baseMap,3,5, 9,40,17, 66 );
+        placeRandomRock(objectMap,baseMap,3,3, 14,26,19, 40 );
+        placeRandomRock(objectMap,baseMap,3,5, 31,40,36, 70 );
+        placeRandomRock(objectMap,baseMap,3,3, 22,70,34, 77 );
 
         return objectMap;
     }
@@ -303,7 +316,7 @@ public class LevelBuild {
         int placed = 0;
         int attempts = 0; // Tránh vòng lặp vô tận
 
-        while (placed < count && attempts < count * 10) {
+        while (placed < count && attempts < count * 50) {
             attempts++;
             int x = rand.nextInt(endX - startX + 1) + startX; // Cột
             int y = rand.nextInt(endY - startY + 1) + startY; // Dòng
@@ -324,7 +337,7 @@ public class LevelBuild {
         int placed = 0;
         int attempts = 0;
 
-        while (placed < count && attempts < count * 10) {
+        while (placed < count && attempts < count * 50) {
             attempts++;
             int x = rand.nextInt(endX - startX + 1) + startX;
             int y = rand.nextInt(endY - startY + 1) + startY;
@@ -344,7 +357,7 @@ public class LevelBuild {
         int placed = 0;
         int attempts = 0;
 
-        while (placed < count && attempts < count * 10) {
+        while (placed < count && attempts < count * 50) {
             attempts++;
             int x = rand.nextInt(endX - startX + 1) + startX;
             int y = rand.nextInt(endY - startY + 1) + startY;

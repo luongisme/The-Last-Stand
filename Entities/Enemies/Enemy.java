@@ -94,7 +94,7 @@ public abstract class Enemy {
     public void drawHealthBar(GraphicsContext gc) {
         if (health <= 0 || !isAlive) return;
 
-        double barX = x;
+        double barX = x+6;
         double barY = y - 6;
 
         final double HEALTH_BAR_WIDTH = 30.0;
