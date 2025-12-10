@@ -172,6 +172,10 @@ public class EnemyManager {
 
             // Xóa quái đã chết
             if (e.getEnemyHealth() <= 0) {
+                // Award money to player when enemy dies (only if not already awarded)
+                if (e.getIsAlive()) {
+                    playing.getPlayer().addMoney(e.getRewardGold());
+                }
                 enemies.remove(i);
                 i--;
                 continue;

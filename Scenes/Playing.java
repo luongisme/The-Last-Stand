@@ -86,7 +86,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         enemyManager= new EnemyManager(this);
 		towerManager = new TowerManager(this);
         projectileManager = new ProjectileManager(this);
-        player = new Player(120, 3);
+        player = new Player(200, 3);
         waveManager = new WaveManager(this);
         loadLevel(levelIndex);
     }
