@@ -217,7 +217,7 @@ public abstract class Tower {
 
         Enemy bestCandidate = enemyManager.getEnemiesInRange(centerX, centerY, range).stream()
                 .filter(e -> e.getEnemyHealth() > 0)
-                .max(Comparator.comparingInt(Enemy::getEnemyHealth))
+                .min(Comparator.comparingInt(Enemy::getEnemyHealth))
                 .orElse(null);
 
         if (bestCandidate != null) {

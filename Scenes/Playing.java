@@ -86,7 +86,7 @@ public class Playing extends GameScene implements Render, SceneMethod {
         enemyManager= new EnemyManager(this);
 		towerManager = new TowerManager(this);
         projectileManager = new ProjectileManager(this);
-        player = new Player(200, 3);
+        player = new Player(300, 3);
         waveManager = new WaveManager(this);
         loadLevel(levelIndex);
     }
@@ -101,8 +101,8 @@ public class Playing extends GameScene implements Render, SceneMethod {
 
     public void reset() {
         levelIndex = 0;
-        player.setMoney(5000);
-        player.setHealth(100);
+        player.setMoney(300);
+        player.setHealth(3);
         waveManager.reset();
         enemyManager.reset();
         loadLevel(levelIndex);
