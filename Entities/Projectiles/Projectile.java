@@ -113,7 +113,7 @@ public class Projectile {
     }
 
     public ImpactEffect createImpactEffect() {
-        return null; // Mặc định trả về null (như bạn muốn tắt effect cho Poison/Frost)
+        return null; // Mặc định trả về null (như bạn muốn tắt effect)
     }
 
     public int getImpactAnimSpeed() { return impactAnimSpeed; }

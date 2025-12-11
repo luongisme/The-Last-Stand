@@ -43,7 +43,7 @@ public abstract class Tower {
     private int constructionTick = 0;
     private int constructionIndex = 0;
     private int constructionLoopCount = 0;
-    private final int CONSTRUCTION_SPEED = 5;
+    private final int CONSTRUCTION_SPEED = 3;
     private final int CONSTRUCTION_FRAMES = 6; // TowerBuild[0,1,2].length
     private final int TARGET_CONSTRUCTION_LOOPS = 3;
 
@@ -206,20 +206,15 @@ public abstract class Tower {
     }
 
     protected void scanEnemy() {
-        // Nếu target cũ chết hoặc chạy thoát -> Bỏ target
         if (currentTarget != null) {
             if (currentTarget.getEnemyHealth() <= 0 || !isInRange(currentTarget)) {
                 currentTarget = null;
-                // Nếu đang tấn công mà mất target -> Có thể ngừng hoặc để animation chạy hết (tùy chọn)
-                // Ở đây ta giữ animation chạy hết cho mượt, nhưng lần sau sẽ không bắn
             }
         }
 
         float centerX = x + 16;
         float centerY = y + 16;
 
-        // Chỉ tìm target mới nếu đang rảnh tay hoặc target cũ đã mất
-        // (Hoặc nếu bạn muốn logic "Luôn đổi sang con máu cao nhất ngay lập tức"):
         Enemy bestCandidate = enemyManager.getEnemiesInRange(centerX, centerY, range).stream()
                 .filter(e -> e.getEnemyHealth() > 0)
                 .max(Comparator.comparingInt(Enemy::getEnemyHealth))

@@ -138,23 +138,14 @@ public class TowerManager {
 
     private void drawRange(GraphicsContext gc, Tower t) {
         gc.setStroke(Color.WHITE);
-        gc.setLineWidth(1); // Hoặc 2 cho dễ nhìn
+        gc.setLineWidth(1);
 
-        // 1. ĐỒNG BỘ TÂM (Center Sync)
-        // Trong Tower.java bạn dùng (x + 16, y + 16) để tính khoảng cách bắn.
-        // Nên khi vẽ vòng tròn, tâm cũng phải nằm chính xác ở đó.
         float centerX = t.getX() + 16;
         float centerY = t.getY() + 16;
 
-        // 2. SỬA LỖI RADIUS vs DIAMETER
-        // t.getRange() trả về BÁN KÍNH (Radius - khoảng cách từ tâm ra rìa).
-        // Hàm strokeOval của JavaFX yêu cầu width/height là ĐƯỜNG KÍNH (Diameter).
-        float range = t.getRange(); // Đây là bán kính
-        float diameter = range * 2; // Đường kính = Bán kính * 2
+        float range = t.getRange();
+        float diameter = range * 2;
 
-        // 3. VẼ
-        // strokeOval vẽ từ góc trên-trái của hình vuông bao quanh hình tròn
-        // Tọa độ vẽ = Tâm - Bán kính
         gc.strokeOval(
                 centerX - range, // X
                 centerY - range, // Y
@@ -163,14 +154,10 @@ public class TowerManager {
         );
     }
 
-    // Hàm kiểm tra xem chuột có đang đè lên tháp không (Cần biến mouseX, mouseY từ Playing)
     private boolean isHovering(Tower t) {
-        // Lấy tọa độ chuột pixel thực tế (không phải grid)
         int mx = playing.getRawMouseX();
         int my = playing.getRawMouseY();
 
-        // Kích thước vùng check dựa trên hàm drawBase:
-        // x - 11, y - 58, w = 38, h = 76
         int imgX = t.getX() - 11;
         int imgY = t.getY() - 58;
         int imgW = 38;
@@ -181,13 +168,11 @@ public class TowerManager {
     }
 
     public Tower getTowerAtPixel(int x, int y) {
-        // Duyệt ngược từ cuối danh sách để ưu tiên tháp vẽ sau (nằm trên) nếu có chồng lấn
         for (int i = towers.size() - 1; i >= 0; i--) {
             Tower t = towers.get(i);
 
             if (t.isSelling()) continue;
 
-            // Logic Hitbox giống hệt isHovering
             int imgX = t.getX() - 11;
             int imgY = t.getY() - 58;
             int imgW = 38;
@@ -267,18 +252,6 @@ public class TowerManager {
     private boolean isValidIndex(int x, int y) {
         return x >= 0 && x < towerMap[0].length && y >= 0 && y < towerMap.length;
     }
-
-//    public Image[] getTowerIconsAnimation(int type) {
-//        return sprite.getTowerIconArray(type);
-//    }
-//
-//    public Image[] getSellIconsAnimation() {
-//        return sprite.getSellIcon();
-//    }
-//
-//    public Image[] getUpgradeIconsAnimation() {
-//        return sprite.getUpgradeIcon();
-//    }
 
     public Image getTowerIcon(int type) { return sprite.getTowerIcon(type); }
 

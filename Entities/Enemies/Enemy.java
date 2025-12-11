@@ -19,12 +19,9 @@ public abstract class Enemy {
     protected float slowFactor = 0f;
 
     private float x, y;
-    private int enemyID;
     private int maxHealth;
     private int health;
-    private int damage;
     private int rewardGold; // Gold reward when killed
-    private float speedX, speedY;
     private int enemyType;
 
     // STATES
@@ -35,9 +32,6 @@ public abstract class Enemy {
 
     protected int frameW = 32;
     protected int frameH = 32;
-
-    private int barWidth;
-    private final int barLength = 4;
 
     // Directions
     public static final int DOWN = 0;
@@ -130,21 +124,16 @@ public abstract class Enemy {
     // ==================== Animation System ====================
     public void update(float dt) {
         float dtSeconds = dt / 1000.0f;
-        // 1. Xử lý hiệu ứng (Độc vẫn rút máu kể cả khi choáng)
         updateStatusEffects(dtSeconds);
 
-        // 2. Logic di chuyển (Chỉ chạy khi không choáng và còn sống)
         if (stunCount <= 0 && health > 0) {
             updateMove(dtSeconds);
             this.bounds = new Rectangle2D(x, y, frameW, frameH);
         }
 
-        // 3. Animation
         if (stunCount <= 0) {
             updateAnimation(dtSeconds);
         }
-
-
     }
 
     private void updateAnimation(float dt) {
@@ -159,11 +148,9 @@ public abstract class Enemy {
     }
 
     private void updateMove(float dt) {
-        // Sử dụng pathfinding nếu có
         if (usePathfinding && pathController != null) {
             updatePathfindingMove(dt);
         } else {
-            // Fallback: di chuyển theo hướng hiện tại
             updateSimpleMove(dt);
         }
     }
@@ -258,15 +245,12 @@ public abstract class Enemy {
 
 
     public void applyStatus(StatusEffect newEffect) {
-        // Kiểm tra trùng lặp ID (ví dụ không cho stack 2 effect stun cùng lúc)
         for (StatusEffect e : statusEffects) {
             if (e.getId().equals(newEffect.getId())) {
-                // Reset thời gian hiệu ứng cũ hoặc bỏ qua
                 return;
             }
         }
 
-        // Tính toán kháng hiệu ứng
         newEffect.applyResistance(this.tenacity);
         newEffect.onStart(this);
         statusEffects.add(newEffect);
@@ -277,52 +261,28 @@ public abstract class Enemy {
         if (this.health < 0) this.health = 0;
     }
 
-    // Hàm nội bộ để cập nhật speed thực tế
-    private void recalculateSpeed() {
-        this.speed = this.moveSpeed * (1.0f - this.slowFactor);
-        if (this.speed < 0) this.speed = 0;
-    }
-
-    // Getter cho EnemyManager dùng để vẽ
-    public boolean isStunned() { return stunCount > 0; }
-
     // ==================== Getters ====================
     public float getX() { return x; }
     public float getY() { return y; }
     public float getCenterX() { return x + frameW / 2.0f; }
     public float getCenterY() { return y + frameH / 2.0f; }
-    public int getEnemyId() { return enemyID; }
     public int getEnemyHealth() { return health; }
-    public int getMaxHealth(){return maxHealth;}
     public float getSpeed() { return speed; }
     public int getEnemyType() { return enemyType; }
     public int getAnimationIndex() { return animationIndex; }
-    public Rectangle2D getBounds() { return bounds; }
-    public int getEnemyDamage() { return damage; }
     public int getLastDir() { return lastDir; }
     public boolean getIsAlive() {return isAlive;}
-    public boolean isHit() {return isHit;}
     public int getRewardGold() { return rewardGold; }
-    public float getEnemySpeedX() { return speedX; }
-    public float getEnemySpeedY() { return speedY; }
     public List<StatusEffect> getStatusEffects() { return statusEffects;}
 
     // ==================== Setters ====================
     public void setX(float x) { this.x = x; }
     public void setY(float y) { this.y = y; }
     public void setSpeed(float speed) { this.speed = speed; }
-    public void setStunned(boolean stunned) { this.isStunned = stunned; }
-    public void setLastDir(int lastDir) { this.lastDir = lastDir; }
-    public void setEnemyID(int enemyID) { this.enemyID = enemyID; }
     public void setEnemyHealth(int health) { this.health = health; }
-    public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
-    public void setEnemyDamage(int damage) { this.damage = damage; }
     public void setRewardGold(int rewardGold) { this.rewardGold = rewardGold; }
-    public void setEnemySpeedX(float speedX) { this.speedX = speedX; }
     public void setAlive(boolean alive) {isAlive = alive;}
     public void setHit(boolean hit) {isHit = hit;}
-    public void setEnemySpeedY(float speedY) { this.speedY = speedY; }
-    public void setEnemyType(int enemyType) { this.enemyType = enemyType; }
 
     public void onReachedBase(){
         if (player != null) {
@@ -355,71 +315,29 @@ public abstract class Enemy {
         return reachedBase;
     }
 
-
-    public boolean isUsingPathfinding() {
-        return usePathfinding;
-    }
-
-
-    public void setMoveSpeed(float speed) {
-        this.moveSpeed = speed;
-    }
-
-    public float getMoveSpeed() {
-        return moveSpeed;
-    }
-
-    public EnemyPathController getPathController() {
-        return pathController;
-    }
-
-    // ==================== Attack Logic ====================
-    public boolean canAttack() {
-        return true;
-    }
-
-    // ==================== Take Damage Logic ====================
-
-    //handle damage taken and death
-    public void takeDamage(int damage){
-        this.isHit=true;
-        this.health-=damage;
-        if(this.health<=0) {
-            this.isAlive = false;
-            this.health = 0;
-        }
-    }
-
-    public void setSpriteSize(int w, int h) {
-        this.frameW = w;
-        this.frameH = h;
-        updateBounds();
-    }
     public void addStun() {
         this.stunCount++;
     }
 
-    // Gọi khi kết thúc Stun
     public void removeStun() {
         this.stunCount--;
-        if (this.stunCount < 0) this.stunCount = 0; // Safety check
+        if (this.stunCount < 0) this.stunCount = 0;
     }
 
-    // Gọi khi bắt đầu Slow
     public void addSlow(float factor) {
         this.slowFactor += factor;
-        // Giới hạn slow tối đa (ví dụ không quá 90%)
         if (this.slowFactor > 0.9f) this.slowFactor = 0.9f;
         recalculateSpeed();
     }
 
-    // Gọi khi kết thúc Slow
     public void removeSlow(float factor) {
         this.slowFactor -= factor;
         if (this.slowFactor < 0) this.slowFactor = 0;
         recalculateSpeed();
     }
 
-
-
+    private void recalculateSpeed() {
+        this.speed = this.moveSpeed * (1.0f - this.slowFactor);
+        if (this.speed < 0) this.speed = 0;
+    }
 }

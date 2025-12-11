@@ -10,15 +10,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ProjectileManager {
-    private Playing playing;
     private ArrayList<Projectile> projectiles = new ArrayList<>();
-    private ArrayList<ImpactEffect> effects = new ArrayList<>(); // Class ImpactEffect bạn tự tạo tương tự hiệu ứng xây
+    private ArrayList<ImpactEffect> effects = new ArrayList<>();
     private LoadProjectileImages spriteLoader;
 
-    private int projId = 0;
-
     public ProjectileManager(Playing playing) {
-        this.playing = playing;
         this.spriteLoader = new LoadProjectileImages();
     }
 
@@ -27,7 +23,6 @@ public class ProjectileManager {
     }
 
     private void spawnImpactEffect(Projectile p) {
-        // GỌI HÀM CỦA ĐẠN: Đa hình sẽ tự chạy vào CannonProjectile.createImpactEffect()
         ImpactEffect effect = p.createImpactEffect();
 
         if (effect != null) {
@@ -36,11 +31,11 @@ public class ProjectileManager {
     }
 
     public void update() {
-        // 1. Update Projectiles
+        // Update Projectiles
         Iterator<Projectile> it = projectiles.iterator();
         while (it.hasNext()) {
             Projectile p = it.next();
-            p.update(); // Logic bay và va chạm đã nằm trong class Projectile
+            p.update();
 
             if (!p.isActive()) {
                 spawnImpactEffect(p);
@@ -48,7 +43,7 @@ public class ProjectileManager {
             }
         }
 
-        // 2. Update Effects (Nổ)
+        // Update Effects
         Iterator<ImpactEffect> itEffect = effects.iterator();
         while (itEffect.hasNext()) {
             ImpactEffect e = itEffect.next();
@@ -60,7 +55,6 @@ public class ProjectileManager {
     }
 
     public void draw(GraphicsContext gc) {
-        // 1. Vẽ Đạn
         for (Projectile p : projectiles) {
             Image img = spriteLoader.getProjectile(p.getProjectileType(), p.getTowerLevel(), p.getAnimationIndex());
             if (img != null) {
@@ -70,7 +64,6 @@ public class ProjectileManager {
             }
         }
 
-        // 2. Vẽ Hiệu ứng Nổ (Impact) - ĐÃ BỔ SUNG
         for (ImpactEffect e : effects) {
             e.draw(gc, spriteLoader);
         }
@@ -91,6 +84,5 @@ public class ProjectileManager {
     public void reset() {
         projectiles.clear();
         effects.clear();
-        projId = 0;
     }
 }

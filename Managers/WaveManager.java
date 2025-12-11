@@ -73,6 +73,7 @@ public void update(float dt){
         waveIndex++;
         enemyIndex = 0;
         System.out.println("Wave " + (waveIndex + 1) + " started!");
+
     }
 
     public void startWaveTimer() {

@@ -14,12 +14,10 @@ public class PoisonEffect extends StatusEffect {
 
     @Override
     public void onStart(Enemy enemy) {
-        // Có thể thêm logic giảm giáp hoặc đổi màu tại đây nếu muốn
     }
 
     @Override
     public void onTick(float dt, Enemy enemy) {
-        // Độc gây sát thương mỗi chu kỳ (Logic nằm ở đây là chuẩn nhất)
         timeSinceLastTick += dt;
         if (timeSinceLastTick >= tickRate) {
             timeSinceLastTick = 0;
@@ -29,6 +27,5 @@ public class PoisonEffect extends StatusEffect {
 
     @Override
     public void onEnd(Enemy enemy) {
-        // Dọn dẹp nếu cần
     }
 }

@@ -4,7 +4,7 @@ import Constant.EntityConstant;
 
 public class GoblinBoss extends Enemy{
     public GoblinBoss(float x, float y) {
-        super(x, y, EntityConstant.GOBLIN_BOSS.getId(),500);
+        super(x, y, EntityConstant.GOBLIN_BOSS.getId(),600);
         setRewardGold(50);
     }
 }

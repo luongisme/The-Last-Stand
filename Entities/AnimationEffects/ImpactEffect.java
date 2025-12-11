@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 
 public abstract class ImpactEffect {
     protected Point2D pos;
-    protected int type; // 0: Cannon, 1: Poison, 2: Frost
+    protected int type; // 0: Anemo, 1: Toxo, 2: Electro
     protected int animIndex = 0;
     protected int animTick = 0;
     protected int animSpeed;

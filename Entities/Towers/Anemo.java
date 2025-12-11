@@ -3,22 +3,21 @@ package Entities.Towers;
 import Constant.TowerConstant;
 import Entities.AnimationEffects.ImpactProfile;
 import Entities.Enemies.Enemy;
-import Entities.Projectiles.CannonProjectile;
+import Entities.Projectiles.AnemoProjectile;
 import Entities.Projectiles.Projectile;
 import Logic.Strategies.AnemoImpact;
 import Logic.Strategies.ImpactStrategy;
 import Managers.EnemyManager;
 import Managers.ProjectileManager;
 
-public class Cannon extends Tower{
-    public Cannon(int x, int y, int id, EnemyManager em, ProjectileManager pm) {
-        super(x, y, id, TowerConstant.CANNON, em, pm);
+public class Anemo extends Tower{
+    public Anemo(int x, int y, int id, EnemyManager em, ProjectileManager pm) {
+        super(x, y, id, TowerConstant.ANEMO, em, pm);
     }
 
     @Override
     public ImpactStrategy getImpactStrategy() {
-        // Cannon dùng đạn Anemo: Đẩy lùi + Sát thương lan
-        return new AnemoImpact(getExplosionRadius());
+        return new AnemoImpact(getExplosionRadius(), getDuration(), getSlowPercent());
     }
 
     @Override
@@ -28,28 +27,33 @@ public class Cannon extends Tower{
         this.shootFrame = 8;
     }
 
-    public float getExplosionRadius() {
+    private float getExplosionRadius() {
         // Level 1: 60, Level 2: 80, Level 3: 100
         return 60.0f + (getLevel() - 1) * 20.0f;
     }
 
+    private float getDuration() {
+        return 2.5f + (getLevel() * 0.5f);
+    }
+
+    private float getSlowPercent() {
+        // 30%, 40%, 50%
+        return 0.2f + (getLevel() * 0.1f);
+    }
+
     @Override
     public ImpactProfile getImpactProfile() {
-        // Logic tính toán thông số dựa trên Level
         float radius = getExplosionRadius();
-        float size = radius * 1.5f; // Hình nổ to gấp đôi bán kính
+        float size = radius * 1.5f;
+        int speed = 5; // 6,5,4
 
-        // Tốc độ nổ: Level cao nổ nhanh
-        int speed = 8 - (getLevel() * 2); // 6,4,2
-
-        // Tạo Profile: Size động
         return new ImpactProfile(size, speed);
     }
 
     @Override
     protected Projectile createSpecificProjectile(float x, float y, float speed, int maxFrames, int lvl, Enemy target) {
-        return new CannonProjectile(x, y, speed, damage,
+        return new AnemoProjectile(x, y, speed, damage,
                                     towerType.ordinal(), lvl, maxFrames, target,
-                                    getImpactStrategy(), enemyManager, getExplosionRadius(), getImpactProfile());
+                                    getImpactStrategy(), enemyManager, getImpactProfile());
     }
 }

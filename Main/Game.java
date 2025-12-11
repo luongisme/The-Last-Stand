@@ -36,38 +36,27 @@ public class Game extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        
         initClasses();
-
         // Initialize KeyboardListener with game instance for F3 debug toggle
         KeyboardListener.setGameInstance(this);
-
         musicManager = MusicManager.getInstance();
-        musicManager.playMenuMusic(); // phát nhạc menu khi mở game
-
-        
+        musicManager.playMenuMusic();
         // Wrap GameScreen (Canvas) in a Pane
         StackPane root = new StackPane();
         root.getChildren().add(gameScreen);
-        
         // Create JavaFX Scene
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        
         // Setup keyboard listeners
         scene.setOnKeyPressed(KeyboardListener::handleKeyPressed);
         scene.setOnKeyReleased(KeyboardListener::handleKeyReleased);
         scene.setOnKeyTyped(KeyboardListener::handleKeyTyped);
-        
         primaryStage.setTitle("The Last Stand - Tower Defense");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
         musicSetting = new MusicSetting(primaryStage, root);
-
-        
         // Request focus for keyboard events
         gameScreen.requestFocus();
-        
         startGameLoop();
     }
 

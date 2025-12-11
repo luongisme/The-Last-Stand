@@ -12,18 +12,15 @@ public class SlowEffect extends StatusEffect {
 
     @Override
     public void onStart(Enemy enemy) {
-        // Tác động ngay khi dính hiệu ứng
         enemy.addSlow(slowPercent);
     }
 
     @Override
     public void onTick(float dt, Enemy enemy) {
-        // Slow không cần làm gì mỗi tick (vì speed đã giảm rồi)
     }
 
     @Override
     public void onEnd(Enemy enemy) {
-        // Hoàn trả lại tốc độ khi hết hiệu ứng
         enemy.removeSlow(slowPercent);
     }
 }
